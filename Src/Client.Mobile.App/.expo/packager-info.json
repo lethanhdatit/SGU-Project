@@ -1,9 +1,9 @@
 {
+  "devToolsPort": 19002,
   "expoServerPort": 19000,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null,
-  "devToolsPort": 19003,
-  "packagerPort": 19004,
-  "packagerPid": 13544
+  "packagerPort": 19001,
+  "packagerPid": 7080,
+  "expoServerNgrokUrl": "https://pg-b84.altdev.client-mobile-app.exp.direct",
+  "packagerNgrokUrl": "https://packager.pg-b84.altdev.client-mobile-app.exp.direct",
+  "ngrokPid": 7012
 }
