@@ -20,6 +20,16 @@ namespace SGU.Service.Common
             //... add more ...
         }
 
+        public enum ProductStatus : byte
+        {
+            [Display(Name = "Active")]
+            Active = 1,
+            [Display(Name = "Inactive")]
+            Inactive = 2,
+           
+            //... add more ...
+        }
+
         public enum RoleIdType : long
         {
             [Display(Name = "Admin")]
@@ -27,6 +37,19 @@ namespace SGU.Service.Common
             [Display(Name = "Người Dùng")]
             User = 2,           
             //... add more ...
+        }
+
+        public enum LoginProvider : byte
+        {
+            [Display(Name = "System")]
+            System = 1,
+
+            [Display(Name = "Google")]
+            Google = 2,
+
+            [Display(Name = "Facebook")]
+            Facebook = 3,
+
         }
     }
 }

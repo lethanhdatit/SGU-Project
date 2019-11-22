@@ -79,8 +79,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base62.cs" />
     <Compile Include="Common\Constant.cs" />
     <Compile Include="Common\Enum.cs" />
+    <Compile Include="CredentialUtils.cs" />
+    <Compile Include="Implement\SaleService.cs" />
+    <Compile Include="Implement\AccountService.cs" />
     <Compile Include="Implement\UserService.cs" />
     <Compile Include="Implement\BaseService.cs" />
     <Compile Include="Interfaces\IUserService.cs" />

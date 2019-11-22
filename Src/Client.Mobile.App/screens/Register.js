@@ -4,7 +4,8 @@ import {
   ImageBackground,
   Dimensions,
   StatusBar,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  ScrollView
 } from "react-native";
 import { Block, Checkbox, Text, theme } from "galio-framework";
 
@@ -32,13 +33,13 @@ class Register extends React.Component {
                   <Button style={{ ...styles.socialButtons, marginRight: 30 }}>
                     <Block row>
                       <Icon
-                        name="logo-github"
+                        name="logo-facebook"
                         family="Ionicon"
                         size={14}
                         color={"black"}
                         style={{ marginTop: 2, marginRight: 5 }}
                       />
-                      <Text style={styles.socialTextButtons}>GITHUB</Text>
+                      <Text style={styles.socialTextButtons}>FACEBOOK</Text>
                     </Block>
                   </Button>
                   <Button style={styles.socialButtons}>
@@ -55,7 +56,9 @@ class Register extends React.Component {
                   </Button>
                 </Block>
               </Block>
+
               <Block flex>
+              <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
                 <Block flex={0.17} middle>
                   <Text color="#8898AA" size={12}>
                     Or sign up the classic way
@@ -150,7 +153,8 @@ class Register extends React.Component {
                     </Block>
                   </KeyboardAvoidingView>
                 </Block>
-              </Block>
+                </ScrollView>
+              </Block>              
             </Block>
           </Block>
         </ImageBackground>
