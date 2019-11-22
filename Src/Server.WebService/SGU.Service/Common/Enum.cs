@@ -29,6 +29,18 @@ namespace SGU.Service.Common
            
             //... add more ...
         }
+        public enum OrderStatus : byte
+        {
+            [Display(Name = "Mới Tạo")] // User vừa mới tạo
+            New = 1,
+            [Display(Name = "Đang Xử Lý")] // Admin đã pick đơn và đang xử lý
+            Processing = 2,           
+            [Display(Name = "Đã Hoàn Tất")] // Đã hoàn thành đơn hàng
+            Completed = 4,
+            [Display(Name = "Đã Hủy")] // Bị hủy (User hoạc admin hoặc thợ)
+            Cancelled = 8,
+            //... add more ...
+        }
 
         public enum RoleIdType : long
         {

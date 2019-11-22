@@ -20,8 +20,17 @@ namespace SGU.WebService.Models
         public long ProductID { get; set; }
 
         public long ProductTypeID { get; set; }
+        public long OriginID { get; set; }
+        public long TrademarkID { get; set; }
 
-        public string ProductSize { get; set; }
+
+        public string ProductTypeName { get; set; }
+
+        public string OriginName { get; set; }
+
+        public string TrademarkName { get; set; }
+
+        public string ProductSize { get; set; }      
 
         public string ProductColor { get; set; }
 
@@ -29,13 +38,59 @@ namespace SGU.WebService.Models
 
         public decimal ProductPrice { get; set; }
 
-        public long OriginID { get; set; }
-
-        public long TrademarkID { get; set; }
-
         public string ProductName { get; set; }
 
         public string ProductInfomation { get; set; }
 
+    }
+
+    public class ProductTypeView
+    {       
+        public long TypeID { get; set; }
+
+        public string TypeName { get; set; }
+      
+    }
+
+    public class OrderView
+    {
+        [Required]
+        public long UserId { get; set; }
+
+        [Required]
+        public string Address { get; set; }
+        [Required]
+        public string Phone { get; set; }
+        [Required]
+        public string ShippingDate { get; set; }
+        [Required]
+        public long ShipmentID { get; set; }
+        public string NoteUser { get; set; }
+
+    }
+
+    public class CartView
+    {
+        [Required]
+        public long UserId { get; set; }
+        public byte Type { get; set; }
+        public List<CartItemView> Items { get; set; }
+
+        public decimal TotalPrice { get; set; }
+    }
+
+    public class CartItemView
+    {
+        [Required]
+        public long ProductID { get; set; }
+
+        public string ProductName { get; set; }
+
+        public decimal ProductPrice { get; set; }
+
+        [Required]
+        public int Quantity { get; set; }
+
+        public decimal TotalPrice { get; set; }
     }
 }

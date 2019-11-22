@@ -33,7 +33,7 @@ namespace SGU.Data.Models
         public long TrademarkID { get; set; }
 
         public string ProductName { get; set; }
-
+        public long Quantity { get; set; }
         public string ProductInfomation { get; set; }
 
         public byte? Status { get; set; }
