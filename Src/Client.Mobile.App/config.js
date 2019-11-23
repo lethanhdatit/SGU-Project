@@ -8,7 +8,8 @@ export default {
     GOOGLE_PLACES_AUTOCOMPLETE: 'AIzaSyAjpRpRw66A8LwTDMmezxn2PZlF4iIj0ek', // https://console.cloud.google.com/apis/credentials  dattoo730@gmail.com -> Jikula
 
     //API ENDPOINTs
-    LOGIN_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/account/login/`,    
+    LOGIN_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/account/login/`,
+    REGISTER_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/account/register/`,    
     CHECK_LOGIN_STATUS_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/account/checksigninstatus/`,
     GET_ALL_ACTIVE_SERVICE_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/sale/getavailableservices/`,
     GET_ALL_ACTIVE_SERVICE_TYPE_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/sale/getservicetypes/`,

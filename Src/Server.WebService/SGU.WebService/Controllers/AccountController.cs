@@ -11,6 +11,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using SGU.Service;
 using static SGU.Service.Common.Enum;
+using System.Globalization;
 
 namespace SGU.WebService.Controllers
 {
@@ -65,20 +66,21 @@ namespace SGU.WebService.Controllers
                                 break;
                             }
                     }
-               
+                    CultureInfo provider = CultureInfo.InvariantCulture;
+                    var UserDayOfBirth = DateTime.ParseExact(model.DOB, "dd/MM/yyyy", provider);
                     var _newUser = new User()
                     {
                         UserName = model.FullName,                        
                         UserEmail = model.Email,
                         UserAvatar = _avatarUrl,                   
-                        UserDayOfBirth = model.DOB,
+                        UserDayOfBirth = UserDayOfBirth,
                         CreatedDate = DateTime.UtcNow,
                         Status = (byte)UserStatus.Active
                     };
                     var resId = _accountService.CreateUser(_newUser, model.Password);
                     if (resId > 0)
                     {
-                        response.Data = new { code = 202, IdUser = resId, message = "Registered success." };
+                        response.Data = new { code = HttpStatusCode.OK, IdUser = resId, message = "Registered success." };
                     }
                     else
                     {
@@ -117,8 +119,9 @@ namespace SGU.WebService.Controllers
                 var user = _accountService.GetUserByEmail(model.Email);
                 if (user != null)
                 {
-                    byte[] password = CredentialUtils.StringToBytes(model.Password);
-                    var encryptedPassword = CredentialUtils.EncryptPassword(password, model.Email);
+                    byte[] password = CryptographyUtil.StringToBytes(model.Password.ToLower());
+                    var encryptedPassByte = CryptographyUtil.SHA1EncryptPassword(password);
+                    var encryptedPassword = CryptographyUtil.BytesToString(encryptedPassByte);
 
                     if (user.UserPassword == encryptedPassword)
                     {
@@ -126,12 +129,12 @@ namespace SGU.WebService.Controllers
                     }
                     else
                     {
-                        response.Data = new { code = HttpStatusCode.ExpectationFailed, message = "Login fail." };
+                        response.Data = new { code = HttpStatusCode.ExpectationFailed, message = "Sai mật khẩu." };
                     }
                 }
                 else
                 {
-                    response.Data = new { code = HttpStatusCode.PreconditionFailed, message = "User was not existed." };
+                    response.Data = new { code = HttpStatusCode.PreconditionFailed, message = "Tài khoản không tồn tại." };
                 }
 
                 return response;

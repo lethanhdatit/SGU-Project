@@ -13,7 +13,6 @@ import Home from "../screens/Home";
 import Onboarding from "../screens/Onboarding";
 import Pro from "../screens/Pro";
 import Profile from "../screens/Profile";
-import Register from "../screens/Register";
 import Elements from "../screens/Elements";
 import Articles from "../screens/Articles";
 // drawer
@@ -63,9 +62,9 @@ const transitionConfig = (transitionProps, prevTransitionProps) => ({
 
 const ElementsStack = createStackNavigator({
   Elements: {
-    screen: Elements,
+    screen: Articles,
     navigationOptions: ({ navigation }) => ({
-      header: <Header title="Elements" navigation={navigation} />
+      header: <Header title="Đơn Hàng" navigation={navigation} />
     })
   }
 },{
@@ -77,9 +76,9 @@ const ElementsStack = createStackNavigator({
 
 const ArticlesStack = createStackNavigator({
   Articles: {
-    screen: Articles,
+    screen: Elements,
     navigationOptions: ({ navigation }) => ({
-      header: <Header title="Articles" navigation={navigation} />
+      header: <Header title="Đăng Xuất" navigation={navigation} />
     })
   }
 },{
@@ -95,7 +94,7 @@ const ProfileStack = createStackNavigator(
       screen: Profile,
       navigationOptions: ({ navigation }) => ({
         header: (
-          <Header white transparent title="Profile" iconColor={'#FFF'} navigation={navigation} />
+          <Header white transparent title="Cá Nhân" iconColor={'#FFF'} navigation={navigation} />
         ),
         headerTransparent: true
       })
@@ -112,7 +111,7 @@ const HomeStack = createStackNavigator(
     Home: {
       screen: Home,
       navigationOptions: ({ navigation }) => ({
-        header: <Header search options title="Home" navigation={navigation} />
+        header: <Header search options title="Mua Sắm" navigation={navigation} />
       })
     },
     Pro: {
@@ -145,7 +144,7 @@ const AppStack = createDrawerNavigator(
       screen: HomeStack,
       navigationOptions: navOpt => ({
         drawerLabel: ({ focused }) => (
-          <DrawerItem focused={focused} title="Home" />
+          <DrawerItem focused={focused} title="Mua Sắm" />
         )
       })
     },
@@ -153,23 +152,15 @@ const AppStack = createDrawerNavigator(
       screen: ProfileStack,
       navigationOptions: navOpt => ({
         drawerLabel: ({ focused }) => (
-          <DrawerItem focused={focused} screen="Profile" title="Profile" />
+          <DrawerItem focused={focused} screen="Profile" title="Cá Nhân" />
         )
       })
-    },
-    Account: {
-      screen: Register,
-      navigationOptions: navOpt => ({
-        drawerLabel: ({ focused }) => (
-          <DrawerItem focused={focused} screen="Register" title="Account" />
-        )
-      })
-    },
+    },    
     Elements: {
       screen: ElementsStack,
       navigationOptions: navOpt => ({
         drawerLabel: ({ focused }) => (
-          <DrawerItem focused={focused} screen="Elements" title="Elements" />
+          <DrawerItem focused={focused} screen="Elements" title="Đơn Hàng" />
         )
       })
     },
@@ -177,7 +168,7 @@ const AppStack = createDrawerNavigator(
       screen: ArticlesStack,
       navigationOptions: navOpt => ({
         drawerLabel: ({ focused }) => (
-          <DrawerItem focused={focused} screen="Articles" title="Articles" />
+          <DrawerItem focused={focused} screen="Articles" title="Đăng Xuất" />
         )
       })
     }

@@ -4,7 +4,7 @@ import { AppLoading } from 'expo';
 import { Asset } from 'expo-asset';
 import { Block, GalioProvider } from 'galio-framework';
 
-import Screens from './navigation/Screens';
+import AppAuthen from './navigation/AppAuthen';
 import { Images, articles, argonTheme } from './constants';
 
 // cache app images
@@ -49,7 +49,7 @@ export default class App extends React.Component {
       return (
         <GalioProvider theme={argonTheme}>
           <Block flex>
-            <Screens />
+            <AppAuthen />
           </Block>
         </GalioProvider>
       );

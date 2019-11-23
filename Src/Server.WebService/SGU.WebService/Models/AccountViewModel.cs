@@ -28,7 +28,7 @@ namespace SGU.WebService.Models
         [Required]
         public string Password { get; set; }
         [Required]
-        public DateTime DOB { get; set; }
+        public string DOB { get; set; }
         public byte LoginProvider { get; set; }
     }
 

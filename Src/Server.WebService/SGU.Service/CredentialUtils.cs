@@ -100,7 +100,7 @@ namespace SGU.Service
             return Base62.FromBytes(buff);
         }
     }
-    internal class CryptographyUtil
+    public class CryptographyUtil
     {
         private static readonly Encoding m_UnicodeEncoding = Encoding.GetEncoding(
             "utf-8",

@@ -20,8 +20,10 @@ namespace SGU.Service.Implement
 
         public long CreateUser(User entity, string _password)
         {
-            byte[] password = CryptographyUtil.StringToBytes(_password);
-            var encryptedPassword = CredentialUtils.EncryptPassword(password, entity.UserEmail);
+
+            byte[] password = CryptographyUtil.StringToBytes(_password.ToLower());
+            var encryptedPassByte = CryptographyUtil.SHA1EncryptPassword(password);
+            var encryptedPassword = CryptographyUtil.BytesToString(encryptedPassByte);
             entity.UserPassword = encryptedPassword;
             var Role = _unitOfWork.Repository<Role>().GetOne(x => x.RoleID == (long)RoleIdType.User);
             entity.Roles.Add(Role);

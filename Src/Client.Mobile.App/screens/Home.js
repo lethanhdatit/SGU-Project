@@ -4,10 +4,14 @@ import { Block, theme } from 'galio-framework';
 
 import { Card } from '../components';
 import articles from '../constants/articles';
+import * as Api from "../components/Api";
+import * as AsyncStorage from '../components/AsyncStorage';
+import config from "../config";
+
 const { width } = Dimensions.get('screen');
 
 class Home extends React.Component {
-  renderArticles = () => {
+   renderArticles = () => {
     return (
       <ScrollView
         showsVerticalScrollIndicator={false}
