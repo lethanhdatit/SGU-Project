@@ -229,18 +229,19 @@ export default class Register extends React.Component {
                         </Button>
                       </Block>
 
-                      <Block middle>
-                        <Button
-                          style={{ width: "100%" }}
+                      <Block middle>                        
+                      <TouchableOpacity style={{
+                          width: "100%", alignItems: 'center',
+                          justifyContent: 'center',
+                          marginTop: 15
+                        }}
                           color="transparent"
-                          textStyle={{
+                          onPress={() => this.OnLogin()}>
+                          <Text style={{
                             color: argonTheme.COLORS.PRIMARY,
                             fontSize: 14
-                          }}
-                          onPress={() => this.OnLogin()}
-                        >
-                          Đã có tài khoản? Đăng nhập ngay
-                      </Button>
+                          }}>Đã có tài khoản? Đăng nhập ngay</Text>
+                        </TouchableOpacity >
                       </Block>
 
                     </KeyboardAvoidingView>
@@ -269,7 +270,7 @@ export default class Register extends React.Component {
 const styles = StyleSheet.create({
   registerContainer: {
     width: width * 0.9,
-    height: height * 0.78,
+    height: height * 0.8,
     backgroundColor: "#F4F5F7",
     borderRadius: 4,
     shadowColor: argonTheme.COLORS.BLACK,

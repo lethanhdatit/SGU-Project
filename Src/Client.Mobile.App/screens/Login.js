@@ -5,7 +5,8 @@ import {
   Dimensions,
   StatusBar,
   KeyboardAvoidingView,
-  ScrollView
+  ScrollView,
+  TouchableOpacity
 } from "react-native";
 import { Block, Checkbox, Text, theme } from "galio-framework";
 
@@ -47,27 +48,27 @@ export default class Login extends React.Component {
       IsRemember: this.state.Remember,
       LoginProvider: 1 // enum LoginProvider
     };
-    
+
     var res = await API._fetch(config.LOGIN_API_ENDPOINT, 'POST', dataBody);
     if (res != null && res.Data != null) {
       if (res.Data.code == 200) {
-        console.log("res.Data.IdUser: " +res.Data.IdUser);
-        if(this.state.Remember){
+        console.log("res.Data.IdUser: " + res.Data.IdUser);
+        if (this.state.Remember) {
           await AsyncStorage._storeData(config.USER_ID_STOREKEY, String(res.Data.IdUser));
-        }        
+        }
         this.props.navigation.navigate('App');
       }
-      else if(res.Data.code == 500){
+      else if (res.Data.code == 500) {
         alert("Lỗi không xác định.");
         console.log(res.Data.message);
       }
-      else{
+      else {
         alert(res.Data.message);
       }
-    } 
+    }
     else {
       console.log("Call API fail at: " + config.LOGIN_API_ENDPOINT);
-    }    
+    }
   }
 
   async OnRegister() {
@@ -150,9 +151,9 @@ export default class Login extends React.Component {
                       </Block>
 
                       <Block middle>
-                        <Button disabled={isDisableLoginButton} 
-                                style={{ ...styles.createButton, backgroundColor: isDisableLoginButton ? "#cccccc" : "#5E72E4" }} 
-                                onPress={() => this.OnBasicLogin()}>
+                        <Button disabled={isDisableLoginButton}
+                          style={{ ...styles.createButton, backgroundColor: isDisableLoginButton ? "#cccccc" : "#5E72E4" }}
+                          onPress={() => this.OnBasicLogin()}>
                           <Text bold size={14} color={argonTheme.COLORS.WHITE}>
                             Đăng Nhập
                         </Text>
@@ -160,17 +161,18 @@ export default class Login extends React.Component {
                       </Block>
 
                       <Block middle>
-                        <Button
-                          style={{ width: "100%" }}
+                        <TouchableOpacity style={{
+                          width: "100%", alignItems: 'center',
+                          justifyContent: 'center',
+                          marginTop: 15
+                        }}
                           color="transparent"
-                          textStyle={{
+                          onPress={() => this.OnRegister()}>
+                          <Text style={{
                             color: argonTheme.COLORS.PRIMARY,
                             fontSize: 14
-                          }}
-                          onPress={() => this.OnRegister()}
-                        >
-                          Chưa có tài khoản? Tạo ngay
-                      </Button>
+                          }}>Chưa có tài khoản? Tạo ngay</Text>
+                        </TouchableOpacity >
                       </Block>
 
                     </KeyboardAvoidingView>
