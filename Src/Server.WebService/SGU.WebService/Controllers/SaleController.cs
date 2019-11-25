@@ -24,7 +24,7 @@ namespace SGU.WebService.Controllers
 
 
         [System.Web.Http.Route("searchitems")]
-        [System.Web.Http.HttpGet]
+        [System.Web.Http.HttpPost]
         public JsonResult SearchItems(SearchOptionModel model)
         {
             var response = JsonResponse();
@@ -53,7 +53,7 @@ namespace SGU.WebService.Controllers
                 }
 
                 var result = ConvertToProductView(_data);
-                response.Data = new { data = result, code = HttpStatusCode.OK };
+                response.Data = new { result, code = HttpStatusCode.OK };
                 return response;
             }
             catch (Exception ex)
