@@ -54,27 +54,70 @@ class Home extends React.Component {
 
 
   renderArticles = () => {
+    var _Items = [];
+    var pageSize = 3;
+    var length = this.state.Products.length;
+    if (length != 0) {
+      var du = length % pageSize;
+      var nguyen = Math.floor((length / pageSize));
+      // console.log("nguyen: " + nguyen);
+      // console.log("du: " + du);
+      var index = 0;
+      for (let i = 0; i < nguyen; i++) {
+        var _Temp = [];
+        for (let j = index; j < index + pageSize; j++) {
+          if(j == index + pageSize - 1){            
+            _Temp.push(
+              <Card key={j} item={this.state.Products[j]} />
+            );
+          }else{
+            _Temp.push(
+              <Card key={j} item={this.state.Products[j]} style={{ marginRight: theme.SIZES.BASE }} />
+            );
+          }          
+        }
+        _Items.push(
+          <Block key={i} flex row>
+            {
+              _Temp
+            }
+          </Block>
+        );
+        _Temp = null;
+        index=index+pageSize;
+      }
+
+      var _Temp = [];
+      for (let i = length - du ; i < length; i++) {
+        if(i == length - 1){
+          _Temp.push(
+            <Card key={i} item={this.state.Products[i]} />
+          );
+        }else{
+          _Temp.push(
+            <Card key={i} item={this.state.Products[i]} style={{ marginRight: theme.SIZES.BASE }} />
+          );
+        }       
+      }
+      _Items.push(
+        <Block key={nguyen + 1} flex row>
+          {
+            _Temp
+          }
+        </Block>
+      );
+    }
+
     return (
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.articles}>
-        <Block flex>
-          {/* <Card item={articles[0]} horizontal  /> */}
-          <Block flex row>
-            {
-              this.state.Products.map((data, i) => {
-                console.log("data: " + JSON.stringify(data));
-                <Card item={data} style={{ marginRight: theme.SIZES.BASE }} />
-              })
-            } 
-          </Block>
-          {/* <Block flex row>
-            <Card item={articles[1]} style={{ marginRight: theme.SIZES.BASE }} />
-            <Card item={articles[2]} style={{ marginRight: theme.SIZES.BASE }} />
-            <Card item={articles[2]} />
-          </Block> */}
+        <Block flex>         
           {/* <Card item={articles[3]} horizontal />
           <Card item={articles[4]} full /> */}
+          {
+            _Items
+          }
         </Block>
       </ScrollView>
     )
