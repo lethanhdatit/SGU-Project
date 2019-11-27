@@ -45,7 +45,7 @@ namespace SGU.Service.Implement
 
         public User GetUserByEmail(string email)
         {
-            return _unitOfWork.Repository<User>().GetOne(x => x.UserEmail.ToLower() == email.ToLower());
+            return _unitOfWork.Repository<User>().GetOne(x => x.UserEmail.ToLower() == email.ToLower() && x.Roles.Any(y=>y.RoleID == (long)RoleIdType.User));
         }
     }
 }

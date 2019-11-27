@@ -117,6 +117,8 @@ class Header extends React.Component {
         break;
     }
   }
+
+  
   renderSearch = () => {
     const { navigation } = this.props;
     return (

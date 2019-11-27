@@ -111,7 +111,7 @@ const HomeStack = createStackNavigator(
     Home: {
       screen: Home,
       navigationOptions: ({ navigation }) => ({
-        header: <Header search options title="Mua Sắm" navigation={navigation} />
+        header: <Header title="Mua Sắm" navigation={navigation} />
       })
     },
     Pro: {

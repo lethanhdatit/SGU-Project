@@ -78,7 +78,7 @@ namespace SGU.WebService.Controllers
                     TypeName = x.TypeName
                 }).ToList();
 
-                response.Data = new { data = result, code = HttpStatusCode.OK };
+                response.Data = new { result, code = HttpStatusCode.OK };
                 return response;
             }
             catch (Exception ex)
