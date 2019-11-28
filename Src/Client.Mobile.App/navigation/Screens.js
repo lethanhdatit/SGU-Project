@@ -1,5 +1,5 @@
 import React from "react";
-import { Easing, Animated } from "react-native";
+import { Easing, Animated, Text } from "react-native";
 import {
   createStackNavigator,
   createDrawerNavigator,
@@ -11,7 +11,7 @@ import { Block } from "galio-framework";
 // screens
 import Home from "../screens/Home";
 import Onboarding from "../screens/Onboarding";
-import Pro from "../screens/Pro";
+import ProductDetail from "../screens/ProductDetail";
 import Profile from "../screens/Profile";
 import Elements from "../screens/Elements";
 import Articles from "../screens/Articles";
@@ -114,12 +114,10 @@ const HomeStack = createStackNavigator(
         header: <Header title="Mua Sắm" navigation={navigation} />
       })
     },
-    Pro: {
-      screen: Pro,
-      navigationOptions: ({ navigation }) => ({
-        header: (
-          <Header left={<Block />} white transparent title="" navigation={navigation} />
-        ),
+    ProductDetail: {
+      screen: ProductDetail,
+      navigationOptions: ({ navigation }) => ({     
+        // header: <Header back title="" transparent white navigation={navigation} />, 
         headerTransparent: true
       })
     }

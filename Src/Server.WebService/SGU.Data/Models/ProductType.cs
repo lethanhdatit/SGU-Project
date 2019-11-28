@@ -19,6 +19,7 @@ namespace SGU.Data.Models
         public long TypeID { get; set; }
 
         public string TypeName { get; set; }
+        public string MobileIcon { get; set; }
 
         public DateTime CreatedDate { get; set; }
 

@@ -75,7 +75,8 @@ namespace SGU.WebService.Controllers
                 var result = _data.Select(x => new ProductTypeView()
                 {
                     TypeID = x.TypeID,
-                    TypeName = x.TypeName
+                    TypeName = x.TypeName,
+                    MobileIcon = x.MobileIcon
                 }).ToList();
 
                 response.Data = new { result, code = HttpStatusCode.OK };

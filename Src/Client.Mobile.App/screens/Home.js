@@ -47,8 +47,9 @@ class Home extends React.Component {
     var res = await API._fetch(`${config.SEARCH_PRODUCTS_API_ENDPOINT}`, 'POST', searchOptions);
     if (res != null && res.Data != null) {
       if (res.Data.code == 200) {
-        var temp = [];        
-        res.Data.result.map((data, i) => {          
+        var temp = [];
+        res.Data.result.map((data, i) => {    
+          console.log("ProductImage: " + data.ProductImage);      
           temp.push({
             title: data.ProductName,
             image: data.ProductImage,
@@ -88,7 +89,7 @@ class Home extends React.Component {
         var _Temp = [];
         for (let j = index; j < index + pageSize; j++) {
           _Temp.push(
-            <Card key={j} item={this.state.Products[j]} style={{ marginRight: (j == index + pageSize - 1) ? (0) : (theme.SIZES.BASE) }} />
+            <Card navigation={this.props.navigation} key={j} item={this.state.Products[j]} style={{ marginRight: (j == index + pageSize - 1) ? (0) : (theme.SIZES.BASE) }} />
           );
         }
         _Items.push(
@@ -102,7 +103,7 @@ class Home extends React.Component {
       var _Temp = [];
       for (let i = length - du; i < length; i++) {
         _Temp.push(
-          <Card key={i} item={this.state.Products[i]} style={{ marginRight: (i == length - 1) ? (0) : (theme.SIZES.BASE) }} />
+          <Card navigation={this.props.navigation} key={i} item={this.state.Products[i]} style={{ marginRight: (i == length - 1) ? (0) : (theme.SIZES.BASE) }} />
         );
       }
       _Items.push(
@@ -133,7 +134,7 @@ class Home extends React.Component {
         right
         color="black"
         style={styles.search}
-        placeholder="What are you looking for?"
+        placeholder="Bạn cần tìm gì?"
         onChangeText={
           (text) => this.setState({ SearchTerm: text })
         }
@@ -178,7 +179,7 @@ class Home extends React.Component {
         onPress={() => this.UpdateSelectProductType(data.TypeID)}
         >
         <Block row middle>
-          <Icon name="diamond" family="ArgonExtra" style={{ paddingRight: 8 }} color={argonTheme.COLORS.ICON} />
+          <Icon name={data.MobileIcon} family="font-awesome" style={{ paddingRight: 8 }} color={argonTheme.COLORS.ICON} />
           <Text size={16} style={styles.tabTitle}>{data.TypeName}</Text>
         </Block>
       </Button>

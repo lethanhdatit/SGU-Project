@@ -5,7 +5,8 @@ import {
   Image,
   TouchableWithoutFeedback,
   ImageBackground,
-  Dimensions
+  Dimensions,
+  Platform
 } from "react-native";
 //galio
 import { Block, Text, theme } from "galio-framework";
@@ -14,7 +15,7 @@ import { articles, Images, argonTheme } from "../constants/";
 import { Card } from "../components/";
 
 const { width } = Dimensions.get("screen");
-
+const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 const thumbMeasure = (width - 48 - 32) / 3;
 const cardWidth = width - theme.SIZES.BASE * 2;
 const categories = [
@@ -36,7 +37,7 @@ const categories = [
   }
 ];
 
-class Articles extends React.Component {
+class ProductDetail extends React.Component {
   renderProduct = (item, index) => {
     const { navigation } = this.props;
 
@@ -52,27 +53,7 @@ class Articles extends React.Component {
             style={styles.productImage}
             source={{ uri: item.image }}
           />
-          <Block center style={{ paddingHorizontal: theme.SIZES.BASE }}>
-            <Text
-              center
-              size={16}
-              color={theme.COLORS.MUTED}
-              style={styles.productPrice}
-            >
-              {item.price}
-            </Text>
-            <Text center size={34}>
-              {item.title}
-            </Text>
-            <Text
-              center
-              size={16}
-              color={theme.COLORS.MUTED}
-              style={styles.productDescription}
-            >
-              {item.description}
-            </Text>
-          </Block>
+
         </Block>
       </TouchableWithoutFeedback>
     );
@@ -81,40 +62,7 @@ class Articles extends React.Component {
   renderCards = () => {
     return (
       <Block flex style={styles.group}>
-        <Text bold size={16} style={styles.title}>
-          Cards
-        </Text>
         <Block flex>
-          <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-            <Card item={articles[0]} horizontal />
-            <Block flex row>
-              <Card
-                item={articles[1]}
-                style={{ marginRight: theme.SIZES.BASE }}
-              />
-              <Card item={articles[2]} />
-            </Block>
-            <Card item={articles[4]} full />
-            <Block flex card shadow style={styles.category}>
-              <ImageBackground
-                source={{ uri: Images.Products["View article"] }}
-                style={[
-                  styles.imageBlock,
-                  { width: width - theme.SIZES.BASE * 2, height: 252 }
-                ]}
-                imageStyle={{
-                  width: width - theme.SIZES.BASE * 2,
-                  height: 252
-                }}
-              >
-                <Block style={styles.categoryTitle}>
-                  <Text size={18} bold color={theme.COLORS.WHITE}>
-                    View article
-                  </Text>
-                </Block>
-              </ImageBackground>
-            </Block>
-          </Block>
           <Block flex style={{ marginTop: theme.SIZES.BASE / 2 }}>
             <ScrollView
               horizontal={true}
@@ -132,7 +80,29 @@ class Articles extends React.Component {
                 categories.map((item, index) =>
                   this.renderProduct(item, index)
                 )}
+
             </ScrollView>
+            <Block left style={{ paddingHorizontal: theme.SIZES.BASE }}>
+              <Text
+                center
+                size={16}
+                color={theme.COLORS.MUTED}
+                style={styles.productPrice}
+              >
+                15000 VND
+                </Text>
+              <Text center size={34}>
+                Đầm Bé Yêu Cực Đẹp
+                </Text>
+              <Text
+                center
+                size={16}
+                color={theme.COLORS.MUTED}
+                style={styles.productDescription}
+              >
+                Mô tả cho đầm bé yêu uuuuuuuuuuuuuuuu
+                </Text>
+            </Block>
           </Block>
         </Block>
       </Block>
@@ -182,7 +152,7 @@ class Articles extends React.Component {
 
   render() {
     return (
-      <Block flex center>
+      <Block flex center style={styles.navbar}>
         <ScrollView
           showsVerticalScrollIndicator={false}
         >
@@ -247,7 +217,13 @@ const styles = StyleSheet.create({
   productDescription: {
     paddingTop: theme.SIZES.BASE
     // paddingBottom: theme.SIZES.BASE * 2,
+  },
+  navbar: {
+    paddingVertical: 0,
+    paddingBottom: theme.SIZES.BASE * 1.5,
+    paddingTop: iPhoneX ? theme.SIZES.BASE * 4 : theme.SIZES.BASE,
+    zIndex: 5,
   }
 });
 
-export default Articles;
+export default ProductDetail;

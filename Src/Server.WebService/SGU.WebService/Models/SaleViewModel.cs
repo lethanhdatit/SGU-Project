@@ -49,7 +49,8 @@ namespace SGU.WebService.Models
         public long TypeID { get; set; }
 
         public string TypeName { get; set; }
-      
+        public string MobileIcon { get; set; }        
+
     }
 
     public class OrderView
