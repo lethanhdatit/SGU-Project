@@ -28,21 +28,36 @@ namespace SGU.WebService.Models
 
         public string OriginName { get; set; }
 
-        public string TrademarkName { get; set; }
+        public string TrademarkName { get; set; }       
 
-        public string ProductSize { get; set; }      
-
-        public string ProductColor { get; set; }
-
-        public string ProductImage { get; set; }
-
-        public decimal ProductPrice { get; set; }
+        public string ProductPrice { get; set; }
 
         public string ProductName { get; set; }
-
+        public string ProductImage { get; set; }
+        
         public string ProductInfomation { get; set; }
 
+        public List<string> VariantColors { get; set; } = new List<string>();
+        public List<string> VariantSizes { get; set; } = new List<string>();
+        public List<string> VariantImages { get; set; } = new List<string>();
+
+        public List<VariantView> Variants { get; set; } = new List<VariantView>();
     }
+
+    public class VariantView
+    {
+        public long VariantID { get; set; }
+
+        public string VariantSize { get; set; }
+
+        public string VariantColor { get; set; }
+
+        public string VariantImage { get; set; }
+
+        public long Stock { get; set; }
+
+    }
+
 
     public class ProductTypeView
     {       

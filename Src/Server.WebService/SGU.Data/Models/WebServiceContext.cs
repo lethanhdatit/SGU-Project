@@ -22,11 +22,17 @@ namespace SGU.Data.Models
         public virtual DbSet<ShoppingCart> ShoppingCarts { get; set; }
         public virtual DbSet<Trademark> Trademarks { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Variant> Variants { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>()
                 .HasMany(e => e.ShoppingCarts)
+                .WithRequired(e => e.Product)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Product>()
+                .HasMany(e => e.Variants)
                 .WithRequired(e => e.Product)
                 .WillCascadeOnDelete(false);
 

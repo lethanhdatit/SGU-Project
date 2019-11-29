@@ -1,7 +1,7 @@
 import React from 'react';
 import { withNavigation } from 'react-navigation';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions, Image, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Dimensions, Image, TouchableWithoutFeedback,TouchableOpacity } from 'react-native';
 import { Block, Text, theme } from 'galio-framework';
 
 import { argonTheme } from '../constants';
@@ -23,17 +23,17 @@ class Card extends React.Component {
 
     return (
       <Block row={horizontal} card flex style={cardContainer}>
-        <TouchableWithoutFeedback onPress={() => navigation.navigate('ProductDetail')}>
+        <TouchableOpacity onPress={() => navigation.navigate('ProductDetail',{productId: item.productId, go_back_key: navigation.state.key})}>
           <Block flex style={imgContainer}>
             <Image source={{uri: item.image}} style={imageStyles} />
           </Block>
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={() => navigation.navigate('ProductDetail')}>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('ProductDetail',{productId: item.productId, go_back_key: navigation.state.key})}>
           <Block middle flex space="between" style={styles.cardDescription}>
             <Text size={14} style={styles.cardTitle}>{item.title}</Text>
-            <Text size={12} muted={!ctaColor} color={ctaColor || argonTheme.COLORS.ACTIVE} bold>{item.cta} VNĐ</Text>
+            <Text size={12} muted={!ctaColor} color={ctaColor || argonTheme.COLORS.ACTIVE} bold>{item.cta} đ</Text>
           </Block>
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
       </Block>
     );
   }

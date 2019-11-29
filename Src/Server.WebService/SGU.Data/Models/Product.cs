@@ -14,17 +14,12 @@ namespace SGU.Data.Models
         {
             OrderDetails = new HashSet<OrderDetail>();
             ShoppingCarts = new HashSet<ShoppingCart>();
+            Variants = new HashSet<Variant>();
         }
 
         public long ProductID { get; set; }
 
         public long ProductTypeID { get; set; }
-
-        public string ProductSize { get; set; }
-
-        public string ProductColor { get; set; }
-
-        public string ProductImage { get; set; }
 
         public decimal ProductPrice { get; set; }
 
@@ -33,9 +28,8 @@ namespace SGU.Data.Models
         public long TrademarkID { get; set; }
 
         public string ProductName { get; set; }
-        public long Quantity { get; set; }
-        public string ProductInfomation { get; set; }
 
+        public string ProductInfomation { get; set; }        
         public byte? Status { get; set; }
 
         public DateTime CreatedDate { get; set; }
@@ -53,5 +47,8 @@ namespace SGU.Data.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ShoppingCart> ShoppingCarts { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Variant> Variants { get; set; }
     }
 }

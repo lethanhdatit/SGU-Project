@@ -18,7 +18,7 @@ class Home extends React.Component {
     super(props);
     this.state = {
       Products: [],
-      ProductTypes: [],      
+      ProductTypes: [],
       SearchTerm: "",
       ProductTypeId: null,
       OriginID: null,
@@ -29,7 +29,7 @@ class Home extends React.Component {
 
   componentWillMount() {
     this._OnFetchProductTypes();
-    this._onRequestSearch();    
+    this._onRequestSearch();
   }
 
   _onRequestSearch() {
@@ -48,14 +48,15 @@ class Home extends React.Component {
     if (res != null && res.Data != null) {
       if (res.Data.code == 200) {
         var temp = [];
-        res.Data.result.map((data, i) => {    
-          console.log("ProductImage: " + data.ProductImage);      
+        res.Data.result.map((data, i) => {
+          console.log("ProductImage: " + data.ProductImage);
           temp.push({
+            productId: data.ProductID,
             title: data.ProductName,
             image: data.ProductImage,
             cta: data.ProductPrice
           });
-        });       
+        });
         this.setState({ Products: temp })
       }
     }
@@ -65,13 +66,13 @@ class Home extends React.Component {
     var res = await API._fetch(`${config.GET_ACTIVE_PRODUCT_TYPE}`, 'GET');
     if (res != null && res.Data != null) {
       if (res.Data.code == 200) {
-        var temp = [];       
-        res.Data.result.map((data, i) => {         
-          temp.push({...data, IsSelected: false});
-        });        
+        var temp = [];
+        res.Data.result.map((data, i) => {
+          temp.push({ ...data, IsSelected: false });
+        });
         this.setState({ ProductTypes: temp })
       }
-    }    
+    }
   };
 
 
@@ -145,8 +146,8 @@ class Home extends React.Component {
     );
   }
 
-  UpdateSelectProductType(typeID) {   
-    if(this.state.ProductTypeId != typeID){
+  UpdateSelectProductType(typeID) {
+    if (this.state.ProductTypeId != typeID) {
       var searchOptions = {
         SearchTerm: this.state.SearchTerm,
         ProductTypeId: typeID,
@@ -154,8 +155,8 @@ class Home extends React.Component {
         TrademarkID: this.state.TrademarkID,
       };
       this._OnSearchProducts(searchOptions);
-      this.setState({ProductTypeId: typeID});
-    }else{
+      this.setState({ ProductTypeId: typeID });
+    } else {
       var searchOptions = {
         SearchTerm: this.state.SearchTerm,
         ProductTypeId: null,
@@ -163,28 +164,28 @@ class Home extends React.Component {
         TrademarkID: this.state.TrademarkID,
       };
       this._OnSearchProducts(searchOptions);
-      this.setState({ProductTypeId: null});
+      this.setState({ ProductTypeId: null });
     }
-    
+
   }
-  
+
   renderOptions = () => {
     var _Items = [];
-    this.state.ProductTypes.map((data, i) => {         
+    this.state.ProductTypes.map((data, i) => {
       _Items.push(
-        <Button 
-        key={data.TypeID} 
-        shadowColor={"red"}
-        shadowless={(this.state.ProductTypeId == data.TypeID) ? (false) : (true)} style={[styles.tab, styles.divider]} 
-        onPress={() => this.UpdateSelectProductType(data.TypeID)}
+        <Button
+          key={data.TypeID}
+          shadowColor={"red"}
+          shadowless={(this.state.ProductTypeId == data.TypeID) ? (false) : (true)} style={[styles.tab, styles.divider]}
+          onPress={() => this.UpdateSelectProductType(data.TypeID)}
         >
-        <Block row middle>
-          <Icon name={data.MobileIcon} family="font-awesome" style={{ paddingRight: 8 }} color={argonTheme.COLORS.ICON} />
-          <Text size={16} style={styles.tabTitle}>{data.TypeName}</Text>
-        </Block>
-      </Button>
+          <Block row middle>
+            <Icon name={data.MobileIcon} family="font-awesome" style={{ paddingRight: 8 }} color={argonTheme.COLORS.ICON} />
+            <Text size={16} style={styles.tabTitle}>{data.TypeName}</Text>
+          </Block>
+        </Button>
       );
-    });  
+    });
     return (
       <Block row style={styles.options}>
         <ScrollView
@@ -196,7 +197,7 @@ class Home extends React.Component {
           showsHorizontalScrollIndicator={false}
           snapToInterval={cardWidth + theme.SIZES.BASE * 0.375}
           contentContainerStyle={{
-          //paddingHorizontal: theme.SIZES.BASE / 2
+            //paddingHorizontal: theme.SIZES.BASE / 2
           }}
         >
           {_Items}

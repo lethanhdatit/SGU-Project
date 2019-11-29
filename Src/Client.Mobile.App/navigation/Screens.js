@@ -12,7 +12,7 @@ import { Block } from "galio-framework";
 import Home from "../screens/Home";
 import Onboarding from "../screens/Onboarding";
 import ProductDetail from "../screens/ProductDetail";
-import Profile from "../screens/Profile";
+import Profile from "../screens/Elements-copy";
 import Elements from "../screens/Elements";
 import Articles from "../screens/Articles";
 // drawer
@@ -117,16 +117,18 @@ const HomeStack = createStackNavigator(
     ProductDetail: {
       screen: ProductDetail,
       navigationOptions: ({ navigation }) => ({     
-        // header: <Header back title="" transparent white navigation={navigation} />, 
+        // header: <Header back title=""  white navigation={navigation} />, 
         headerTransparent: true
       })
-    }
+    },
+    
   },
   {
     cardStyle: {
       backgroundColor: "#F8F9FE"
     },
-    transitionConfig
+    transitionConfig,
+    initialRouteName: 'Home'
   }
 );
 // divideru se baga ca si cum ar fi un ecrna dar nu-i nimic duh

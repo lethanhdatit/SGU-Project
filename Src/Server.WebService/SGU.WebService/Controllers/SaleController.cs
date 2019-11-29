@@ -64,6 +64,52 @@ namespace SGU.WebService.Controllers
 
         }
 
+        [System.Web.Http.Route("GetDetailsItem")]
+        [System.Web.Http.HttpGet]
+        public JsonResult GetDetailsItem(long ProductID)
+        {
+            var response = JsonResponse();
+            try
+            {
+                var _data = _saleService.GetActiveItemByID(ProductID);
+                var result = new ProductView();
+                if (_data != null)
+                {
+                    result.ProductName = _data.ProductName;
+                    result.ProductID = _data.ProductID;
+                    result.OriginID = _data.OriginID;
+                    result.OriginName = _data.Origin.OriginName;
+                    result.ProductTypeID = _data.ProductTypeID;
+                    result.ProductTypeName = _data.ProductType.TypeName;
+                    result.TrademarkID = _data.TrademarkID;
+                    result.TrademarkName = _data.Trademark.TrademarkName;                    
+                    result.VariantColors = _data.Variants.Select(x=>x.VariantColor.ToUpper()).Distinct().ToList();
+                    result.VariantSizes = _data.Variants.Select(x => x.VariantSize.ToUpper()).Distinct().ToList();                   
+                    result.VariantImages = _data.Variants.Select(x => x.VariantImage).Distinct().ToList();
+                    result.ProductImage = result.VariantImages.FirstOrDefault();
+                    result.ProductPrice = string.Format("{0:#,0}", _data.ProductPrice);
+                    result.ProductInfomation = _data.ProductInfomation;
+
+                    result.Variants = _data.Variants.Select(x => new VariantView()
+                    {
+                        VariantColor = x.VariantColor,
+                        VariantSize = x.VariantSize,
+                        VariantImage = x.VariantImage,
+                        Stock = x.Stock,
+                        VariantID = x.VariantID
+                    }).ToList();
+                }              
+                response.Data = new { result, code = HttpStatusCode.OK };
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Data = new { code = HttpStatusCode.InternalServerError, message = "Internal server exception: " + ex.Message };
+                return response;
+            }
+
+        }
+
         [System.Web.Http.Route("getproducttypes")]
         [System.Web.Http.HttpGet]
         public JsonResult GetProductTypes()
@@ -321,10 +367,8 @@ namespace SGU.WebService.Controllers
                         ProductTypeName = x.ProductType.TypeName,
                         TrademarkID = x.TrademarkID,
                         TrademarkName = x.Trademark.TrademarkName,
-                        ProductSize = x.ProductSize,
-                        ProductColor = x.ProductColor,
-                        ProductImage = x.ProductImage,
-                        ProductPrice = x.ProductPrice,
+                        ProductImage = x.Variants.Select(y=>y.VariantImage).FirstOrDefault(),                       
+                        ProductPrice = string.Format("{0:#,0}", x.ProductPrice),
                         ProductInfomation = x.ProductInfomation
                     })
                     .ToList();

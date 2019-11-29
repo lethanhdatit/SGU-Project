@@ -6,60 +6,72 @@ import {
   TouchableWithoutFeedback,
   ImageBackground,
   Dimensions,
-  Platform
+  Platform,
+  TouchableOpacity
 } from "react-native";
 //galio
 import { Block, Text, theme } from "galio-framework";
 //argon
 import { articles, Images, argonTheme } from "../constants/";
-import { Card } from "../components/";
-
+import { Card, Button, Header, Icon } from "../components/";
+import * as API from "../components/Api";
+import * as AsyncStorage from '../components/AsyncStorage';
+import config from "../config";
 const { width } = Dimensions.get("screen");
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 const thumbMeasure = (width - 48 - 32) / 3;
 const cardWidth = width - theme.SIZES.BASE * 2;
-const categories = [
-  {
-    title: "Music Album",
-    description:
-      "Rock music is a genre of popular music. It developed during and after the 1960s in the United Kingdom.",
-    image:
-      "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?fit=crop&w=840&q=80",
-    price: "$125"
-  },
-  {
-    title: "Events",
-    description:
-      "Rock music is a genre of popular music. It developed during and after the 1960s in the United Kingdom.",
-    image:
-      "https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=840&q=80",
-    price: "$35"
+
+
+
+export default class ProductDetail extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ProductDetails: [],
+    }
   }
-];
 
-class ProductDetail extends React.Component {
-  renderProduct = (item, index) => {
-    const { navigation } = this.props;
 
-    return (
-      <TouchableWithoutFeedback
-        style={{ zIndex: 3 }}
-        key={`product-${item.title}`}
-        onPress={() => navigation.navigate("ProductDetail", { product: item })}
-      >
-        <Block center style={styles.productItem}>
-          <Image
-            resizeMode="cover"
-            style={styles.productImage}
-            source={{ uri: item.image }}
-          />
+  componentWillMount() {
+    this._onFetchDetails();
+  }
 
-        </Block>
-      </TouchableWithoutFeedback>
-    );
-  };
+  _onFetchDetails = async () => {
+    var ProductID = this.props.navigation.getParam('productId', '0');
+    var res = await API._fetch(`${config.GET_ACTIVE_DETAILS_ITEM_API_ENDPOINT}?ProductID=${Number(ProductID)}`, 'GET');
+    if (res != null && res.Data != null) {
+      if (res.Data.code == 200) {
+        this.setState({ ProductDetails: res.Data.result })
+      }
+    }
+  }
+
+
+  IsEmpty(obj) {
+    for (var key in obj) {
+      return false; // not empty
+    }
+
+    return true; // empty
+  }
 
   renderCards = () => {
+    var Images = [];
+    if (this.IsEmpty(this.state.ProductDetails) == false) {
+      this.state.ProductDetails.VariantImages.map((data, i) => {
+        Images.push(
+          <Block key={i} center style={styles.productItem}>
+            <Image
+              resizeMode="cover"
+              style={styles.productImage}
+              source={{ uri: data }}
+            />
+          </Block>
+        );
+      });
+    }
+
     return (
       <Block flex style={styles.group}>
         <Block flex>
@@ -70,41 +82,90 @@ class ProductDetail extends React.Component {
               decelerationRate={0}
               scrollEventThrottle={16}
               snapToAlignment="center"
-              showsHorizontalScrollIndicator={false}
+              showsHorizontalScrollIndicator={true}
               snapToInterval={cardWidth + theme.SIZES.BASE * 0.375}
               contentContainerStyle={{
                 paddingHorizontal: theme.SIZES.BASE / 2
               }}
             >
-              {categories &&
-                categories.map((item, index) =>
-                  this.renderProduct(item, index)
-                )}
+              {
+                Images
+              }
 
             </ScrollView>
-            <Block left style={{ paddingHorizontal: theme.SIZES.BASE }}>
+
+            <Block flex style={{ marginHorizontal: theme.SIZES.BASE }}>
+              <Block style={styles.nameInfo}>
+                <Text bold size={28} color="#32325D">
+                  {this.state.ProductDetails.ProductName}
+                </Text>
+                <Text size={16} color="red" style={{ marginTop: 10 }}>
+                  {this.state.ProductDetails.ProductPrice} đ
+                </Text>
+              </Block>
+              <Block middle style={{ marginTop: 30, marginBottom: 16 }}>
+                <Block style={styles.divider} />
+              </Block>
+              <Block>
+                <Block row>
+                  <Block left flex>
+                    <Text bold size={16} style={{ ...styles.titleCustom }}>
+                      Phân loại:
+                  </Text>
+                  </Block>
+                  <Block right flex>
+                    <Text size={16} style={{ color: "#525F7F", marginVertical: 5 }}>
+                      {this.state.ProductDetails.ProductTypeName}
+                    </Text>
+                  </Block>
+                </Block>
+
+                <Block row>
+                  <Block left flex>
+                    <Text bold size={16} style={{ ...styles.titleCustom }}>
+                      Thương hiệu:
+                  </Text>
+                  </Block>
+                  <Block right flex>
+                    <Text size={16} style={{ color: "#525F7F", marginVertical: 5 }}>
+                      {this.state.ProductDetails.TrademarkName}
+                    </Text>
+                  </Block>
+                </Block>
+
+                <Block row>
+                  <Block left flex>
+                    <Text bold size={16} style={{ ...styles.titleCustom }}>
+                      Xuất xứ:
+                  </Text>
+                  </Block>
+                  <Block right flex>
+                    <Text size={16} style={{ color: "#525F7F", marginVertical: 5 }}>
+                      {this.state.ProductDetails.OriginName}
+                    </Text>
+                  </Block>
+                </Block>
+              </Block>
+              <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
+                <Block style={styles.divider} />
+              </Block>
+              <Text bold size={16} style={{ ...styles.titleCustom, marginBottom: 15 }}>
+                Mô tả:
+              </Text>
               <Text
-                center
                 size={16}
-                color={theme.COLORS.MUTED}
-                style={styles.productPrice}
+                color="#525F7F"
+                style={{ textAlign: "justify" }}
               >
-                15000 VND
-                </Text>
-              <Text center size={34}>
-                Đầm Bé Yêu Cực Đẹp
-                </Text>
-              <Text
-                center
-                size={16}
-                color={theme.COLORS.MUTED}
-                style={styles.productDescription}
-              >
-                Mô tả cho đầm bé yêu uuuuuuuuuuuuuuuu
-                </Text>
+                {this.state.ProductDetails.ProductInfomation}
+              </Text>
+              <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
+                <Block style={styles.divider} />
+              </Block>
             </Block>
           </Block>
         </Block>
+
       </Block>
     );
   };
@@ -118,7 +179,7 @@ class ProductDetail extends React.Component {
         style={[styles.group, { paddingBottom: theme.SIZES.BASE * 5 }]}
       >
         <Text bold size={16} style={styles.title}>
-          Album
+          Sản phẩm liên quan:
         </Text>
         <Block style={{ marginHorizontal: theme.SIZES.BASE * 2 }}>
           <Block flex right>
@@ -159,16 +220,46 @@ class ProductDetail extends React.Component {
           {this.renderCards()}
           {this.renderAlbum()}
         </ScrollView>
+        <Block flex style={{
+          backgroundColor: 'transparent', // TabBar background
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,         
+          width: "100%"
+        }}>
+          <Block row>
+            <Block flex ={2}>
+              <Button color="success" style={styles.button}>
+                Add To Cart
+              </Button>
+            </Block>
+            <Block flex={2}>
+              <Button color="warning" style={styles.button}>
+                Buy Now
+              </Button>
+            </Block>
+          </Block>
+        </Block>
       </Block>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  button: {
+    //margin: theme.SIZES.BASE,
+    width: "100%",
+    opacity: 0.8
+  },
   title: {
     paddingBottom: theme.SIZES.BASE,
     paddingHorizontal: theme.SIZES.BASE * 2,
     marginTop: 22,
+    color: argonTheme.COLORS.HEADER
+  },
+  titleCustom: {
+    marginVertical: 5,
     color: argonTheme.COLORS.HEADER
   },
   group: {
@@ -199,15 +290,15 @@ const styles = StyleSheet.create({
   },
   productItem: {
     width: cardWidth - theme.SIZES.BASE * 2,
-    marginHorizontal: theme.SIZES.BASE,
+    marginHorizontal: theme.SIZES.BASE * 0.5,
     shadowColor: "black",
     shadowOffset: { width: 0, height: 7 },
     shadowRadius: 10,
     shadowOpacity: 0.2
   },
   productImage: {
-    width: cardWidth - theme.SIZES.BASE,
-    height: cardWidth - theme.SIZES.BASE,
+    width: cardWidth - theme.SIZES.BASE * 2,
+    height: cardWidth - theme.SIZES.BASE * 2,
     borderRadius: 3
   },
   productPrice: {
@@ -223,7 +314,14 @@ const styles = StyleSheet.create({
     paddingBottom: theme.SIZES.BASE * 1.5,
     paddingTop: iPhoneX ? theme.SIZES.BASE * 4 : theme.SIZES.BASE,
     zIndex: 5,
+  },
+  nameInfo: {
+    marginTop: 35
+  },
+  divider: {
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#E9ECEF"
   }
 });
 
-export default ProductDetail;

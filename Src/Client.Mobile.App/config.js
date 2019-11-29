@@ -13,7 +13,7 @@ export default {
     CHECK_LOGIN_STATUS_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/account/checksigninstatus/`,
     SEARCH_PRODUCTS_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/sale/searchitems/`,
     GET_ACTIVE_PRODUCT_TYPE: `${REST_API_BASE_ENDPOINT}api/sale/getproducttypes/`,
-    GET_ALL_ACTIVE_ITEM_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/sale/getavailableitems/`,
+    GET_ACTIVE_DETAILS_ITEM_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/sale/GetDetailsItem/`,
     GET_CART_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/sale/getusercart/`,
     PLACE_ORDER_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/sale/placeorder/`,
     UPDATE_CART_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/sale/updateusercart/`,    

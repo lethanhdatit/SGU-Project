@@ -19,11 +19,13 @@ namespace SGU.Data.Models
         public long TypeID { get; set; }
 
         public string TypeName { get; set; }
-        public string MobileIcon { get; set; }
 
         public DateTime CreatedDate { get; set; }
 
         public DateTime? UpdatedDate { get; set; }
+
+        [StringLength(50)]
+        public string MobileIcon { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Product> Products { get; set; }

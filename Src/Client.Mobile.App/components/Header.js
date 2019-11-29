@@ -27,7 +27,7 @@ const BellButton = ({ isWhite, style, navigation }) => (
 );
 
 const BasketButton = ({ isWhite, style, navigation }) => (
-  <TouchableOpacity style={[styles.button, style]} onPress={() => navigation.navigate('ProductDetail')}>
+  <TouchableOpacity style={[styles.button, style]} onPress={() => navigation.navigate('Home')}>
     <Icon
       family="ArgonExtra"
       size={20}
@@ -52,9 +52,12 @@ const SearchButton = ({ isWhite, style, navigation }) => (
 );
 
 class Header extends React.Component {
+  constructor(props) {
+    super(props);   
+  }
   handleLeftPress = () => {
     const { back, navigation } = this.props;
-    return (back ? navigation.navigate('Home') : navigation.openDrawer());
+    return (back ? () => navigation.goBack() : navigation.openDrawer());
   }
   renderRight = () => {
     const { white, title, navigation } = this.props;
@@ -93,6 +96,11 @@ class Header extends React.Component {
           <BellButton key='chat-profile' navigation={navigation} isWhite={white} />,
           <BasketButton key='basket-deals' navigation={navigation} isWhite={white} />
         ]);
+      case 'ProductDetail':
+        return ([
+          <BellButton key='chat-profile' navigation={navigation}  />,
+          <BasketButton key='basket-deals' navigation={navigation} />
+        ]);
       case 'Elements':
         return ([
           <BellButton key='chat-profile' navigation={navigation} isWhite={white} />,
@@ -118,7 +126,7 @@ class Header extends React.Component {
     }
   }
 
-  
+
   renderSearch = () => {
     const { navigation } = this.props;
     return (
@@ -206,11 +214,12 @@ class Header extends React.Component {
           rightStyle={{ alignItems: 'center' }}
           left={
             <Icon
-              name={back ? 'nav-left' : "menu-8"} family="ArgonExtra"
-              size={back ? 20 : 14} onPress={()=>this.handleLeftPress()}
+              name={back ? 'chevron-left' : "menu-8"} family="ArgonExtra"
+              size={back ? 50 : 14} 
+              onPress={() => this.handleLeftPress()}
               color={iconColor || argonTheme.COLORS.ICON} />
           }
-          leftStyle={{ paddingVertical: 12, flex: 0.2 }}
+          leftStyle={{ paddingVertical: back ? 0 : 12, flex: back ? 0 : 0.2 }}
           titleStyle={[
             styles.title,
             { color: argonTheme.COLORS[white ? 'WHITE' : 'HEADER'] },

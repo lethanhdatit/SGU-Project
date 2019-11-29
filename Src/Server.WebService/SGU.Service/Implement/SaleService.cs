@@ -24,12 +24,19 @@ namespace SGU.Service.Implement
             return _unitOfWork.Repository<Product>().Get(x => x.Status == (byte)ProductStatus.Active)?.ToList();
         }
 
+        public Product GetActiveItemByID(long productId)
+        {
+            return _unitOfWork.Repository<Product>().GetOne(x => x.ProductID == productId
+                                                              && x.Status == (byte)ProductStatus.Active);
+        }
+
         public List<Product> GetActiveItemsByProductTypeId(long productTypeId)
         {
             return _unitOfWork.Repository<Product>().Get(x => x.ProductTypeID == productTypeId 
                                                               && x.Status == (byte)ProductStatus.Active)?
                                                               .ToList();
         }
+        
 
         public List<Product> GetActiveItemsByOriginID(long originID)
         {

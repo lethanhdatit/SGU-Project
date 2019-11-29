@@ -94,6 +94,8 @@ class Profile extends React.Component {
                     </Block>
                   </Block>
                 </Block>
+
+
                 <Block flex>
                   <Block middle style={styles.nameInfo}>
                     <Text bold size={28} color="#32325D">
@@ -159,6 +161,9 @@ class Profile extends React.Component {
                     </Block>
                   </Block>
                 </Block>
+
+
+                
               </Block>
             </ScrollView>
           </ImageBackground>
