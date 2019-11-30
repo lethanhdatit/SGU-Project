@@ -14,7 +14,7 @@ namespace SGU.Data.Models
 
         public long OrderID { get; set; }
 
-        public long ProductID { get; set; }
+        public long VariantID { get; set; }
 
         public int Quantity { get; set; }
 
@@ -22,6 +22,6 @@ namespace SGU.Data.Models
 
         public virtual Order Order { get; set; }
 
-        public virtual Product Product { get; set; }
+        public virtual Variant Variant { get; set; }
     }
 }

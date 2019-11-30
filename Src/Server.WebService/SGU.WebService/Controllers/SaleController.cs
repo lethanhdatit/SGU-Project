@@ -89,11 +89,11 @@ namespace SGU.WebService.Controllers
                     result.ProductImage = result.VariantImages.FirstOrDefault();
                     result.ProductPrice = string.Format("{0:#,0}", _data.ProductPrice);
                     result.ProductInfomation = _data.ProductInfomation;
-
+                    result.TotalQuantity = _data.Variants.Sum(x => x.Stock);
                     result.Variants = _data.Variants.Select(x => new VariantView()
                     {
-                        VariantColor = x.VariantColor,
-                        VariantSize = x.VariantSize,
+                        VariantColor = x.VariantColor.ToUpper(),
+                        VariantSize = x.VariantSize.ToUpper(),
                         VariantImage = x.VariantImage,
                         Stock = x.Stock,
                         VariantID = x.VariantID
@@ -146,14 +146,14 @@ namespace SGU.WebService.Controllers
                 var carts = _saleService.GetCartByIdUser(UserId);
                 if (carts != null && carts.Any())
                 {
-                    var total = carts.Sum(x => (x.Quantity * x.Product.ProductPrice));
+                    var total = carts.Sum(x => (x.Quantity * x.Variant.Product.ProductPrice));
                     var itemsView = carts.Select(x => new CartItemView()
                     {
-                        ProductID = x.ProductID,
-                        ProductPrice = x.Product.ProductPrice,
-                        ProductName = x.Product.ProductName,
+                        VariantID = x.VariantID,
+                        ProductPrice = x.Variant.Product.ProductPrice,
+                        ProductName = x.Variant.Product.ProductName,
                         Quantity = x.Quantity,
-                        TotalPrice = x.Quantity * x.Product.ProductPrice
+                        TotalPrice = x.Quantity * x.Variant.Product.ProductPrice
 
                     }).ToList();
 
@@ -199,11 +199,11 @@ namespace SGU.WebService.Controllers
                         {
                             if (i.Quantity == 0)
                             {
-                                _saleService.RemoveCart(model.UserId, i.ProductID);
+                                _saleService.RemoveCart(model.UserId, i.VariantID);
                             }
                             else
                             {
-                                var cart = _saleService.GetCart(model.UserId, i.ProductID);
+                                var cart = _saleService.GetCart(model.UserId, i.VariantID);
                                 cart.Quantity = i.Quantity;
                                 _saleService.UpdateCart(cart);
                             }
@@ -215,7 +215,7 @@ namespace SGU.WebService.Controllers
                         {
                             if (i.Quantity != 0)
                             {
-                                var cart = _saleService.GetCart(model.UserId, i.ProductID);
+                                var cart = _saleService.GetCart(model.UserId, i.VariantID);
                                 if (cart != null)
                                 {
                                     cart.Quantity += i.Quantity;
@@ -223,6 +223,9 @@ namespace SGU.WebService.Controllers
                                 }
                                 else
                                 {
+                                    cart = new ShoppingCart();
+                                    cart.VariantID = i.VariantID;
+                                    cart.UserID = model.UserId;
                                     cart.Quantity = i.Quantity;
                                     _saleService.AddCart(cart);
                                 }
@@ -259,7 +262,7 @@ namespace SGU.WebService.Controllers
                 var carts = _saleService.GetCartByIdUser(model.UserId);
                 if (carts != null && carts.Any())
                 {
-                    var total = carts.Sum(x => (x.Quantity * x.Product.ProductPrice));
+                    var total = carts.Sum(x => (x.Quantity * x.Variant.Product.ProductPrice));
                     CultureInfo provider = CultureInfo.InvariantCulture;
                     var ShippingDate = DateTime.ParseExact(model.ShippingDate, "dd/MM/yyyy hh:mm tt", provider);
                     var newOrder = new Order()
@@ -281,14 +284,14 @@ namespace SGU.WebService.Controllers
                             var newOrderDetail = new OrderDetail()
                             {
                                 OrderID = resId,
-                                ProductID = item.ProductID,
+                                VariantID = item.VariantID,
                                 Quantity = item.Quantity,
-                                Price = item.Product.ProductPrice * item.Quantity
+                                Price = item.Variant.Product.ProductPrice * item.Quantity
                             };
                             var resD = _saleService.CreateOrderDetail(newOrderDetail);
                             if (resD > 0)
                             {
-                                _saleService.RemoveCart(item.UserID, item.ProductID);
+                                _saleService.RemoveCart(item.UserID, item.VariantID);
                             }
                         }
                         response.Data = new { code = HttpStatusCode.OK, IdOrder = resId, message = "Place order success." };
@@ -369,8 +372,9 @@ namespace SGU.WebService.Controllers
                         TrademarkName = x.Trademark.TrademarkName,
                         ProductImage = x.Variants.Select(y=>y.VariantImage).FirstOrDefault(),                       
                         ProductPrice = string.Format("{0:#,0}", x.ProductPrice),
-                        ProductInfomation = x.ProductInfomation
-                    })
+                        ProductInfomation = x.ProductInfomation,
+                        TotalQuantity = x.Variants.Sum(i => i.Stock)
+                })
                     .ToList();
                 }
 

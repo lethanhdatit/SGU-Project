@@ -27,11 +27,6 @@ namespace SGU.Data.Models
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>()
-                .HasMany(e => e.ShoppingCarts)
-                .WithRequired(e => e.Product)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Product>()
                 .HasMany(e => e.Variants)
                 .WithRequired(e => e.Product)
                 .WillCascadeOnDelete(false);
@@ -49,6 +44,16 @@ namespace SGU.Data.Models
             modelBuilder.Entity<User>()
                 .HasMany(e => e.ShoppingCarts)
                 .WithRequired(e => e.User)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Variant>()
+                .HasMany(e => e.OrderDetails)
+                .WithRequired(e => e.Variant)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Variant>()
+                .HasMany(e => e.ShoppingCarts)
+                .WithRequired(e => e.Variant)
                 .WillCascadeOnDelete(false);
         }
     }

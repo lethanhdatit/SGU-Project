@@ -1,12 +1,15 @@
 import React from 'react';
 import { withNavigation } from 'react-navigation';
-import { TouchableOpacity, StyleSheet, Platform, Dimensions } from 'react-native';
+import { TouchableOpacity, StyleSheet, Platform, Dimensions, DeviceEventEmitter } from 'react-native';
 import { Button, Block, NavBar, Text, theme } from 'galio-framework';
 
 import Icon from './Icon';
 import Input from './Input';
 import Tabs from './Tabs';
 import argonTheme from '../constants/Theme';
+import * as API from "./Api";
+import * as AsyncStorage from './AsyncStorage';
+import config from "../config";
 
 const { height, width } = Dimensions.get('window');
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
@@ -26,7 +29,7 @@ const BellButton = ({ isWhite, style, navigation }) => (
   // <Block />
 );
 
-const BasketButton = ({ isWhite, style, navigation }) => (
+const BasketButton = ({ isWhite, style, navigation, CountCart }) => (
   <TouchableOpacity style={[styles.button, style]} onPress={() => navigation.navigate('Home')}>
     <Icon
       family="ArgonExtra"
@@ -35,7 +38,7 @@ const BasketButton = ({ isWhite, style, navigation }) => (
       color={argonTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
     />
     <Block middle style={styles.notify}>
-      <Text style={{ fontSize: 9, color: "white" }}>10</Text>
+      <Text style={{ fontSize: 9, color: "white" }}>{CountCart}</Text>
     </Block>
   </TouchableOpacity>
 );
@@ -54,7 +57,31 @@ const SearchButton = ({ isWhite, style, navigation }) => (
 class Header extends React.Component {
   constructor(props) {
     super(props);   
+    this.state = {
+      CountCart: 0,     
+    }
+    this._handleCountCart();
   }
+
+  componentWillMount() {    
+   //add listener
+    this.eventListener = DeviceEventEmitter.addListener('EventListener-CountCart',this._handleCountCart);
+  }
+
+  componentWillUnmount() {
+    this.eventListener.remove();    
+  }
+
+  _handleCountCart = async () => {   
+    var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
+    var res = await API._fetch(`${config.COUNT_CART_API_ENDPOINT}?userId=${Number(UID)}`, 'GET');
+    if (res != null && res.Data != null) {
+      if (res.Data.code == 200) {
+        this.setState({CountCart: res.Data.result});
+      }
+    }    
+  };
+
   handleLeftPress = () => {
     const { back, navigation } = this.props;
     return (back ? () => navigation.goBack() : navigation.openDrawer());
@@ -74,52 +101,52 @@ class Header extends React.Component {
       case 'Home':
         return ([
           <BellButton key='chat-home' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-home' navigation={navigation} isWhite={white} />
+          <BasketButton key='basket-home' CountCart={this.state.CountCart} navigation={navigation} isWhite={white} />
         ]);
       case 'Deals':
         return ([
           <BellButton key='chat-categories' navigation={navigation} />,
-          <BasketButton key='basket-categories' navigation={navigation} />
+          <BasketButton key='basket-categories' CountCart={this.state.CountCart} navigation={navigation} />
         ]);
       case 'Categories':
         return ([
           <BellButton key='chat-categories' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-categories' navigation={navigation} isWhite={white} />
+          <BasketButton key='basket-categories' CountCart={this.state.CountCart} navigation={navigation} isWhite={white} />
         ]);
       case 'Category':
         return ([
           <BellButton key='chat-deals' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-deals' navigation={navigation} isWhite={white} />
+          <BasketButton key='basket-deals' CountCart={this.state.CountCart} navigation={navigation} isWhite={white} />
         ]);
       case 'Profile':
         return ([
           <BellButton key='chat-profile' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-deals' navigation={navigation} isWhite={white} />
+          <BasketButton key='basket-deals' CountCart={this.state.CountCart} navigation={navigation} isWhite={white} />
         ]);
       case 'ProductDetail':
         return ([
           <BellButton key='chat-profile' navigation={navigation}  />,
-          <BasketButton key='basket-deals' navigation={navigation} />
+          <BasketButton key='basket-deals' CountCart={this.state.CountCart} navigation={navigation} />
         ]);
       case 'Elements':
         return ([
           <BellButton key='chat-profile' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-deals' navigation={navigation} isWhite={white} />
+          <BasketButton key='basket-deals' CountCart={this.state.CountCart} navigation={navigation} isWhite={white} />
         ]);
       case 'Product':
         return ([
           <SearchButton key='search-product' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-product' navigation={navigation} isWhite={white} />
+          <BasketButton key='basket-product' CountCart={this.state.CountCart} navigation={navigation} isWhite={white} />
         ]);
       case 'Search':
         return ([
           <BellButton key='chat-search' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-search' navigation={navigation} isWhite={white} />
+          <BasketButton key='basket-search' CountCart={this.state.CountCart} navigation={navigation} isWhite={white} />
         ]);
       case 'Settings':
         return ([
           <BellButton key='chat-search' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-search' navigation={navigation} isWhite={white} />
+          <BasketButton key='basket-search' CountCart={this.state.CountCart} navigation={navigation} isWhite={white} />
         ]);
       default:
         break;

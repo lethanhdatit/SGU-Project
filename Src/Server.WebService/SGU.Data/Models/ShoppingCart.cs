@@ -13,7 +13,7 @@ namespace SGU.Data.Models
 
         public long UserID { get; set; }
 
-        public long ProductID { get; set; }
+        public long VariantID { get; set; }
 
         public int Quantity { get; set; }
 
@@ -21,8 +21,8 @@ namespace SGU.Data.Models
 
         public DateTime? UpdatedDate { get; set; }
 
-        public virtual Product Product { get; set; }
-
         public virtual User User { get; set; }
+
+        public virtual Variant Variant { get; set; }
     }
 }

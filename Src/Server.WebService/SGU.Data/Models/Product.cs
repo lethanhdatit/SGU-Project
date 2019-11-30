@@ -12,8 +12,6 @@ namespace SGU.Data.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Product()
         {
-            OrderDetails = new HashSet<OrderDetail>();
-            ShoppingCarts = new HashSet<ShoppingCart>();
             Variants = new HashSet<Variant>();
         }
 
@@ -29,24 +27,19 @@ namespace SGU.Data.Models
 
         public string ProductName { get; set; }
 
-        public string ProductInfomation { get; set; }        
+        public string ProductInfomation { get; set; }
+
         public byte? Status { get; set; }
 
         public DateTime CreatedDate { get; set; }
 
         public DateTime? UpdatedDate { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
-
         public virtual Origin Origin { get; set; }
 
         public virtual ProductType ProductType { get; set; }
 
         public virtual Trademark Trademark { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ShoppingCart> ShoppingCarts { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Variant> Variants { get; set; }

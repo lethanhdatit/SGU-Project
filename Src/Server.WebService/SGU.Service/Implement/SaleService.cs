@@ -67,14 +67,14 @@ namespace SGU.Service.Implement
             return _unitOfWork.Repository<ShoppingCart>().Get(x => x.UserID == idUser)?.ToList();
         }
 
-        public ShoppingCart GetCart(long userId, long productId)
+        public ShoppingCart GetCart(long userId, long variantID)
         {
-            return _unitOfWork.Repository<ShoppingCart>().GetOne(x => x.UserID == userId && x.ProductID == productId);           
+            return _unitOfWork.Repository<ShoppingCart>().GetOne(x => x.UserID == userId && x.VariantID == variantID);           
         }
 
-        public bool RemoveCart(long userId, long productId)
+        public bool RemoveCart(long userId, long variantID)
         {
-            var cart = _unitOfWork.Repository<ShoppingCart>().GetOne(x => x.UserID == userId && x.ProductID == productId);
+            var cart = _unitOfWork.Repository<ShoppingCart>().GetOne(x => x.UserID == userId && x.VariantID == variantID);
             _unitOfWork.Repository<ShoppingCart>().Delete(cart);
 
             return _unitOfWork.SaveChanges() > 0;

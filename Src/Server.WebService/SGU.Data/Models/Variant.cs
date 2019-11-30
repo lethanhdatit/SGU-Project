@@ -9,6 +9,13 @@ namespace SGU.Data.Models
     [Table("Variant")]
     public partial class Variant
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Variant()
+        {
+            OrderDetails = new HashSet<OrderDetail>();
+            ShoppingCarts = new HashSet<ShoppingCart>();
+        }
+
         public long VariantID { get; set; }
 
         public long ProductID { get; set; }
@@ -23,6 +30,12 @@ namespace SGU.Data.Models
 
         public byte? Status { get; set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+
         public virtual Product Product { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ShoppingCart> ShoppingCarts { get; set; }
     }
 }

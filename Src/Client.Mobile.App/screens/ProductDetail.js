@@ -7,13 +7,17 @@ import {
   ImageBackground,
   Dimensions,
   Platform,
-  TouchableOpacity
+  TouchableOpacity,
+  Modal,
+  DeviceEventEmitter
 } from "react-native";
 //galio
 import { Block, Text, theme } from "galio-framework";
+import NumericInput from 'react-native-numeric-input'
 //argon
 import { articles, Images, argonTheme } from "../constants/";
 import { Card, Button, Header, Icon } from "../components/";
+import Tabs from '../components/Tabs';
 import * as API from "../components/Api";
 import * as AsyncStorage from '../components/AsyncStorage';
 import config from "../config";
@@ -28,10 +32,39 @@ export default class ProductDetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      ProductID: 0,
       ProductDetails: [],
+      TotalStock: 0,
+      modalVisible: false,
+      SelectedVariantId: 0,
+      SelectedVariantStock: 0,
+      BuyQuantity: 0,
+      SelectedVariantImage: null,
+      DefaultImage: null,
+      IsAddToCart: true
     }
   }
 
+  ResetToDefault() {
+    this.setState({
+      SelectedVariantId: 0,
+      SelectedVariantStock: this.state.TotalStock,
+      BuyQuantity: 0,
+      SelectedVariantImage: this.state.DefaultImage,
+    })
+  }
+
+  componentDidMount() {
+    const { navigation } = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      this._onFetchDetails();
+    });
+  }
+
+  componentWillUnmount() {
+    // Remove the event listener
+    this.focusListener.remove();
+  }
 
   componentWillMount() {
     this._onFetchDetails();
@@ -39,10 +72,11 @@ export default class ProductDetail extends React.Component {
 
   _onFetchDetails = async () => {
     var ProductID = this.props.navigation.getParam('productId', '0');
+    var IsAddToCart = this.props.navigation.getParam('isAddToCart', true);
     var res = await API._fetch(`${config.GET_ACTIVE_DETAILS_ITEM_API_ENDPOINT}?ProductID=${Number(ProductID)}`, 'GET');
     if (res != null && res.Data != null) {
       if (res.Data.code == 200) {
-        this.setState({ ProductDetails: res.Data.result })
+        this.setState({ProductID: ProductID, IsAddToCart: IsAddToCart, ProductDetails: res.Data.result, SelectedVariantStock: res.Data.result.TotalQuantity, SelectedVariantImage: res.Data.result.ProductImage,TotalStock: res.Data.result.TotalQuantity, DefaultImage: res.Data.result.ProductImage});
       }
     }
   }
@@ -211,36 +245,219 @@ export default class ProductDetail extends React.Component {
     );
   };
 
-  render() {
+  setModalVisible(visible) {
+    this.setState({ modalVisible: visible });
+  }
+
+  AddItem = (value) => {
+    if (value <= this.state.SelectedVariantStock) {
+      this.setState({ BuyQuantity: value })
+    }
+  }
+
+  renderTabOptions = () => {
+    const tabs = [];
+    if (this.IsEmpty(this.state.ProductDetails) == false) {
+      this.state.ProductDetails.Variants.map((item, index) => {
+        tabs.push({
+          id: item.VariantID,
+          title: `${item.VariantColor}, ${item.VariantSize}`,
+          stock: item.Stock,
+          image: item.VariantImage
+        });
+      });
+    }
+    const defaultTab = tabs && tabs[0] && tabs[0].id;
+    if (!tabs) return null;
     return (
-      <Block flex center style={styles.navbar}>
+      <Tabs
+        data={tabs}
+        //initialIndex={defaultTab}
+        onChange={(id, stock, image) => this.setState({ SelectedVariantId: id, SelectedVariantStock: stock, SelectedVariantImage: image })}
+      />
+    )
+  }
+
+
+  OnAddToCart = (isAddToCart) => {
+    this.ResetToDefault();
+    this.setState({ IsAddToCart: isAddToCart });
+    this.setModalVisible(true);
+  }
+
+  OnNextAction = async (isAddToCart) => {
+   if(isAddToCart){
+    var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
+    var _items = [
+      {
+        VariantID: this.state.SelectedVariantId,
+        Quantity: this.state.BuyQuantity,
+      }
+    ];
+    var dataBody = {
+      UserId: UID,
+      Items: _items,
+      Type: 2 //update out cart
+    };
+    var res = await API._fetch(config.UPDATE_CART_API_ENDPOINT, 'POST', dataBody);
+    if (res != null && res.Data != null) {
+      if (res.Data.code == 200) {
+        alert("success!");
+        DeviceEventEmitter.emit('EventListener-CountCart');
+        //this.setModalVisible(!this.state.modalVisible);
+      }
+    }
+   }
+  }
+  
+
+  render() {
+    var IsShowButton = this.state.BuyQuantity > 0 ? true : false;
+    return (
+      <Block flex style={styles.navbar}>
         <ScrollView
           showsVerticalScrollIndicator={false}
         >
           {this.renderCards()}
-          {this.renderAlbum()}
+          {/* {this.renderAlbum()} */}
         </ScrollView>
         <Block flex style={{
           backgroundColor: 'transparent', // TabBar background
           position: 'absolute',
           left: 0,
           right: 0,
-          bottom: 0,         
+          bottom: 0,
           width: "100%"
         }}>
           <Block row>
-            <Block flex ={2}>
-              <Button color="success" style={styles.button}>
-                Add To Cart
+            <Block flex={2}>
+              <Button onPress={() => this.OnAddToCart(true)} color="success" style={styles.button}>
+                <Icon
+                  name={'shopping-cart'}
+                  family="font-awesome"
+                  // style={{ paddingRight: 8 }}
+                  size={25}
+                  color={argonTheme.COLORS.ICON}
+                />
               </Button>
             </Block>
             <Block flex={2}>
-              <Button color="warning" style={styles.button}>
-                Buy Now
+              <Button onPress={() => this.OnAddToCart(false)} color="warning" style={styles.button}>
+                Mua ngay
               </Button>
             </Block>
           </Block>
+
         </Block>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.state.modalVisible}
+          onRequestClose={() => {
+            alert('Modal has been closed.');
+          }}>
+          <Block style={{
+            backgroundColor: 'white',
+            padding: 10,
+            borderRadius: 4,
+            borderColor: 'rgba(0, 0, 0, 0.1)',
+            // height: "70%",
+            width: "100%",
+            bottom: 0,
+            position: 'absolute',
+          }}>
+            <Block row>
+              <Block right flex>
+                <Icon
+                  name={'close'}
+                  family="font-awesome"
+                  // style={{ paddingRight: 8 }}
+                  size={20}
+                  color={argonTheme.COLORS.ICON}
+                  onPress={() => {
+                    this.setModalVisible(!this.state.modalVisible);
+                  }}
+                />
+              </Block>
+            </Block>
+
+            <Block row flex>
+              <Block style={styles.shadow}>
+                <Image
+                  resizeMode="cover"
+                  source={{ uri: this.state.SelectedVariantImage }}
+                  style={styles.albumThumb}
+                />
+              </Block>
+              <Block flex style={{
+                alignItems: 'flex-start',
+                alignSelf: 'flex-end',
+                marginLeft: 15
+              }}>
+                <Block row style={{ marginBottom: 3 }}>
+                  <Text bold size={16} >
+                    {this.state.ProductDetails.ProductPrice} đ
+                  </Text>
+                </Block>
+
+                <Block row>
+                  <Text size={16}>
+                    Kho:
+                  </Text>
+                  <Text size={16} color="red" style={{ marginLeft: 5 }}>
+                    {this.state.SelectedVariantStock}
+                  </Text>
+                </Block>
+
+              </Block>
+            </Block>
+            <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
+              <Block style={styles.divider} />
+            </Block>
+            <Block flex middle>
+              <Block row left flex>
+                <Text bold>Phân loại: (Màu sắc, Size)</Text>
+              </Block>
+              <Block row flex center middle>
+                {this.renderTabOptions()}
+              </Block>
+            </Block>
+            <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
+              <Block style={styles.divider} />
+            </Block>
+            <Block row flex>
+              <Block center left flex>
+                <Text bold>Số lượng:</Text>
+              </Block>
+              <Block right flex>
+                <NumericInput
+                  disabled={true}
+                  initValue={0}
+                  editable={false}
+                  minValue={0}
+                  maxValue={this.state.SelectedVariantId > 0 ? this.state.SelectedVariantStock : 0}
+                  iconSize={theme.SIZES.BASE}
+                  totalWidth={theme.SIZES.BASE * 5}
+                  totalHeight={(theme.SIZES.BASE * 4) / 2}
+                  onChange={value => this.AddItem(value)}
+                />
+              </Block>
+            </Block>
+            <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
+              <Block style={styles.divider} />
+            </Block>
+            <Block row flex center>
+              <Button
+              onPress={()=>this.OnNextAction(this.state.IsAddToCart)}
+                disabled={!IsShowButton}
+                color={"warning"}
+                style={{ ...styles.button, height: 35, width: "100%", opacity: IsShowButton ? 1 : 0.3 }}
+              >
+                {this.state.IsAddToCart ? "Thêm vào giỏ" : "Mua Ngay"}
+              </Button>
+            </Block>
+          </Block>
+        </Modal>
       </Block>
     );
   }
@@ -250,7 +467,7 @@ const styles = StyleSheet.create({
   button: {
     //margin: theme.SIZES.BASE,
     width: "100%",
-    opacity: 0.8
+    opacity: 0.9
   },
   title: {
     paddingBottom: theme.SIZES.BASE,

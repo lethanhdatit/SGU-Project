@@ -40,7 +40,7 @@ namespace SGU.WebService.Models
         public List<string> VariantColors { get; set; } = new List<string>();
         public List<string> VariantSizes { get; set; } = new List<string>();
         public List<string> VariantImages { get; set; } = new List<string>();
-
+        public long TotalQuantity { get; set; }
         public List<VariantView> Variants { get; set; } = new List<VariantView>();
     }
 
@@ -98,7 +98,7 @@ namespace SGU.WebService.Models
     public class CartItemView
     {
         [Required]
-        public long ProductID { get; set; }
+        public long VariantID { get; set; }
 
         public string ProductName { get; set; }
 

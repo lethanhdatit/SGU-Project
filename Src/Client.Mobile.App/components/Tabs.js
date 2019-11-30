@@ -48,7 +48,7 @@ export default class Tabs extends React.Component {
     });
   }
 
-  selectMenu = (id) => {
+  selectMenu = (id, stock, image) => {
     this.setState({ active: id });
 
     this.menuRef.current.scrollToIndex({
@@ -57,7 +57,7 @@ export default class Tabs extends React.Component {
     });
 
     this.animate();
-    this.props.onChange && this.props.onChange(id);
+    this.props.onChange && this.props.onChange(id, stock, image);
   }
 
   renderItem = (item) => {
@@ -82,7 +82,7 @@ export default class Tabs extends React.Component {
             styles.menuTitle,
             { color: textColor }
           ]}
-          onPress={() => this.selectMenu(item.id)}>
+          onPress={() => this.selectMenu(item.id, item.stock, item.image)}>
           {item.title}
         </Animated.Text>
       </Block>
@@ -99,7 +99,7 @@ export default class Tabs extends React.Component {
         horizontal={true}
         ref={this.menuRef}
         extraData={this.state}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => String(item.id)}
         showsHorizontalScrollIndicator={false}
         onScrollToIndexFailed={this.onScrollToIndexFailed}
         renderItem={({ item }) => this.renderItem(item)}
@@ -120,7 +120,7 @@ export default class Tabs extends React.Component {
 const styles = StyleSheet.create({
   container: {
     width: width,
-    backgroundColor: theme.COLORS.WHITE,
+    backgroundColor: "transparent",
     zIndex: 2,
   },
   shadow: {
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   menuTitle: {
-    fontWeight: '600',
+    fontWeight: '400',
     fontSize: 14,
     // lineHeight: 28,
     paddingVertical: 10,
