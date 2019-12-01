@@ -125,7 +125,7 @@ const HomeStack = createStackNavigator(
     ShoppingCart: {
       screen: ShoppingCart,
       navigationOptions: ({ navigation }) => ({     
-        header: <Header back title="Giỏ Hàng" navigation={navigation} />, 
+        header: <Header back title="" navigation={navigation} />, 
         headerTransparent: true
       })
     },
