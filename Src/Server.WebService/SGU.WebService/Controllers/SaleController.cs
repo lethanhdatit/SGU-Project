@@ -152,7 +152,11 @@ namespace SGU.WebService.Controllers
                         VariantID = x.VariantID,
                         ProductPrice = x.Variant.Product.ProductPrice,
                         ProductName = x.Variant.Product.ProductName,
+                        ProductImage = x.Variant.VariantImage,
+                        VariantSize = x.Variant.VariantSize.ToUpper(),
+                        VariantColor = x.Variant.VariantColor.ToUpper(),
                         Quantity = x.Quantity,
+                        Stock = x.Variant.Stock,
                         TotalPrice = x.Quantity * x.Variant.Product.ProductPrice
 
                     }).ToList();

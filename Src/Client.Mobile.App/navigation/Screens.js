@@ -12,6 +12,7 @@ import { Block } from "galio-framework";
 import Home from "../screens/Home";
 import Onboarding from "../screens/Onboarding";
 import ProductDetail from "../screens/ProductDetail";
+import ShoppingCart from "../screens/ShoppingCart";
 import Profile from "../screens/Elements-copy";
 import Elements from "../screens/Elements";
 import Articles from "../screens/Articles";
@@ -117,7 +118,14 @@ const HomeStack = createStackNavigator(
     ProductDetail: {
       screen: ProductDetail,
       navigationOptions: ({ navigation }) => ({     
-        // header: <Header back title=""  white navigation={navigation} />, 
+        header: <Header back title="" navigation={navigation} />, 
+        headerTransparent: true
+      })
+    },
+    ShoppingCart: {
+      screen: ShoppingCart,
+      navigationOptions: ({ navigation }) => ({     
+        header: <Header back title="Giỏ Hàng" navigation={navigation} />, 
         headerTransparent: true
       })
     },

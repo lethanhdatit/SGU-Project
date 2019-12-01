@@ -30,11 +30,11 @@ const BellButton = ({ isWhite, style, navigation }) => (
 );
 
 const BasketButton = ({ isWhite, style, navigation, CountCart }) => (
-  <TouchableOpacity style={[styles.button, style]} onPress={() => navigation.navigate('Home')}>
+  <TouchableOpacity style={[styles.button, style]} onPress={() => navigation.navigate('ShoppingCart')}>
     <Icon
-      family="ArgonExtra"
-      size={20}
-      name="basket"
+      family="font-awesome"
+      size={22}
+      name="shopping-cart"
       color={argonTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
     />
     <Block middle style={styles.notify}>
@@ -86,6 +86,7 @@ class Header extends React.Component {
     const { back, navigation } = this.props;
     return (back ? () => navigation.goBack() : navigation.openDrawer());
   }
+  
   renderRight = () => {
     const { white, title, navigation } = this.props;
     const { routeName } = navigation.state;
@@ -234,11 +235,14 @@ class Header extends React.Component {
       <Block style={headerStyles}>
         <NavBar
           back={back}
+          hideLeft={false}
           title={title}
           style={navbarStyles}
+          leftIconName={''}
           transparent={transparent}
           right={this.renderRight()}
           rightStyle={{ alignItems: 'center' }}
+          onLeftPress={() => navigation.goBack()}
           left={
             <Icon
               name={back ? 'chevron-left' : "menu-8"} family="ArgonExtra"

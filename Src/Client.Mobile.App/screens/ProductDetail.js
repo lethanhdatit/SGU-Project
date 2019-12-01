@@ -430,8 +430,7 @@ export default class ProductDetail extends React.Component {
                 <Text bold>Số lượng:</Text>
               </Block>
               <Block right flex>
-                <NumericInput
-                  disabled={true}
+                <NumericInput                  
                   initValue={0}
                   editable={false}
                   minValue={0}
