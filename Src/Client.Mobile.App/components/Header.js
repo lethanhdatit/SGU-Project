@@ -56,37 +56,37 @@ const SearchButton = ({ isWhite, style, navigation }) => (
 
 class Header extends React.Component {
   constructor(props) {
-    super(props);   
+    super(props);
     this.state = {
-      CountCart: 0,     
+      CountCart: 0,
     }
     this._handleCountCart();
   }
 
-  componentWillMount() {    
-   //add listener
-    this.eventListener = DeviceEventEmitter.addListener('EventListener-CountCart',this._handleCountCart);
+  componentWillMount() {
+    //add listener
+    this.eventListener = DeviceEventEmitter.addListener('EventListener-CountCart', this._handleCountCart);
   }
 
   componentWillUnmount() {
-    this.eventListener.remove();    
+    this.eventListener.remove();
   }
 
-  _handleCountCart = async () => {   
+  _handleCountCart = async () => {
     var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
     var res = await API._fetch(`${config.COUNT_CART_API_ENDPOINT}?userId=${Number(UID)}`, 'GET');
     if (res != null && res.Data != null) {
       if (res.Data.code == 200) {
-        this.setState({CountCart: res.Data.result});
+        this.setState({ CountCart: res.Data.result });
       }
-    }    
+    }
   };
 
   handleLeftPress = () => {
     const { back, navigation } = this.props;
     return (back ? () => navigation.goBack() : navigation.openDrawer());
   }
-  
+
   renderRight = () => {
     const { white, title, navigation } = this.props;
     const { routeName } = navigation.state;
@@ -126,8 +126,12 @@ class Header extends React.Component {
         ]);
       case 'ProductDetail':
         return ([
-          <BellButton key='chat-profile' navigation={navigation}  />,
+          <BellButton key='chat-profile' navigation={navigation} />,
           <BasketButton key='basket-deals' CountCart={this.state.CountCart} navigation={navigation} />
+        ]);
+      case 'ShoppingCart':
+        return ([
+          <BellButton key='chat-profile' navigation={navigation} />,          
         ]);
       case 'Elements':
         return ([
@@ -246,7 +250,7 @@ class Header extends React.Component {
           left={
             <Icon
               name={back ? 'chevron-left' : "menu-8"} family="ArgonExtra"
-              size={back ? 50 : 14} 
+              size={back ? 50 : 14}
               onPress={() => this.handleLeftPress()}
               color={iconColor || argonTheme.COLORS.ICON} />
           }
