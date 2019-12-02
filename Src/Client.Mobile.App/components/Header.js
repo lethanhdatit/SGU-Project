@@ -129,10 +129,10 @@ class Header extends React.Component {
           <BellButton key='chat-profile' navigation={navigation} />,
           <BasketButton key='basket-deals' CountCart={this.state.CountCart} navigation={navigation} />
         ]);
-      case 'ShoppingCart':
-        return ([
-          <BellButton key='chat-profile' navigation={navigation} />,          
-        ]);
+      // case 'ShoppingCart':
+      //   return ([
+      //     <BellButton key='chat-profile' navigation={navigation} />,          
+      //   ]);
       case 'Elements':
         return ([
           <BellButton key='chat-profile' navigation={navigation} isWhite={white} />,

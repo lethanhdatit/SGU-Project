@@ -76,7 +76,7 @@ export default class ProductDetail extends React.Component {
     var res = await API._fetch(`${config.GET_ACTIVE_DETAILS_ITEM_API_ENDPOINT}?ProductID=${Number(ProductID)}`, 'GET');
     if (res != null && res.Data != null) {
       if (res.Data.code == 200) {
-        this.setState({ProductID: ProductID, IsAddToCart: IsAddToCart, ProductDetails: res.Data.result, SelectedVariantStock: res.Data.result.TotalQuantity, SelectedVariantImage: res.Data.result.ProductImage,TotalStock: res.Data.result.TotalQuantity, DefaultImage: res.Data.result.ProductImage});
+        this.setState({ ProductID: ProductID, IsAddToCart: IsAddToCart, ProductDetails: res.Data.result, SelectedVariantStock: res.Data.result.TotalQuantity, SelectedVariantImage: res.Data.result.ProductImage, TotalStock: res.Data.result.TotalQuantity, DefaultImage: res.Data.result.ProductImage });
       }
     }
   }
@@ -109,7 +109,7 @@ export default class ProductDetail extends React.Component {
     return (
       <Block flex style={styles.group}>
         <Block flex>
-          <Block flex style={{ marginTop: theme.SIZES.BASE / 2 }}>
+          <Block flex>
             <ScrollView
               horizontal={true}
               pagingEnabled={true}
@@ -119,85 +119,85 @@ export default class ProductDetail extends React.Component {
               showsHorizontalScrollIndicator={true}
               snapToInterval={cardWidth + theme.SIZES.BASE * 0.375}
               contentContainerStyle={{
-                paddingHorizontal: theme.SIZES.BASE / 2
+                paddingHorizontal: theme.SIZES.BASE / 2,
+                paddingBottom: theme.SIZES.BASE / 2
               }}
             >
               {
                 Images
               }
-
             </ScrollView>
-
-            <Block flex style={{ marginHorizontal: theme.SIZES.BASE }}>
-              <Block style={styles.nameInfo}>
-                <Text bold size={28} color="#32325D">
-                  {this.state.ProductDetails.ProductName}
-                </Text>
-                <Text size={16} color="red" style={{ marginTop: 10 }}>
-                  {this.state.ProductDetails.ProductPrice} đ
-                </Text>
-              </Block>
-              <Block middle style={{ marginTop: 30, marginBottom: 16 }}>
-                <Block style={styles.divider} />
-              </Block>
-              <Block>
-                <Block row>
-                  <Block left flex>
-                    <Text bold size={16} style={{ ...styles.titleCustom }}>
-                      Phân loại:
-                  </Text>
-                  </Block>
-                  <Block right flex>
-                    <Text size={16} style={{ color: "#525F7F", marginVertical: 5 }}>
-                      {this.state.ProductDetails.ProductTypeName}
-                    </Text>
-                  </Block>
-                </Block>
-
-                <Block row>
-                  <Block left flex>
-                    <Text bold size={16} style={{ ...styles.titleCustom }}>
-                      Thương hiệu:
-                  </Text>
-                  </Block>
-                  <Block right flex>
-                    <Text size={16} style={{ color: "#525F7F", marginVertical: 5 }}>
-                      {this.state.ProductDetails.TrademarkName}
-                    </Text>
-                  </Block>
-                </Block>
-
-                <Block row>
-                  <Block left flex>
-                    <Text bold size={16} style={{ ...styles.titleCustom }}>
-                      Xuất xứ:
-                  </Text>
-                  </Block>
-                  <Block right flex>
-                    <Text size={16} style={{ color: "#525F7F", marginVertical: 5 }}>
-                      {this.state.ProductDetails.OriginName}
-                    </Text>
-                  </Block>
-                </Block>
-              </Block>
-              <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
-                <Block style={styles.divider} />
-              </Block>
-              <Text bold size={16} style={{ ...styles.titleCustom, marginBottom: 15 }}>
-                Mô tả:
+          </Block >
+          <Block flex style={{ marginHorizontal: theme.SIZES.BASE }}>
+            <Block style={styles.nameInfo}>
+              <Text bold size={26} color="#32325D">
+                {this.state.ProductDetails.ProductName}
               </Text>
-              <Text
-                size={16}
-                color="#525F7F"
-                style={{ textAlign: "justify" }}
-              >
-                {this.state.ProductDetails.ProductInfomation}
-              </Text>
-              <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
-                <Block style={styles.divider} />
+              <Text size={16} color="red" style={{ marginTop: 10 }}>
+                {this.state.ProductDetails.ProductPrice} đ
+                </Text>
+            </Block>
+            <Block middle style={{ marginTop: 30, marginBottom: 16 }}>
+              <Block style={styles.divider} />
+            </Block>
+            <Block>
+              <Block row>
+                <Block left flex>
+                  <Text bold size={16} style={{ ...styles.titleCustom }}>
+                    Phân loại:
+                  </Text>
+                </Block>
+                <Block right flex>
+                  <Text size={16} style={{ color: "#525F7F", marginVertical: 5 }}>
+                    {this.state.ProductDetails.ProductTypeName}
+                  </Text>
+                </Block>
+              </Block>
+
+              <Block row>
+                <Block left flex>
+                  <Text bold size={16} style={{ ...styles.titleCustom }}>
+                    Thương hiệu:
+                  </Text>
+                </Block>
+                <Block right flex>
+                  <Text size={16} style={{ color: "#525F7F", marginVertical: 5 }}>
+                    {this.state.ProductDetails.TrademarkName}
+                  </Text>
+                </Block>
+              </Block>
+
+              <Block row>
+                <Block left flex>
+                  <Text bold size={16} style={{ ...styles.titleCustom }}>
+                    Xuất xứ:
+                  </Text>
+                </Block>
+                <Block right flex>
+                  <Text size={16} style={{ color: "#525F7F", marginVertical: 5 }}>
+                    {this.state.ProductDetails.OriginName}
+                  </Text>
+                </Block>
               </Block>
             </Block>
+            <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
+              <Block style={styles.divider} />
+            </Block>
+            <Text bold size={16} style={{ ...styles.titleCustom, marginBottom: 15 }}>
+              Mô tả:
+              </Text>
+            <Text
+              size={16}
+              color="#525F7F"
+              style={{ textAlign: "justify" }}
+            >
+              {this.state.ProductDetails.ProductInfomation}
+            </Text>
+            <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
+              <Block style={styles.divider} />
+            </Block>
           </Block>
+
         </Block>
 
       </Block>
@@ -286,30 +286,30 @@ export default class ProductDetail extends React.Component {
   }
 
   OnNextAction = async (isAddToCart) => {
-   if(isAddToCart){
-    var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
-    var _items = [
-      {
-        VariantID: this.state.SelectedVariantId,
-        Quantity: this.state.BuyQuantity,
-      }
-    ];
-    var dataBody = {
-      UserId: UID,
-      Items: _items,
-      Type: 2 //update out cart
-    };
-    var res = await API._fetch(config.UPDATE_CART_API_ENDPOINT, 'POST', dataBody);
-    if (res != null && res.Data != null) {
-      if (res.Data.code == 200) {
-        alert("success!");
-        DeviceEventEmitter.emit('EventListener-CountCart');
-        //this.setModalVisible(!this.state.modalVisible);
+    if (isAddToCart) {
+      var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
+      var _items = [
+        {
+          VariantID: this.state.SelectedVariantId,
+          Quantity: this.state.BuyQuantity,
+        }
+      ];
+      var dataBody = {
+        UserId: UID,
+        Items: _items,
+        Type: 2 //update out cart
+      };
+      var res = await API._fetch(config.UPDATE_CART_API_ENDPOINT, 'POST', dataBody);
+      if (res != null && res.Data != null) {
+        if (res.Data.code == 200) {
+          alert("success!");
+          DeviceEventEmitter.emit('EventListener-CountCart');
+          //this.setModalVisible(!this.state.modalVisible);
+        }
       }
     }
-   }
   }
-  
+
 
   render() {
     var IsShowButton = this.state.BuyQuantity > 0 ? true : false;
@@ -322,7 +322,9 @@ export default class ProductDetail extends React.Component {
           {/* {this.renderAlbum()} */}
         </ScrollView>
         <Block flex style={{
+          ...styles.shadow,
           backgroundColor: 'transparent', // TabBar background
+          marginTop: theme.SIZES.BASE * 2,
           position: 'absolute',
           left: 0,
           right: 0,
@@ -357,7 +359,8 @@ export default class ProductDetail extends React.Component {
             alert('Modal has been closed.');
           }}>
           <Block style={{
-            backgroundColor: 'white',
+            ...styles.shadow,
+            backgroundColor: '#F4F5F7',
             padding: 10,
             borderRadius: 4,
             borderColor: 'rgba(0, 0, 0, 0.1)',
@@ -382,7 +385,7 @@ export default class ProductDetail extends React.Component {
             </Block>
 
             <Block row flex>
-              <Block style={styles.shadow}>
+              <Block style={styles.shadowLight}>
                 <Image
                   resizeMode="cover"
                   source={{ uri: this.state.SelectedVariantImage }}
@@ -430,7 +433,7 @@ export default class ProductDetail extends React.Component {
                 <Text bold>Số lượng:</Text>
               </Block>
               <Block right flex>
-                <NumericInput                  
+                <NumericInput
                   initValue={0}
                   editable={false}
                   minValue={0}
@@ -447,7 +450,7 @@ export default class ProductDetail extends React.Component {
             </Block>
             <Block row flex center>
               <Button
-              onPress={()=>this.OnNextAction(this.state.IsAddToCart)}
+                onPress={() => this.OnNextAction(this.state.IsAddToCart)}
                 disabled={!IsShowButton}
                 color={"warning"}
                 style={{ ...styles.button, height: 35, width: "100%", opacity: IsShowButton ? 1 : 0.3 }}
@@ -466,7 +469,7 @@ const styles = StyleSheet.create({
   button: {
     //margin: theme.SIZES.BASE,
     width: "100%",
-    opacity: 0.9
+    opacity: 0.8
   },
   title: {
     paddingBottom: theme.SIZES.BASE,
@@ -479,7 +482,8 @@ const styles = StyleSheet.create({
     color: argonTheme.COLORS.HEADER
   },
   group: {
-    paddingTop: theme.SIZES.BASE
+    paddingTop: theme.SIZES.BASE,
+    marginBottom: theme.SIZES.BASE * 2,
   },
   albumThumb: {
     borderRadius: 4,
@@ -527,17 +531,33 @@ const styles = StyleSheet.create({
   },
   navbar: {
     paddingVertical: 0,
-    paddingBottom: theme.SIZES.BASE * 1.5,
+    //paddingBottom: theme.SIZES.BASE * 1.5,
     paddingTop: iPhoneX ? theme.SIZES.BASE * 4 : theme.SIZES.BASE,
     zIndex: 5,
   },
   nameInfo: {
-    marginTop: 35
+    marginTop: 25
   },
   divider: {
     width: "100%",
     borderWidth: 1,
     borderColor: "#E9ECEF"
+  },
+  shadow: {
+    // backgroundColor: theme.COLORS.WHITE,
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    shadowOpacity: 0.5,
+    elevation: 4,
+  },
+  shadowLight: {
+    // backgroundColor: theme.COLORS.WHITE,
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    shadowOpacity: 0.2,
+    elevation: 3,
   }
 });
 

@@ -136,7 +136,7 @@ export default class ShoppingCart extends React.Component {
         _Items.push(
           <Block key={i}>
             <Block row flex>
-              <Block style={styles.shadow}>
+              <Block style={styles.shadowLight}>
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('ProductDetail', { productId: data.ProductId })}>
                   <Image
                     resizeMode="cover"
@@ -152,25 +152,25 @@ export default class ShoppingCart extends React.Component {
               }}>
                 <Block row style={{ marginBottom: 3 }}>
                   <TouchableOpacity onPress={() => this.props.navigation.navigate('ProductDetail', { productId: data.ProductId })}>
-                    <Text bold size={18} color="#32325D">
+                    <Text bold size={15} color="#32325D">
                       {data.ProductName}
                     </Text>
                   </TouchableOpacity>
                 </Block>
-                <Block row style={{ marginBottom: 3 }}>
-                  <Text bold size={16} color="red">
+                <Block row style={{ marginBottom: 3 }} flex>
+                  <Text bold size={13} color="red">
                     {data.ProductPrice} đ
-                </Text>
+                  </Text>
                 </Block>
                 <Block row left flex>
                   <Text size={12}>
                     Phân loại:
                   </Text>
-                  <Text size={12} bold style={{ marginLeft: 3 }}>
+                  <Text size={11} bold style={{ marginLeft: 3 }}>
                     {`${data.VariantColor}, ${data.VariantSize}`}
                   </Text>
                 </Block>
-                <Block row>
+                <Block row flex>
                   <Block left flex>
                     <NumericInput
                       initValue={data.Quantity}
@@ -179,7 +179,7 @@ export default class ShoppingCart extends React.Component {
                       maxValue={data.Stock}
                       iconSize={theme.SIZES.BASE}
                       totalWidth={theme.SIZES.BASE * 4}
-                      totalHeight={(theme.SIZES.BASE * 3) / 2}
+                      totalHeight={(theme.SIZES.BASE * 3) / 2.2}
                       onChange={value => this.OnChangeQuantity(data.VariantID, value)}
                     />
                   </Block>
@@ -212,19 +212,21 @@ export default class ShoppingCart extends React.Component {
         <ScrollView
           showsVerticalScrollIndicator={true}
         >
-          <Block style={{
+          <Block flex style={{
             backgroundColor: 'white',
             padding: 10,
             borderRadius: 4,
             borderColor: 'rgba(0, 0, 0, 0.1)',
             height: "100%",
             width: "100%",
+            marginTop: 22,
           }}>
             {_Items}
           </Block>
         </ScrollView>
 
         <Block flex style={{
+          ...styles.shadow,
           backgroundColor: '#F4F5F7', // TabBar background
           position: 'absolute',
           left: 0,
@@ -278,10 +280,9 @@ const styles = StyleSheet.create({
   },
   albumThumb: {
     borderRadius: 4,
-    marginVertical: 4,
-    alignSelf: "center",
-    width: thumbMeasure,
-    height: thumbMeasure
+    alignSelf: "flex-end",
+    width: thumbMeasure / 1.2,
+    height: thumbMeasure / 1.2
   },
   category: {
     backgroundColor: theme.COLORS.WHITE,
@@ -334,6 +335,22 @@ const styles = StyleSheet.create({
     width: "100%",
     borderWidth: 1,
     borderColor: "#E9ECEF"
-  }
+  },
+  shadow: {
+    // backgroundColor: theme.COLORS.WHITE,
+     shadowColor: 'black',
+     shadowOffset: { width: 0, height: 3 },
+     shadowRadius: 6,
+     shadowOpacity: 0.5,
+     elevation: 4,
+   },
+   shadowLight: {
+     // backgroundColor: theme.COLORS.WHITE,
+      shadowColor: 'black',
+      shadowOffset: { width: 0, height: 2 },
+      shadowRadius: 6,
+      shadowOpacity: 0.2,
+      elevation: 3,
+    }
 });
 

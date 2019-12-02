@@ -15,9 +15,11 @@ import {
 //galio
 import { Block, Text, theme } from "galio-framework";
 import NumericInput from 'react-native-numeric-input'
+import DateTimePicker from "react-native-modal-datetime-picker";
+import moment from "moment";
 //argon
 import { articles, Images, argonTheme } from "../constants";
-import { Card, Button, Header, Icon } from "../components";
+import { Card, Button, Header, Icon, Input } from "../components";
 import Tabs from '../components/Tabs';
 import * as API from "../components/Api";
 import * as AsyncStorage from '../components/AsyncStorage';
@@ -35,6 +37,13 @@ export default class Checkout extends React.Component {
     this.state = {
       Products: [],
       modalVisible: false,
+      isDateTimePickerVisible: false,
+      ShippingFullName: "",
+      ShippingPhone: "",
+      ShippingAddress: "",
+      ShippingDate: "",
+      ShippingNote: "",
+      ShipmentType: null,
     }
   }
 
@@ -65,7 +74,12 @@ export default class Checkout extends React.Component {
     var res = await API._fetch(`${config.GET_CART_API_ENDPOINT}?UserId=${Number(UID)}`, 'GET');
     if (res != null && res.Data != null) {
       if (res.Data.code == 200) {
-        this.setState({ Products: res.Data.result });
+        this.setState({ 
+          Products: res.Data.result, 
+          ShippingFullName: res.Data.result.UserFullName,
+          ShippingPhone: res.Data.result.UserPhone,
+          ShippingAddress: res.Data.result.UserAddress
+         });
       }
     }
   }
@@ -78,29 +92,6 @@ export default class Checkout extends React.Component {
 
     return true; // empty
   }
-
-  OnChangeQuantity = async (VariantId, value) => {
-    //alert(`${VariantId}, ${value}`);
-    if (value <= 0) {
-      Alert.alert(
-        'Bạn có chắc muốn xóa sản phẩm khỏi giỏ hàng?',
-        '',
-        [
-          {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
-          },
-          { text: 'OK', onPress: () => { this.ChangeQuantity(VariantId, value); this._onFetchDetails(); } },
-        ],
-        { cancelable: true },
-      );
-    }
-    else {
-      this.ChangeQuantity(VariantId, value);
-    }
-  }
-
 
   ChangeQuantity = async (VariantId, value) => {
     var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
@@ -128,6 +119,17 @@ export default class Checkout extends React.Component {
     //todo place order
   }
 
+  handleDatePicked = date => {
+    console.log("A date has been picked: ", date);
+    var customDate = moment(new Date(date)).format('DD/MM/YYYY hh:mm a');
+    console.log("customDate: " + customDate);
+    this.setState({ ShippingDate: customDate });
+    this.toggleDateTimePicker();
+  };
+
+  toggleDateTimePicker = () => {
+    this.setState({ isDateTimePickerVisible: !this.state.isDateTimePickerVisible });
+  };
 
   render() {
     var _Items = [];
@@ -136,7 +138,7 @@ export default class Checkout extends React.Component {
         _Items.push(
           <Block key={i}>
             <Block row flex>
-              <Block style={styles.shadow}>
+              <Block style={styles.shadowLight}>
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('ProductDetail', { productId: data.ProductId })}>
                   <Image
                     resizeMode="cover"
@@ -152,30 +154,30 @@ export default class Checkout extends React.Component {
               }}>
                 <Block row style={{ marginBottom: 3 }}>
                   <TouchableOpacity onPress={() => this.props.navigation.navigate('ProductDetail', { productId: data.ProductId })}>
-                    <Text bold size={16} color="#32325D">
+                    <Text bold size={14} color="#32325D">
                       {data.ProductName}
                     </Text>
                   </TouchableOpacity>
-                </Block>                
+                </Block>
                 <Block row left flex>
                   <Text size={12} color={argonTheme.COLORS.HEADER}>
                     Phân loại:
                   </Text>
-                  <Text size={12} color={argonTheme.COLORS.HEADER} bold style={{ marginLeft: 3 }}>
+                  <Text size={11} color={argonTheme.COLORS.HEADER} bold style={{ marginLeft: 3 }}>
                     {`${data.VariantColor}, ${data.VariantSize}`}
                   </Text>
                 </Block>
                 <Block row>
                   <Block left flex>
-                  <Text bold size={16} color={argonTheme.COLORS.HEADER}>
-                    {data.ProductPrice} đ
-                </Text>
+                    <Text bold size={12} color={argonTheme.COLORS.HEADER}>
+                      {data.ProductPrice} đ
+                    </Text>
                   </Block>
                   <Block right flex>
-                    <Block row middle flex>                     
-                      <Text size={16} color={argonTheme.COLORS.HEADER} style={{ marginLeft: 3 }}>
+                    <Block row middle flex>
+                      <Text bold size={12} color={argonTheme.COLORS.HEADER} style={{ marginLeft: 3 }}>
                         x{data.Quantity}
-                      </Text>                      
+                      </Text>
                     </Block>
                   </Block>
                 </Block>
@@ -192,21 +194,116 @@ export default class Checkout extends React.Component {
     return (
       <Block flex style={styles.navbar}>
         <ScrollView
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator={false}
         >
-          <Block style={{
+          <Block flex style={styles.group}>
+            <Text bold size={16} style={styles.title}>
+              Thông tin giao hàng:
+            </Text>
+            <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+              <Input
+                placeholder="Họ tên"
+                iconContent={
+                  <Icon
+                    size={12}
+                    style={{ marginRight: 10 }}
+                    color={argonTheme.COLORS.ICON}
+                    name="pencil"
+                    family="font-awesome"
+                  />
+                }
+                value={this.state.ShippingFullName}
+                onChangeText={(text) => this.setState({ ShippingFullName: text })}
+              />
+            </Block>
+            <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+              <Input
+                placeholder="Số điện thoại"
+                iconContent={
+                  <Icon
+                    size={12}
+                    style={{ marginRight: 10 }}
+                    color={argonTheme.COLORS.ICON}
+                    name="phone"
+                    family="font-awesome"
+                  />
+                }
+                value={this.state.ShippingPhone}
+                onChangeText={(text) => this.setState({ ShippingPhone: text })}
+              />
+            </Block>
+            <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+              <Input
+                placeholder="Địa chỉ giao hàng"
+                iconContent={
+                  <Icon
+                    size={12}
+                    style={{ marginRight: 10 }}
+                    color={argonTheme.COLORS.ICON}
+                    name="map-marker"
+                    family="font-awesome"
+                  />
+                }
+                value={this.state.ShippingAddress}
+                onChangeText={(text) => this.setState({ ShippingAddress: text })}
+              />
+            </Block>
+            <TouchableOpacity onPress={() => this.toggleDateTimePicker()}>
+              <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+                <Input
+                  placeholder="Ngày giao hàng"
+                  iconContent={
+                    <Icon
+                      size={12}
+                      style={{ marginRight: 10 }}
+                      color={argonTheme.COLORS.ICON}
+                      name="calendar"
+                      family="font-awesome"
+                    />
+                  }
+                  value={this.state.ShippingDate}
+                  onChangeText={(text) => this.setState({ ShippingDate: text })}
+                  editable={false}
+                />
+              </Block>
+            </TouchableOpacity>
+            <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+              <Input
+                placeholder="Ghi chú"
+                iconContent={
+                  <Icon
+                    size={12}
+                    style={{ marginRight: 10 }}
+                    color={argonTheme.COLORS.ICON}
+                    name="sticky-note"
+                    family="font-awesome"
+                  />
+                }
+                value={this.state.ShippingNote}
+                onChangeText={(text) => this.setState({ ShippingNote: text })}
+              />
+            </Block>
+          </Block>
+
+          <Block flex style={{
             backgroundColor: 'white',
-            padding: 10,
+            padding: 12,
             borderRadius: 4,
             borderColor: 'rgba(0, 0, 0, 0.1)',
             height: "100%",
             width: "100%",
           }}>
+            <Text bold size={16} style={styles.titleCus}>
+              Danh sách sản phẩm:
+            </Text>
+            <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
+              <Block style={styles.divider} />
+            </Block>
             {_Items}
           </Block>
         </ScrollView>
-
         <Block flex style={{
+          ...styles.shadow,
           backgroundColor: '#F4F5F7', // TabBar background
           position: 'absolute',
           left: 0,
@@ -233,8 +330,15 @@ export default class Checkout extends React.Component {
             </Block>
           </Block>
         </Block>
-
-      </Block>
+        <DateTimePicker
+          isVisible={this.state.isDateTimePickerVisible}
+          onConfirm={this.handleDatePicked}
+          onCancel={this.toggleDateTimePicker}
+          mode='datetime'
+          minimumDate={new Date()}
+          is24Hour={false}
+        />
+      </Block >
     );
   }
 }
@@ -247,7 +351,12 @@ const styles = StyleSheet.create({
   },
   title: {
     paddingBottom: theme.SIZES.BASE,
-    paddingHorizontal: theme.SIZES.BASE * 2,
+    paddingHorizontal: theme.SIZES.BASE,
+    marginTop: 22,
+    color: argonTheme.COLORS.HEADER
+  },
+  titleCus: {
+    paddingBottom: theme.SIZES.BASE,
     marginTop: 22,
     color: argonTheme.COLORS.HEADER
   },
@@ -260,10 +369,9 @@ const styles = StyleSheet.create({
   },
   albumThumb: {
     borderRadius: 4,
-    marginVertical: 4,
-    alignSelf: "center",
-    width: thumbMeasure,
-    height: thumbMeasure
+    alignSelf: "flex-end",
+    width: thumbMeasure / 1.5,
+    height: thumbMeasure / 1.5
   },
   category: {
     backgroundColor: theme.COLORS.WHITE,
@@ -316,6 +424,22 @@ const styles = StyleSheet.create({
     width: "100%",
     borderWidth: 1,
     borderColor: "#E9ECEF"
-  }
+  },
+  shadow: {
+    // backgroundColor: theme.COLORS.WHITE,
+     shadowColor: 'black',
+     shadowOffset: { width: 0, height: 3 },
+     shadowRadius: 6,
+     shadowOpacity: 0.5,
+     elevation: 4,
+   },
+   shadowLight: {
+     // backgroundColor: theme.COLORS.WHITE,
+      shadowColor: 'black',
+      shadowOffset: { width: 0, height: 2 },
+      shadowRadius: 6,
+      shadowOpacity: 0.2,
+      elevation: 3,
+    }
 });
 

@@ -166,6 +166,9 @@ namespace SGU.WebService.Controllers
                     {
                         Items = itemsView,
                         UserId = UserId,
+                        UserFullName = carts?.FirstOrDefault()?.User?.UserName,
+                        UserPhone = carts?.FirstOrDefault()?.User?.UserPhone,
+                        UserAddress = carts?.FirstOrDefault()?.User?.UserAddress,
                         TotalPrice = string.Format("{0:#,0}", total)
                     };
 

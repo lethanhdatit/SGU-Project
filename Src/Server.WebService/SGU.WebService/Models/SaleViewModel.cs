@@ -89,6 +89,9 @@ namespace SGU.WebService.Models
     {
         [Required]
         public long UserId { get; set; }
+        public string UserFullName { get; set; }
+        public string UserPhone { get; set; }
+        public string UserAddress { get; set; }
         public byte Type { get; set; }
         public List<CartItemView> Items { get; set; }
 
