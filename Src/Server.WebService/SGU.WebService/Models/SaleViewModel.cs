@@ -92,24 +92,24 @@ namespace SGU.WebService.Models
         public byte Type { get; set; }
         public List<CartItemView> Items { get; set; }
 
-        public decimal TotalPrice { get; set; }
+        public string TotalPrice { get; set; }
     }
 
     public class CartItemView
     {
         [Required]
         public long VariantID { get; set; }
-
+        public long ProductId { get; set; }
         public string ProductName { get; set; }
         public string ProductImage { get; set; }
         public string VariantColor { get; set; }
         public string VariantSize { get; set; }
 
-        public decimal ProductPrice { get; set; }
+        public string ProductPrice { get; set; }
 
         [Required]
         public int Quantity { get; set; }
         public long Stock { get; set; }
-        public decimal TotalPrice { get; set; }
+        public string TotalPrice { get; set; }
     }
 }

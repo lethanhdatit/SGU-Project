@@ -13,6 +13,7 @@ import Home from "../screens/Home";
 import Onboarding from "../screens/Onboarding";
 import ProductDetail from "../screens/ProductDetail";
 import ShoppingCart from "../screens/ShoppingCart";
+import Checkout from "../screens/Checkout";
 import Profile from "../screens/Elements-copy";
 import Elements from "../screens/Elements";
 import Articles from "../screens/Articles";
@@ -129,7 +130,13 @@ const HomeStack = createStackNavigator(
         headerTransparent: true
       })
     },
-    
+    Checkout: {
+      screen: Checkout,
+      navigationOptions: ({ navigation }) => ({     
+        header: <Header back title="" navigation={navigation} />, 
+        headerTransparent: true
+      })
+    }    
   },
   {
     cardStyle: {

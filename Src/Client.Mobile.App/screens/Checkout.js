@@ -29,7 +29,7 @@ const cardWidth = width - theme.SIZES.BASE * 2;
 
 
 
-export default class ShoppingCart extends React.Component {
+export default class Checkout extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -125,7 +125,7 @@ export default class ShoppingCart extends React.Component {
   }
 
   OnNextAction = async () => {
-    this.props.navigation.navigate('Checkout');
+    //todo place order
   }
 
 
@@ -152,48 +152,30 @@ export default class ShoppingCart extends React.Component {
               }}>
                 <Block row style={{ marginBottom: 3 }}>
                   <TouchableOpacity onPress={() => this.props.navigation.navigate('ProductDetail', { productId: data.ProductId })}>
-                    <Text bold size={18} color="#32325D">
+                    <Text bold size={16} color="#32325D">
                       {data.ProductName}
                     </Text>
                   </TouchableOpacity>
-                </Block>
-                <Block row style={{ marginBottom: 3 }}>
-                  <Text bold size={16} color="red">
-                    {data.ProductPrice} đ
-                </Text>
-                </Block>
+                </Block>                
                 <Block row left flex>
-                  <Text size={12}>
+                  <Text size={12} color={argonTheme.COLORS.HEADER}>
                     Phân loại:
                   </Text>
-                  <Text size={12} bold style={{ marginLeft: 3 }}>
+                  <Text size={12} color={argonTheme.COLORS.HEADER} bold style={{ marginLeft: 3 }}>
                     {`${data.VariantColor}, ${data.VariantSize}`}
                   </Text>
                 </Block>
                 <Block row>
                   <Block left flex>
-                    <NumericInput
-                      initValue={data.Quantity}
-                      editable={false}
-                      minValue={0}
-                      maxValue={data.Stock}
-                      iconSize={theme.SIZES.BASE}
-                      totalWidth={theme.SIZES.BASE * 4}
-                      totalHeight={(theme.SIZES.BASE * 3) / 2}
-                      onChange={value => this.OnChangeQuantity(data.VariantID, value)}
-                    />
+                  <Text bold size={16} color={argonTheme.COLORS.HEADER}>
+                    {data.ProductPrice} đ
+                </Text>
                   </Block>
                   <Block right flex>
-                    <Block row middle flex>
-                      <Text size={12}>
-                        Còn
-                      </Text>
-                      <Text size={12} color="red" style={{ marginLeft: 3 }}>
-                        {data.Stock}
-                      </Text>
-                      <Text size={12} style={{ marginLeft: 3 }}>
-                        sản phẩm
-                      </Text>
+                    <Block row middle flex>                     
+                      <Text size={16} color={argonTheme.COLORS.HEADER} style={{ marginLeft: 3 }}>
+                        x{data.Quantity}
+                      </Text>                      
                     </Block>
                   </Block>
                 </Block>
@@ -237,7 +219,7 @@ export default class ShoppingCart extends React.Component {
             <Block left middle flex={3} style={{ backgroundColor: "transparent", marginLeft: 3 }}>
               <Block row right>
                 <Text size={14}>
-                  Tổng tiền:
+                  Tổng thanh toán:
                   </Text>
                 <Text color="red" size={14} bold style={{ marginLeft: 3 }}>
                   {this.state.Products.TotalPrice} đ
@@ -245,8 +227,8 @@ export default class ShoppingCart extends React.Component {
               </Block>
             </Block>
             <Block right middle flex={2}>
-              <Button onPress={() => this.OnNextAction()} color="warning" style={{ ...styles.button, width: "70%", height: "80%" }}>
-                Mua hàng
+              <Button onPress={() => this.OnNextAction()} color="success" style={{ ...styles.button, width: "70%", height: "80%" }}>
+                Đặt hàng
               </Button>
             </Block>
           </Block>

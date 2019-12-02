@@ -149,15 +149,16 @@ namespace SGU.WebService.Controllers
                     var total = carts.Sum(x => (x.Quantity * x.Variant.Product.ProductPrice));
                     var itemsView = carts.Select(x => new CartItemView()
                     {
+                        ProductId = x.Variant.ProductID,
                         VariantID = x.VariantID,
-                        ProductPrice = x.Variant.Product.ProductPrice,
+                        ProductPrice = string.Format("{0:#,0}", x.Variant.Product.ProductPrice),
                         ProductName = x.Variant.Product.ProductName,
                         ProductImage = x.Variant.VariantImage,
                         VariantSize = x.Variant.VariantSize.ToUpper(),
                         VariantColor = x.Variant.VariantColor.ToUpper(),
                         Quantity = x.Quantity,
                         Stock = x.Variant.Stock,
-                        TotalPrice = x.Quantity * x.Variant.Product.ProductPrice
+                        TotalPrice = string.Format("{0:#,0}", x.Quantity * x.Variant.Product.ProductPrice)
 
                     }).ToList();
 
@@ -165,7 +166,7 @@ namespace SGU.WebService.Controllers
                     {
                         Items = itemsView,
                         UserId = UserId,
-                        TotalPrice = total
+                        TotalPrice = string.Format("{0:#,0}", total)
                     };
 
                     response.Data = new { code = HttpStatusCode.OK, result = cartView, message = "Get cart success." };
