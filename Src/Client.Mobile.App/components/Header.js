@@ -224,7 +224,7 @@ class Header extends React.Component {
   render() {
     const { backCus, title, white, transparent, bgColor, iconColor, titleColor, navigation, ...props } = this.props;
     const { routeName } = navigation.state;
-    const noShadow = ['Search', 'Categories', 'Deals', 'ProductDetail', 'Profile'].includes(routeName);
+    const noShadow = ['Search', 'Categories', 'Deals', 'Profile'].includes(routeName);
     const headerStyles = [
       !noShadow ? styles.shadow : null,
       transparent ? { backgroundColor: 'rgba(0,0,0,0)' } : null,

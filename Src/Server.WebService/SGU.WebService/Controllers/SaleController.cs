@@ -1,6 +1,7 @@
 ﻿using SGU.Data.Models;
 using SGU.Service.Implement;
 using SGU.WebService.Models;
+using SGU.WebService.Utils;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -117,7 +118,7 @@ namespace SGU.WebService.Controllers
             var response = JsonResponse();
             try
             {
-                var _data = _saleService.GetAllActiveProductTypes();
+                var _data = _saleService.GetAllProductTypes();
                 var result = _data.Select(x => new ProductTypeView()
                 {
                     TypeID = x.TypeID,
@@ -136,9 +137,35 @@ namespace SGU.WebService.Controllers
 
         }
 
+        [System.Web.Http.Route("GetShipments")]
+        [System.Web.Http.HttpGet]
+        public JsonResult GetShipments()
+        {
+            var response = JsonResponse();
+            try
+            {
+                var _data = _saleService.GetAllActiveShipments();
+                var result = _data.Select(x => new ShipmentView()
+                {
+                    ShipmentID = x.ShipmentID,
+                    ShipmentName = x.ShipmentName,
+                    Price = string.Format("{0:#,0}", x.Price)
+                }).ToList();
+
+                response.Data = new { result, code = HttpStatusCode.OK };
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Data = new { code = HttpStatusCode.InternalServerError, message = "Internal server exception: " + ex.Message };
+                return response;
+            }
+
+        }
+
         [System.Web.Http.Route("getcart")]
         [System.Web.Http.HttpGet]
-        public JsonResult GetCart(long UserId) 
+        public JsonResult GetCart(long UserId, long? ShipmentID) 
         {
             var response = JsonResponse();
             try
@@ -147,6 +174,33 @@ namespace SGU.WebService.Controllers
                 if (carts != null && carts.Any())
                 {
                     var total = carts.Sum(x => (x.Quantity * x.Variant.Product.ProductPrice));
+                    var shippingFee = 0;
+
+                    if(ShipmentID != null && ShipmentID != 0)
+                    {
+                        var shipment = _saleService.GetShipmentById(ShipmentID.Value);
+                        if (shipment != null)
+                        {
+                            var totalQuantity = carts.Sum(x => x.Quantity);
+
+                            if (totalQuantity < Constant.SHIPMENT_MIN_LIMIT_FREE)
+                            {
+                                shippingFee = (int)shipment.Price;
+                            }
+                            else if (totalQuantity >= Constant.SHIPMENT_MIN_LIMIT_FREE && totalQuantity <= Constant.SHIPMENT_MAX_LIMIT_FREE)
+                            {
+                                shippingFee = 0;
+                            }
+                            else
+                            {
+                                var phannguyen = (int)(totalQuantity / Constant.SHIPMENT_MAX_LIMIT_FREE);
+                                phannguyen = phannguyen < 1 ? 1 : phannguyen;
+                                shippingFee = (int)(phannguyen * shipment.Price);
+                            }
+                        }
+                        total += shippingFee;
+                    }                   
+
                     var itemsView = carts.Select(x => new CartItemView()
                     {
                         ProductId = x.Variant.ProductID,
@@ -169,6 +223,7 @@ namespace SGU.WebService.Controllers
                         UserFullName = carts?.FirstOrDefault()?.User?.UserName,
                         UserPhone = carts?.FirstOrDefault()?.User?.UserPhone,
                         UserAddress = carts?.FirstOrDefault()?.User?.UserAddress,
+                        TotalShipmentPrice = string.Format("{0:#,0}", shippingFee),
                         TotalPrice = string.Format("{0:#,0}", total)
                     };
 
@@ -292,6 +347,28 @@ namespace SGU.WebService.Controllers
                 if (carts != null && carts.Any())
                 {
                     var total = carts.Sum(x => (x.Quantity * x.Variant.Product.ProductPrice));
+                    var shipment = _saleService.GetShipmentById(model.ShipmentID);
+                    if(shipment != null)
+                    {
+                        var totalQuantity = carts.Sum(x => x.Quantity);
+                        var shippingFee = 0;
+                        if(totalQuantity < Constant.SHIPMENT_MIN_LIMIT_FREE)
+                        {
+                            shippingFee = (int)shipment.Price;
+                        }
+                        else if(totalQuantity >= Constant.SHIPMENT_MIN_LIMIT_FREE && totalQuantity <= Constant.SHIPMENT_MAX_LIMIT_FREE)
+                        {
+                            shippingFee = 0;
+                        }
+                        else
+                        {
+                            var phannguyen = (int)(totalQuantity / Constant.SHIPMENT_MAX_LIMIT_FREE);
+                            phannguyen = phannguyen < 1 ? 1 : phannguyen;
+                            shippingFee = (int)(phannguyen * shipment.Price);                           
+                        }
+                        total += shippingFee;
+                    } 
+
                     CultureInfo provider = CultureInfo.InvariantCulture;
                     var ShippingDate = DateTime.ParseExact(model.ShippingDate, "dd/MM/yyyy hh:mm tt", provider);
                     var newOrder = new Order()

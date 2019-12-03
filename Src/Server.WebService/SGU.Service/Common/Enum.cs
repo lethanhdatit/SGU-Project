@@ -29,6 +29,18 @@ namespace SGU.Service.Common
            
             //... add more ...
         }
+
+        public enum ShipmentStatus : byte
+        {
+            [Display(Name = "Active")]
+            Active = 1,
+            [Display(Name = "Inactive")]
+            Inactive = 2,
+
+            //... add more ...
+        }
+        
+
         public enum OrderStatus : byte
         {
             [Display(Name = "Mới Tạo")] // User vừa mới tạo

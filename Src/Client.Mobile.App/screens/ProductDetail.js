@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
   },
   productItem: {
     width: cardWidth - theme.SIZES.BASE * 2,
-    marginHorizontal: theme.SIZES.BASE * 0.5,
+    marginHorizontal: theme.SIZES.BASE * 1,
     shadowColor: "black",
     shadowOffset: { width: 0, height: 7 },
     shadowRadius: 10,
@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
   productImage: {
     width: cardWidth - theme.SIZES.BASE * 2,
     height: cardWidth - theme.SIZES.BASE * 2,
-    borderRadius: 3
+    borderRadius: 3,
   },
   productPrice: {
     paddingTop: theme.SIZES.BASE,

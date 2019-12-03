@@ -3,24 +3,19 @@ import {
   ScrollView,
   StyleSheet,
   Image,
-  TouchableWithoutFeedback,
-  ImageBackground,
   Dimensions,
   Platform,
   TouchableOpacity,
-  Modal,
   DeviceEventEmitter,
   Alert
 } from "react-native";
 //galio
 import { Block, Text, theme } from "galio-framework";
-import NumericInput from 'react-native-numeric-input'
 import DateTimePicker from "react-native-modal-datetime-picker";
 import moment from "moment";
 //argon
-import { articles, Images, argonTheme } from "../constants";
-import { Card, Button, Header, Icon, Input } from "../components";
-import Tabs from '../components/Tabs';
+import { argonTheme } from "../constants";
+import { Button, Icon, Input, Select } from "../components";
 import * as API from "../components/Api";
 import * as AsyncStorage from '../components/AsyncStorage';
 import config from "../config";
@@ -36,6 +31,8 @@ export default class Checkout extends React.Component {
     super(props);
     this.state = {
       Products: [],
+      Shipments: [],
+      SelectedShipment: 0,
       modalVisible: false,
       isDateTimePickerVisible: false,
       ShippingFullName: "",
@@ -71,15 +68,26 @@ export default class Checkout extends React.Component {
 
   _onFetchDetails = async () => {
     var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
-    var res = await API._fetch(`${config.GET_CART_API_ENDPOINT}?UserId=${Number(UID)}`, 'GET');
+    var res = await API._fetch(`${config.GET_CART_API_ENDPOINT}?UserId=${Number(UID)}&ShipmentID=${this.state.SelectedShipment}`, 'GET');
     if (res != null && res.Data != null) {
       if (res.Data.code == 200) {
-        this.setState({ 
-          Products: res.Data.result, 
+        this.setState({
+          Products: res.Data.result,
           ShippingFullName: res.Data.result.UserFullName,
           ShippingPhone: res.Data.result.UserPhone,
           ShippingAddress: res.Data.result.UserAddress
-         });
+        });
+      }
+    }
+
+    var res2 = await API._fetch(`${config.GET_ACTIVE_SHIPMENT}`, 'GET');
+    if (res2 != null && res2.Data != null) {
+      if (res2.Data.code == 200) {
+        var temp = [];
+        res2.Data.result.map((item, index)=>{
+          temp.push(`${item.ShipmentID}-${item.ShipmentName}`);
+        });
+        this.setState({ Shipments: temp });
       }
     }
   }
@@ -93,27 +101,12 @@ export default class Checkout extends React.Component {
     return true; // empty
   }
 
-  ChangeQuantity = async (VariantId, value) => {
-    var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
-    var _items = [
-      {
-        VariantID: VariantId,
-        Quantity: value,
-      }
-    ];
-    var dataBody = {
-      UserId: UID,
-      Items: _items,
-      Type: 1 //update in cart
-    };
-    var res = await API._fetch(config.UPDATE_CART_API_ENDPOINT, 'POST', dataBody);
-    if (res != null && res.Data != null) {
-      if (res.Data.code == 200) {
-        DeviceEventEmitter.emit('EventListener-CountCart');
-        //this.setModalVisible(!this.state.modalVisible);
-      }
-    }
+  OnSelectShipment(value){
+    var ShipmentID = value.split('-')[0];
+    this.setState({SelectedShipment: ShipmentID});
+    this._onFetchDetails();
   }
+
 
   OnNextAction = async () => {
     //todo place order
@@ -284,10 +277,24 @@ export default class Checkout extends React.Component {
               />
             </Block>
           </Block>
-
+          <Block flex style={styles.group}>
+            <Text bold size={16} style={styles.title}>
+              Chọn nhà vận chuyển:
+            </Text>
+            <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+              <Block flex left>
+                <Select
+                  defaultIndex={1}
+                  options={this.state.Shipments}
+                  style = {{width: "70%"}}
+                  onSelect={(item, index) => this.OnSelectShipment(item)}
+                />
+              </Block>
+            </Block>
+          </Block>
           <Block flex style={{
             backgroundColor: 'white',
-            padding: 12,
+            padding: 14,
             borderRadius: 4,
             borderColor: 'rgba(0, 0, 0, 0.1)',
             height: "100%",
@@ -314,6 +321,14 @@ export default class Checkout extends React.Component {
         }}>
           <Block row style={{ height: theme.SIZES.BASE * 3 }}>
             <Block left middle flex={3} style={{ backgroundColor: "transparent", marginLeft: 3 }}>
+              <Block row right>
+                <Text size={14}>
+                  Tổng phí ship:
+                  </Text>
+                <Text color="red" size={14} bold style={{ marginLeft: 3 }}>
+                  {this.state.Products.TotalShipmentPrice} đ
+                </Text>
+              </Block>
               <Block row right>
                 <Text size={14}>
                   Tổng thanh toán:
@@ -427,19 +442,19 @@ const styles = StyleSheet.create({
   },
   shadow: {
     // backgroundColor: theme.COLORS.WHITE,
-     shadowColor: 'black',
-     shadowOffset: { width: 0, height: 3 },
-     shadowRadius: 6,
-     shadowOpacity: 0.5,
-     elevation: 4,
-   },
-   shadowLight: {
-     // backgroundColor: theme.COLORS.WHITE,
-      shadowColor: 'black',
-      shadowOffset: { width: 0, height: 2 },
-      shadowRadius: 6,
-      shadowOpacity: 0.2,
-      elevation: 3,
-    }
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    shadowOpacity: 0.5,
+    elevation: 4,
+  },
+  shadowLight: {
+    // backgroundColor: theme.COLORS.WHITE,
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    shadowOpacity: 0.2,
+    elevation: 3,
+  }
 });
 

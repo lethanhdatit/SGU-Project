@@ -62,7 +62,7 @@ export default class ShoppingCart extends React.Component {
 
   _onFetchDetails = async () => {
     var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
-    var res = await API._fetch(`${config.GET_CART_API_ENDPOINT}?UserId=${Number(UID)}`, 'GET');
+    var res = await API._fetch(`${config.GET_CART_API_ENDPOINT}?UserId=${Number(UID)}&ShipmentID=${0}`, 'GET');
     if (res != null && res.Data != null) {
       if (res.Data.code == 200) {
         this.setState({ Products: res.Data.result });
@@ -79,8 +79,14 @@ export default class ShoppingCart extends React.Component {
     return true; // empty
   }
 
-  OnChangeQuantity = async (VariantId, value) => {
+  async ChangeQuantityAndRefesh(VariantId, value){
+    await this.ChangeQuantity(VariantId, value); 
+    this._onFetchDetails();
+  }
+
+  OnChangeQuantity = async (VariantId, value, current) => {
     //alert(`${VariantId}, ${value}`);
+    console.log("value: "+value + " current: " + current);
     if (value <= 0) {
       Alert.alert(
         'Bạn có chắc muốn xóa sản phẩm khỏi giỏ hàng?',
@@ -88,13 +94,13 @@ export default class ShoppingCart extends React.Component {
         [
           {
             text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
+            onPress: () => this._onFetchDetails(),
             style: 'cancel',
           },
-          { text: 'OK', onPress: () => { this.ChangeQuantity(VariantId, value); this._onFetchDetails(); } },
+          { text: 'OK', onPress: () => this.ChangeQuantityAndRefesh(VariantId, value) },
         ],
         { cancelable: true },
-      );
+      );      
     }
     else {
       this.ChangeQuantity(VariantId, value);
@@ -120,12 +126,13 @@ export default class ShoppingCart extends React.Component {
       if (res.Data.code == 200) {
         DeviceEventEmitter.emit('EventListener-CountCart');
         //this.setModalVisible(!this.state.modalVisible);
-      }else if(res.Data.code == 202){
+      }
+      else if (res.Data.code == 202) {
         Alert.alert(
           'Cảnh báo',
           res.Data.message,
-          [            
-            { text: 'OK'},
+          [
+            { text: 'OK' },
           ],
           { cancelable: true },
         );
@@ -190,7 +197,7 @@ export default class ShoppingCart extends React.Component {
                       iconSize={theme.SIZES.BASE}
                       totalWidth={theme.SIZES.BASE * 4}
                       totalHeight={(theme.SIZES.BASE * 3) / 2.2}
-                      onChange={value => this.OnChangeQuantity(data.VariantID, value)}
+                      onChange={value => this.OnChangeQuantity(data.VariantID, value, data.Quantity)}
                     />
                   </Block>
                   <Block right flex>
@@ -348,19 +355,19 @@ const styles = StyleSheet.create({
   },
   shadow: {
     // backgroundColor: theme.COLORS.WHITE,
-     shadowColor: 'black',
-     shadowOffset: { width: 0, height: 3 },
-     shadowRadius: 6,
-     shadowOpacity: 0.5,
-     elevation: 4,
-   },
-   shadowLight: {
-     // backgroundColor: theme.COLORS.WHITE,
-      shadowColor: 'black',
-      shadowOffset: { width: 0, height: 2 },
-      shadowRadius: 6,
-      shadowOpacity: 0.2,
-      elevation: 3,
-    }
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    shadowOpacity: 0.5,
+    elevation: 4,
+  },
+  shadowLight: {
+    // backgroundColor: theme.COLORS.WHITE,
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    shadowOpacity: 0.2,
+    elevation: 3,
+  }
 });
 

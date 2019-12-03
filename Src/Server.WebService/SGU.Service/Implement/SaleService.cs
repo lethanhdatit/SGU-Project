@@ -52,9 +52,20 @@ namespace SGU.Service.Implement
                                                               .ToList();
         }
 
-        public List<ProductType> GetAllActiveProductTypes()
+        public List<ProductType> GetAllProductTypes()
         {
             return _unitOfWork.Repository<ProductType>().GetAll()?.ToList();
+        }
+
+        public List<Shipment> GetAllActiveShipments()
+        {
+            return _unitOfWork.Repository<Shipment>().Get(x =>  x.Status == (byte)ShipmentStatus.Active)?
+                                                              .ToList();
+        }
+
+        public Shipment GetShipmentById(long shipmentId)
+        {
+            return _unitOfWork.Repository<Shipment>().GetOne(x => x.ShipmentID == shipmentId && x.Status == (byte)ShipmentStatus.Active);
         }
 
         public List<ShoppingCart> GetShoppingCartByIdUser(long idUser)

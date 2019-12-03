@@ -68,6 +68,15 @@ namespace SGU.WebService.Models
 
     }
 
+    public class ShipmentView
+    {
+        public long ShipmentID { get; set; }
+
+        public string ShipmentName { get; set; }
+
+        public string Price { get; set; }
+    }
+
     public class OrderView
     {
         [Required]
@@ -94,7 +103,7 @@ namespace SGU.WebService.Models
         public string UserAddress { get; set; }
         public byte Type { get; set; }
         public List<CartItemView> Items { get; set; }
-
+        public string TotalShipmentPrice { get; set; }
         public string TotalPrice { get; set; }
     }
 

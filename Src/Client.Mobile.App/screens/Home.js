@@ -43,13 +43,13 @@ class Home extends React.Component {
   }
 
   _OnSearchProducts = async (searchOptions) => {
-    console.log(JSON.stringify(searchOptions));
+    //console.log(JSON.stringify(searchOptions));
     var res = await API._fetch(`${config.SEARCH_PRODUCTS_API_ENDPOINT}`, 'POST', searchOptions);
     if (res != null && res.Data != null) {
       if (res.Data.code == 200) {
         var temp = [];
         res.Data.result.map((data, i) => {
-          console.log("ProductImage: " + data.ProductImage);
+          //console.log("ProductImage: " + data.ProductImage);
           temp.push({
             productId: data.ProductID,
             title: data.ProductName,
