@@ -6,7 +6,8 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert
 } from "react-native";
 import { Block, Checkbox, Text, theme } from "galio-framework";
 import DateTimePicker from "react-native-modal-datetime-picker";
@@ -42,12 +43,26 @@ export default class Register extends React.Component {
     var count = 0;
     if(this.state.Password != this.state.RePassword){
       count++;
-      alert("Password và Re-password không khớp")
+      Alert.alert(
+        'Lỗi',
+        'Password và Re-password không khớp',
+        [            
+          { text: 'OK'},
+        ],
+        { cancelable: true },
+      );     
     }
 
     if(!validate(this.state.Email)){
       count++;
-      alert("Email không hợp lệ.")
+      Alert.alert(
+        'Lỗi',
+        'Email không hợp lệ.',
+        [            
+          { text: 'OK'},
+        ],
+        { cancelable: true },
+      );          
     }
 
     if(count == 0){
@@ -67,7 +82,14 @@ export default class Register extends React.Component {
           this.props.navigation.navigate('App');
         }
         else if (res.Data.code == 500) {
-          alert("Lỗi không xác định.");
+          Alert.alert(
+            'Lỗi',
+            'Lỗi không xác định.',
+            [            
+              { text: 'OK'},
+            ],
+            { cancelable: true },
+          );      
           console.log(res.Data.message);
         }
         else {

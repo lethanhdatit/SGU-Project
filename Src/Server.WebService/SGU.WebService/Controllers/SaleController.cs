@@ -212,8 +212,17 @@ namespace SGU.WebService.Controllers
                             else
                             {
                                 var cart = _saleService.GetCart(model.UserId, i.VariantID);
-                                cart.Quantity = i.Quantity;
-                                _saleService.UpdateCart(cart);
+                                var currentStock = _saleService.GetVariantById(i.VariantID).Stock;
+                                if (i.Quantity > currentStock)
+                                {
+                                    response.Data = new { code = 202, message = "Giỏ hàng của bạn đã có " + cart.Quantity + " sp. chỉ có thể đặt thêm tối đa " + (currentStock - cart.Quantity) + " sp" };
+                                    return response;
+                                }
+                                else
+                                {
+                                    cart.Quantity = i.Quantity;
+                                    _saleService.UpdateCart(cart);
+                                }
                             }
                         }
                     }
@@ -221,13 +230,24 @@ namespace SGU.WebService.Controllers
                     {
                         foreach (var i in model.Items)
                         {
+
                             if (i.Quantity != 0)
                             {
                                 var cart = _saleService.GetCart(model.UserId, i.VariantID);
                                 if (cart != null)
                                 {
-                                    cart.Quantity += i.Quantity;
-                                    _saleService.UpdateCart(cart);
+                                    var currentStock = _saleService.GetVariantById(i.VariantID).Stock;
+                                    var temp = cart.Quantity + i.Quantity;
+                                    if (temp > currentStock)
+                                    {
+                                        response.Data = new { code = 202, message = "Giỏ hàng của bạn đã có "+ cart.Quantity+" sp. chỉ có thể đặt thêm tối đa " + (currentStock - cart.Quantity) + " sp"};
+                                        return response;
+                                    }
+                                    else
+                                    {
+                                        cart.Quantity += i.Quantity;
+                                        _saleService.UpdateCart(cart);
+                                    }
                                 }
                                 else
                                 {
@@ -238,6 +258,7 @@ namespace SGU.WebService.Controllers
                                     _saleService.AddCart(cart);
                                 }
                             }
+
                         }
                     }
                     response.Data = new { code = HttpStatusCode.OK, message = "Update cart success." };

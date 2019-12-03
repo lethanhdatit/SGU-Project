@@ -82,9 +82,9 @@ class Header extends React.Component {
     }
   };
 
-  handleLeftPress = () => {
-    const { back, navigation } = this.props;
-    return (back ? () => navigation.goBack() : navigation.openDrawer());
+  handleLeftPress = (backCus) => {
+    const { navigation } = this.props;
+    return (backCus ? navigation.goBack() : navigation.openDrawer());
   }
 
   renderRight = () => {
@@ -129,10 +129,10 @@ class Header extends React.Component {
           <BellButton key='chat-profile' navigation={navigation} />,
           <BasketButton key='basket-deals' CountCart={this.state.CountCart} navigation={navigation} />
         ]);
-      // case 'ShoppingCart':
-      //   return ([
-      //     <BellButton key='chat-profile' navigation={navigation} />,          
-      //   ]);
+      case 'ShoppingCart':
+        return ([
+          <BellButton key='chat-profile' navigation={navigation} />,          
+        ]);
       case 'Elements':
         return ([
           <BellButton key='chat-profile' navigation={navigation} isWhite={white} />,
@@ -222,7 +222,7 @@ class Header extends React.Component {
     }
   }
   render() {
-    const { back, title, white, transparent, bgColor, iconColor, titleColor, navigation, ...props } = this.props;
+    const { backCus, title, white, transparent, bgColor, iconColor, titleColor, navigation, ...props } = this.props;
     const { routeName } = navigation.state;
     const noShadow = ['Search', 'Categories', 'Deals', 'ProductDetail', 'Profile'].includes(routeName);
     const headerStyles = [
@@ -238,7 +238,7 @@ class Header extends React.Component {
     return (
       <Block style={headerStyles}>
         <NavBar
-          back={back}
+          back={false}
           hideLeft={false}
           title={title}
           style={navbarStyles}
@@ -249,14 +249,19 @@ class Header extends React.Component {
           onLeftPress={() => navigation.goBack()}
           left={
             <Icon
-              name={back ? 'chevron-left' : "menu-8"} family="ArgonExtra"
-              size={back ? 50 : 14}
-              onPress={() => this.handleLeftPress()}
+              name={backCus ? 'chevron-left' : "menu-8"} family={backCus ? "evilicons" : "ArgonExtra"}
+              size={backCus ? theme.SIZES.BASE * 2.2 : 14}
+              onPress={() => this.handleLeftPress(backCus)}
               color={iconColor || argonTheme.COLORS.ICON} />
           }
-          leftStyle={{ paddingVertical: back ? 0 : 12, flex: back ? 0 : 0.2 }}
+          leftStyle={{ paddingVertical: backCus ? 0 : 12, flex: backCus ? 0 : 0.2 }}
           titleStyle={[
-            styles.title,
+            {
+              width: backCus ? "auto" : '100%',
+              marginLeft: backCus ? theme.SIZES.BASE * 1.3 : 0,
+              fontSize: 16,
+              fontWeight: 'bold'
+            },
             { color: argonTheme.COLORS[white ? 'WHITE' : 'HEADER'] },
             titleColor && { color: titleColor }
           ]}

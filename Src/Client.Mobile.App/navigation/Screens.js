@@ -119,21 +119,21 @@ const HomeStack = createStackNavigator(
     ProductDetail: {
       screen: ProductDetail,
       navigationOptions: ({ navigation }) => ({     
-        header: <Header back title="" navigation={navigation} />, 
+        header: <Header backCus  title="" navigation={navigation} />, 
         headerTransparent: true
       })
     },
     ShoppingCart: {
       screen: ShoppingCart,
       navigationOptions: ({ navigation }) => ({     
-        header: <Header back title="" navigation={navigation} />, 
+        header: <Header backCus title="Giỏ Hàng" navigation={navigation} />, 
         headerTransparent: true
       })
     },
     Checkout: {
       screen: Checkout,
       navigationOptions: ({ navigation }) => ({     
-        header: <Header back title="" navigation={navigation} />, 
+        header: <Header backCus title="Thanh Toán" navigation={navigation} />, 
         headerTransparent: true
       })
     }    

@@ -72,6 +72,11 @@ namespace SGU.Service.Implement
             return _unitOfWork.Repository<ShoppingCart>().GetOne(x => x.UserID == userId && x.VariantID == variantID);           
         }
 
+        public Variant GetVariantById(long variantID)
+        {
+            return _unitOfWork.Repository<Variant>().GetOne(x => x.VariantID == variantID);
+        }        
+
         public bool RemoveCart(long userId, long variantID)
         {
             var cart = _unitOfWork.Repository<ShoppingCart>().GetOne(x => x.UserID == userId && x.VariantID == variantID);

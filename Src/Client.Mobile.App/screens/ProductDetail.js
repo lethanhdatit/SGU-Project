@@ -9,7 +9,8 @@ import {
   Platform,
   TouchableOpacity,
   Modal,
-  DeviceEventEmitter
+  DeviceEventEmitter,
+  Alert
 } from "react-native";
 //galio
 import { Block, Text, theme } from "galio-framework";
@@ -305,6 +306,15 @@ export default class ProductDetail extends React.Component {
           alert("success!");
           DeviceEventEmitter.emit('EventListener-CountCart');
           //this.setModalVisible(!this.state.modalVisible);
+        }else if(res.Data.code == 202){
+          Alert.alert(
+            'Cảnh báo',
+            res.Data.message,
+            [            
+              { text: 'OK'},
+            ],
+            { cancelable: true },
+          );
         }
       }
     }

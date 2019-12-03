@@ -120,6 +120,16 @@ export default class ShoppingCart extends React.Component {
       if (res.Data.code == 200) {
         DeviceEventEmitter.emit('EventListener-CountCart');
         //this.setModalVisible(!this.state.modalVisible);
+      }else if(res.Data.code == 202){
+        Alert.alert(
+          'Cảnh báo',
+          res.Data.message,
+          [            
+            { text: 'OK'},
+          ],
+          { cancelable: true },
+        );
+        //alert(res.Data.message);
       }
     }
   }

@@ -6,7 +6,8 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert
 } from "react-native";
 import { Block, Checkbox, Text, theme } from "galio-framework";
 
@@ -58,12 +59,26 @@ export default class Login extends React.Component {
         }
         this.props.navigation.navigate('App');
       }
-      else if (res.Data.code == 500) {
-        alert("Lỗi không xác định.");
+      else if (res.Data.code == 500) {       
+        Alert.alert(
+          'Lỗi',
+          'Lỗi không xác định.',
+          [            
+            { text: 'OK'},
+          ],
+          { cancelable: true },
+        );
         console.log(res.Data.message);
       }
       else {
-        alert(res.Data.message);
+        Alert.alert(
+          'Lỗi',
+          res.Data.message,
+          [            
+            { text: 'OK'},
+          ],
+          { cancelable: true },
+        );       
       }
     }
     else {
