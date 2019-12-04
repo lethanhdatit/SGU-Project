@@ -173,7 +173,8 @@ namespace SGU.WebService.Controllers
                 var carts = _saleService.GetCartByIdUser(UserId);
                 if (carts != null && carts.Any())
                 {
-                    var total = carts.Sum(x => (x.Quantity * x.Variant.Product.ProductPrice));
+                    var totalItemsPrice = carts.Sum(x => (x.Quantity * x.Variant.Product.ProductPrice));
+                    var total = totalItemsPrice;
                     var shippingFee = 0;
 
                     if(ShipmentID != null && ShipmentID != 0)
@@ -224,6 +225,7 @@ namespace SGU.WebService.Controllers
                         UserPhone = carts?.FirstOrDefault()?.User?.UserPhone,
                         UserAddress = carts?.FirstOrDefault()?.User?.UserAddress,
                         TotalShipmentPrice = string.Format("{0:#,0}", shippingFee),
+                        TotalItemsPrice = string.Format("{0:#,0}", totalItemsPrice),
                         TotalPrice = string.Format("{0:#,0}", total)
                     };
 

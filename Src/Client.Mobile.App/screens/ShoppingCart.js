@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   navbar: {
     backgroundColor: 'white',
     paddingVertical: 0,
-    paddingBottom: theme.SIZES.BASE * 2,
+    paddingBottom: theme.SIZES.BASE * 3.1,
     paddingTop: iPhoneX ? theme.SIZES.BASE * 4.5 : theme.SIZES.BASE * 1.5,
     zIndex: 5,
   },

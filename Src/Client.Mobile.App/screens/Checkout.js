@@ -84,7 +84,7 @@ export default class Checkout extends React.Component {
     if (res2 != null && res2.Data != null) {
       if (res2.Data.code == 200) {
         var temp = [];
-        res2.Data.result.map((item, index)=>{
+        res2.Data.result.map((item, index) => {
           temp.push(`${item.ShipmentID}-${item.ShipmentName}`);
         });
         this.setState({ Shipments: temp });
@@ -101,9 +101,9 @@ export default class Checkout extends React.Component {
     return true; // empty
   }
 
-  OnSelectShipment(value){
+  OnSelectShipment(value) {
     var ShipmentID = value.split('-')[0];
-    this.setState({SelectedShipment: ShipmentID});
+    this.state.SelectedShipment = ShipmentID;
     this._onFetchDetails();
   }
 
@@ -113,9 +113,7 @@ export default class Checkout extends React.Component {
   }
 
   handleDatePicked = date => {
-    console.log("A date has been picked: ", date);
     var customDate = moment(new Date(date)).format('DD/MM/YYYY hh:mm a');
-    console.log("customDate: " + customDate);
     this.setState({ ShippingDate: customDate });
     this.toggleDateTimePicker();
   };
@@ -284,10 +282,9 @@ export default class Checkout extends React.Component {
             <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
               <Block flex left>
                 <Select
-                  defaultIndex={1}
                   options={this.state.Shipments}
-                  style = {{width: "70%"}}
-                  onSelect={(item, index) => this.OnSelectShipment(item)}
+                  style={{ width: "70%" }}
+                  onSelect={(index, item) => this.OnSelectShipment(item)}
                 />
               </Block>
             </Block>
@@ -319,27 +316,61 @@ export default class Checkout extends React.Component {
           width: "100%",
           paddingHorizontal: 5
         }}>
-          <Block row style={{ height: theme.SIZES.BASE * 3 }}>
-            <Block left middle flex={3} style={{ backgroundColor: "transparent", marginLeft: 3 }}>
-              <Block row right>
-                <Text size={14}>
-                  Tổng phí ship:
+          <Block row style={{ height: theme.SIZES.BASE * 5 }}>
+            <Block left middle flex={3} style={{ backgroundColor: "transparent", padding: 5 }}>
+
+              <Block row style={{ marginVertical: theme.SIZES.BASE / 2.4 }}>
+                <Block left flex>
+                  <Text size={12} color={argonTheme.COLORS.HEADER}>
+                    Tiền sản phẩm:
                   </Text>
-                <Text color="red" size={14} bold style={{ marginLeft: 3 }}>
-                  {this.state.Products.TotalShipmentPrice} đ
-                </Text>
+                </Block>
+                <Block right flex>
+                  <Block row middle flex>
+                    <Text bold size={12} color={argonTheme.COLORS.HEADER} style={{ marginLeft: 3 }}>
+                      {this.state.Products.TotalItemsPrice} đ
+                      </Text>
+                  </Block>
+                </Block>
               </Block>
-              <Block row right>
-                <Text size={14}>
-                  Tổng thanh toán:
+
+              <Block row style={{ marginBottom: theme.SIZES.BASE / 2.4 }}>
+                <Block left flex>
+                  <Text size={12} color={argonTheme.COLORS.HEADER}>
+                    Phí ship:
+                    </Text>
+                </Block>
+                <Block right flex>
+                  <Block row middle flex>
+                    <Text bold size={12} color={argonTheme.COLORS.HEADER} style={{ marginLeft: 3 }}>
+                      {this.state.Products.TotalShipmentPrice} đ
+                      </Text>
+                  </Block>
+                </Block>
+              </Block>
+
+              <Block row middle>
+                <Block style={styles.divider} />
+              </Block>
+
+              <Block row style={{ marginVertical: theme.SIZES.BASE / 2.4 }}>
+                <Block left flex>
+                  <Text bold size={12} color={argonTheme.COLORS.HEADER}>
+                    Tổng thanh toán:
                   </Text>
-                <Text color="red" size={14} bold style={{ marginLeft: 3 }}>
-                  {this.state.Products.TotalPrice} đ
-                </Text>
+                </Block>
+                <Block right flex>
+                  <Block row middle flex>
+                    <Text color="red" size={14} bold style={{ marginLeft: 3 }}>
+                      {this.state.Products.TotalPrice} đ
+                    </Text>
+                  </Block>
+                </Block>
               </Block>
+
             </Block>
-            <Block right middle flex={2}>
-              <Button onPress={() => this.OnNextAction()} color="success" style={{ ...styles.button, width: "70%", height: "80%" }}>
+            <Block right middle flex={1}>
+              <Button onPress={() => this.OnNextAction()} color="success" style={{ ...styles.button, width: "90%", height: "60%" }}>
                 Đặt hàng
               </Button>
             </Block>
@@ -428,7 +459,7 @@ const styles = StyleSheet.create({
   navbar: {
     backgroundColor: 'white',
     paddingVertical: 0,
-    paddingBottom: theme.SIZES.BASE * 2,
+    paddingBottom: theme.SIZES.BASE * 5.1,
     paddingTop: iPhoneX ? theme.SIZES.BASE * 4.5 : theme.SIZES.BASE * 1.5,
     zIndex: 5,
   },

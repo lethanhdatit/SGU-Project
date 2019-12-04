@@ -104,6 +104,7 @@ namespace SGU.WebService.Models
         public byte Type { get; set; }
         public List<CartItemView> Items { get; set; }
         public string TotalShipmentPrice { get; set; }
+        public string TotalItemsPrice { get; set; }
         public string TotalPrice { get; set; }
     }
 
