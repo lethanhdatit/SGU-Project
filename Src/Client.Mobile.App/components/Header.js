@@ -130,9 +130,9 @@ class Header extends React.Component {
           <BasketButton key='basket-deals' CountCart={this.state.CountCart} navigation={navigation} />
         ]);
       case 'ShoppingCart':
-        return ([
-          <BellButton key='chat-profile' navigation={navigation} />,          
-        ]);
+        return (
+          <BellButton key='chat-profile' navigation={navigation} />
+        );
       case 'Elements':
         return ([
           <BellButton key='chat-profile' navigation={navigation} isWhite={white} />,
@@ -245,20 +245,22 @@ class Header extends React.Component {
           leftIconName={''}
           transparent={transparent}
           right={this.renderRight()}
-          rightStyle={{ alignItems: 'center' }}
+          rightStyle={{}}
           onLeftPress={() => navigation.goBack()}
           left={
-            <Icon
-              name={backCus ? 'chevron-left' : "menu-8"} family={backCus ? "evilicons" : "ArgonExtra"}
-              size={backCus ? theme.SIZES.BASE * 2.2 : 14}
-              onPress={() => this.handleLeftPress(backCus)}
-              color={iconColor || argonTheme.COLORS.ICON} />
+            <TouchableOpacity style={[backCus ? styles.button : null]} onPress={() => this.handleLeftPress(backCus)}>
+              <Icon
+                name={backCus ? 'chevron-left' : "menu-8"} family={backCus ? "evilicons" : "ArgonExtra"}
+                size={backCus ? theme.SIZES.BASE * 2.4 : 14}                
+                color={iconColor || argonTheme.COLORS.ICON} />
+            </TouchableOpacity>
           }
           leftStyle={{ paddingVertical: backCus ? 0 : 12, flex: backCus ? 0 : 0.2 }}
           titleStyle={[
             {
               width: backCus ? "auto" : '100%',
-              marginLeft: backCus ? theme.SIZES.BASE * 1.3 : 0,
+              alignItems: backCus ? 'center' : 'stretch',
+              alignSelf:  backCus ? 'center' : 'flex-start',
               fontSize: 16,
               fontWeight: 'bold'
             },
@@ -275,7 +277,7 @@ class Header extends React.Component {
 
 const styles = StyleSheet.create({
   button: {
-    padding: 12,
+    padding: theme.SIZES.BASE / 1.5,
     position: 'relative',
   },
   title: {

@@ -35,6 +35,7 @@ export default class ShoppingCart extends React.Component {
     this.state = {
       Products: [],
       modalVisible: false,
+      IsCartEmpty: true
     }
   }
 
@@ -65,7 +66,8 @@ export default class ShoppingCart extends React.Component {
     var res = await API._fetch(`${config.GET_CART_API_ENDPOINT}?UserId=${Number(UID)}&ShipmentID=${0}`, 'GET');
     if (res != null && res.Data != null) {
       if (res.Data.code == 200) {
-        this.setState({ Products: res.Data.result });
+        var _IsCartEmpty = res.Data.result != null ? this.IsEmpty(res.Data.result.Items) : true;
+        this.setState({ Products: res.Data.result, IsCartEmpty: _IsCartEmpty });
       }
     }
   }
@@ -79,14 +81,14 @@ export default class ShoppingCart extends React.Component {
     return true; // empty
   }
 
-  async ChangeQuantityAndRefesh(VariantId, value){
-    await this.ChangeQuantity(VariantId, value); 
+  async ChangeQuantityAndRefesh(VariantId, value) {
+    await this.ChangeQuantity(VariantId, value);
     this._onFetchDetails();
   }
 
   OnChangeQuantity = async (VariantId, value, current) => {
     //alert(`${VariantId}, ${value}`);
-    console.log("value: "+value + " current: " + current);
+    console.log("value: " + value + " current: " + current);
     if (value <= 0) {
       Alert.alert(
         'Bạn có chắc muốn xóa sản phẩm khỏi giỏ hàng?',
@@ -100,7 +102,7 @@ export default class ShoppingCart extends React.Component {
           { text: 'OK', onPress: () => this.ChangeQuantityAndRefesh(VariantId, value) },
         ],
         { cancelable: true },
-      );      
+      );
     }
     else {
       this.ChangeQuantity(VariantId, value);
@@ -226,51 +228,78 @@ export default class ShoppingCart extends React.Component {
 
     return (
       <Block flex style={styles.navbar}>
-        <ScrollView
-          showsVerticalScrollIndicator={true}
-        >
-          <Block flex style={{
-            backgroundColor: 'white',
-            padding: 10,
-            borderRadius: 4,
-            borderColor: 'rgba(0, 0, 0, 0.1)',
-            height: "100%",
-            width: "100%",
-            marginTop: 22,
-          }}>
-            {_Items}
-          </Block>
-        </ScrollView>
-
-        <Block flex style={{
-          ...styles.shadow,
-          backgroundColor: '#F4F5F7', // TabBar background
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: 0,
-          width: "100%",
-          paddingHorizontal: 5
-        }}>
-          <Block row style={{ height: theme.SIZES.BASE * 3 }}>
-            <Block left middle flex={3} style={{ backgroundColor: "transparent", marginLeft: 3 }}>
-              <Block row right>
-                <Text size={14}>
-                  Tổng tiền:
-                  </Text>
-                <Text color="red" size={14} bold style={{ marginLeft: 3 }}>
-                  {this.state.Products.TotalPrice} đ
-                </Text>
+        {
+          (this.state.IsCartEmpty)
+            ?
+            (
+              <Block middle center style={{
+                backgroundColor: '#F4F5F7',
+                padding: 10,
+                borderRadius: 4,
+                borderColor: 'rgba(0, 0, 0, 0.1)',
+                height: "100%",
+                width: "100%",                
+              }}>
+                <Icon
+                  name={'shopping-cart'}
+                  family="font-awesome"
+                  // style={{ paddingRight: 8 }}
+                  size={30}
+                  color={argonTheme.COLORS.ICON}
+                />
+                <Text bold size={15} color="#32325D">Giỏ hàng trống!</Text>
               </Block>
-            </Block>
-            <Block right middle flex={2}>
-              <Button onPress={() => this.OnNextAction()} color="warning" style={{ ...styles.button, width: "70%", height: "80%" }}>
-                Mua hàng
-              </Button>
-            </Block>
-          </Block>
-        </Block>
+            )
+            :
+            (
+              <Block>
+                <ScrollView
+                  showsVerticalScrollIndicator={true}
+                >
+                  <Block flex style={{
+                    backgroundColor: 'white',
+                    padding: 10,
+                    borderRadius: 4,
+                    borderColor: 'rgba(0, 0, 0, 0.1)',
+                    height: "100%",
+                    width: "100%",
+                    marginTop: 22,
+                  }}>
+                    {_Items}
+                  </Block>
+                </ScrollView>
+                <Block hide={this.state.IsCartEmpty} flex style={{
+                  ...styles.shadow,
+                  backgroundColor: '#F4F5F7', // TabBar background
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  width: "100%",
+                  paddingHorizontal: 5
+                }}>
+                  <Block row style={{ height: theme.SIZES.BASE * 3 }}>
+                    <Block left middle flex={3} style={{ backgroundColor: "transparent", marginLeft: 3 }}>
+                      <Block row right>
+                        <Text size={14}>
+                          Tổng tiền:
+                      </Text>
+                        <Text color="red" size={14} bold style={{ marginLeft: 3 }}>
+                          {this.state.Products.TotalPrice} đ
+                      </Text>
+                      </Block>
+                    </Block>
+                    <Block right middle flex={2}>
+                      <Button onPress={() => this.OnNextAction()} color="warning" style={{ ...styles.button, width: "70%", height: "80%" }}>
+                        Mua hàng
+                    </Button>
+                    </Block>
+                  </Block>
+                </Block>
 
+              </Block>
+            )
+        }
       </Block>
     );
   }

@@ -302,10 +302,10 @@ export default class ProductDetail extends React.Component {
       };
       var res = await API._fetch(config.UPDATE_CART_API_ENDPOINT, 'POST', dataBody);
       if (res != null && res.Data != null) {
-        if (res.Data.code == 200) {
-          alert("success!");
+        if (res.Data.code == 200) {          
           DeviceEventEmitter.emit('EventListener-CountCart');
-          //this.setModalVisible(!this.state.modalVisible);
+          this.setState({ modalVisible: false });
+          this.props.navigation.navigate('ShoppingCart');
         }else if(res.Data.code == 202){
           Alert.alert(
             'Cảnh báo',
@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
   },
   navbar: {
     paddingVertical: 0,
-    //paddingBottom: theme.SIZES.BASE * 1.5,
+    paddingBottom: theme.SIZES.BASE * 2.5,
     paddingTop: iPhoneX ? theme.SIZES.BASE * 4 : theme.SIZES.BASE,
     zIndex: 5,
   },

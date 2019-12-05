@@ -23,7 +23,7 @@ class Home extends React.Component {
       ProductTypeId: null,
       OriginID: null,
       TrademarkID: null,
-      PageSize: 2
+      PageSize: 3
     }
   }
 

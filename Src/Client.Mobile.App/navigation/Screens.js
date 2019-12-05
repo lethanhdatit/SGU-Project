@@ -119,7 +119,7 @@ const HomeStack = createStackNavigator(
     ProductDetail: {
       screen: ProductDetail,
       navigationOptions: ({ navigation }) => ({     
-        header: <Header backCus  title="" navigation={navigation} />, 
+        header: <Header backCus  title="Chi Tiết" navigation={navigation} />, 
         headerTransparent: true
       })
     },

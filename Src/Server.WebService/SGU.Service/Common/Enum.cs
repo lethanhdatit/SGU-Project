@@ -49,7 +49,7 @@ namespace SGU.Service.Common
             Processing = 2,           
             [Display(Name = "Đã Hoàn Tất")] // Đã hoàn thành đơn hàng
             Completed = 4,
-            [Display(Name = "Đã Hủy")] // Bị hủy (User hoạc admin hoặc thợ)
+            [Display(Name = "Đã Hủy")] // Bị hủy (User hoạc admin)
             Cancelled = 8,
             //... add more ...
         }
