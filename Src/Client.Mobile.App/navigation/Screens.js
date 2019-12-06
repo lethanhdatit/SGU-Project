@@ -14,13 +14,14 @@ import Onboarding from "../screens/Onboarding";
 import ProductDetail from "../screens/ProductDetail";
 import ShoppingCart from "../screens/ShoppingCart";
 import Checkout from "../screens/Checkout";
-import Profile from "../screens/Elements-copy";
+import Profile from "../screens/Profile";
 import Elements from "../screens/Elements";
-import Articles from "../screens/Articles";
+import MyOrders from "../screens/MyOrders";
+import OrderDetail from "../screens/OrderDetail";
 // drawer
 import Menu from "./Menu";
 import DrawerItem from "../components/DrawerItem";
-
+import { tabs } from "../constants";
 // header for screens
 import Header from "../components/Header";
 
@@ -62,14 +63,29 @@ const transitionConfig = (transitionProps, prevTransitionProps) => ({
   }
 });
 
-const ElementsStack = createStackNavigator({
-  Elements: {
-    screen: Articles,
+const MyOrdersStack = createStackNavigator({
+  MyOrders: {
+    screen: MyOrders,
     navigationOptions: ({ navigation }) => ({
-      header: <Header title="Đơn Hàng" navigation={navigation} />
+      header: <Header tabIndex={0} tabs={[
+        { id: 0, title: 'Tất Cả' },
+        { id: 1, title: 'Đang Xử Lý' },
+        { id: 2, title: 'Chờ Vận Chuyển' },
+        { id: 4, title: 'Đã Hoàn Tất' },
+        { id: 8, title: 'Đã Hủy' },
+      ]}
+        backHome backCus title="Đơn Hàng Của Tôi" navigation={navigation} />,
+      // headerTransparent: true
+    })
+  },
+  OrderDetail: {
+    screen: OrderDetail,
+    navigationOptions: ({ navigation }) => ({
+      header: <Header backCus title="Chi Tiết Đơn Hàng" navigation={navigation} />,
+      headerTransparent: true
     })
   }
-},{
+}, {
   cardStyle: {
     backgroundColor: "#F8F9FE"
   },
@@ -83,7 +99,7 @@ const ArticlesStack = createStackNavigator({
       header: <Header title="Đăng Xuất" navigation={navigation} />
     })
   }
-},{
+}, {
   cardStyle: {
     backgroundColor: "#F8F9FE"
   },
@@ -118,25 +134,25 @@ const HomeStack = createStackNavigator(
     },
     ProductDetail: {
       screen: ProductDetail,
-      navigationOptions: ({ navigation }) => ({     
-        header: <Header backCus  title="Chi Tiết" navigation={navigation} />, 
+      navigationOptions: ({ navigation }) => ({
+        header: <Header backCus title="Chi Tiết" navigation={navigation} />,
         headerTransparent: true
       })
     },
     ShoppingCart: {
       screen: ShoppingCart,
-      navigationOptions: ({ navigation }) => ({     
-        header: <Header backCus title="Giỏ Hàng" navigation={navigation} />, 
+      navigationOptions: ({ navigation }) => ({
+        header: <Header backCus title="Giỏ Hàng" navigation={navigation} />,
         headerTransparent: true
       })
     },
     Checkout: {
       screen: Checkout,
-      navigationOptions: ({ navigation }) => ({     
-        header: <Header backCus title="Thanh Toán" navigation={navigation} />, 
+      navigationOptions: ({ navigation }) => ({
+        header: <Header backCus title="Thanh Toán" navigation={navigation} />,
         headerTransparent: true
       })
-    }    
+    }
   },
   {
     cardStyle: {
@@ -170,12 +186,12 @@ const AppStack = createDrawerNavigator(
           <DrawerItem focused={focused} screen="Profile" title="Cá Nhân" />
         )
       })
-    },    
-    Elements: {
-      screen: ElementsStack,
+    },
+    MyOrders: {
+      screen: MyOrdersStack,
       navigationOptions: navOpt => ({
         drawerLabel: ({ focused }) => (
-          <DrawerItem focused={focused} screen="Elements" title="Đơn Hàng" />
+          <DrawerItem focused={focused} screen="MyOrders" title="Đơn Hàng" />
         )
       })
     },

@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
     paddingTop: theme.SIZES.BASE
     // paddingBottom: theme.SIZES.BASE * 2,
   },
-  navbar: {   
+  navbar: {
     paddingTop: iPhoneX ? theme.SIZES.BASE * 4.5 : theme.SIZES.BASE * 1.5
   },
   nameInfo: {

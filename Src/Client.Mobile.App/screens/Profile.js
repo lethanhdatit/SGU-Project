@@ -21,7 +21,7 @@ class Profile extends React.Component {
   render() {
     return (
       <Block flex style={styles.profile}>
-        <Block flex>
+        {/* <Block flex>
           <ImageBackground
             source={Images.ProfileBackground}
             style={styles.profileContainer}
@@ -167,7 +167,7 @@ class Profile extends React.Component {
               </Block>
             </ScrollView>
           </ImageBackground>
-        </Block>
+        </Block> */}
         {/* <ScrollView showsVerticalScrollIndicator={false} 
                     contentContainerStyle={{ flex: 1, width, height, zIndex: 9000, backgroundColor: 'red' }}>
         <Block flex style={styles.profileCard}>

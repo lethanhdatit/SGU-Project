@@ -212,7 +212,7 @@ class Home extends React.Component {
     return (
       <Block flex center style={styles.home}>
         {this.renderSearch()}
-        {this.renderOptions()}
+        {this.renderOptions()}      
         {this.renderProducts()}
       </Block>
     );

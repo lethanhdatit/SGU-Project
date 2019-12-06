@@ -82,9 +82,9 @@ class Header extends React.Component {
     }
   };
 
-  handleLeftPress = (backCus) => {
+  handleLeftPress = (backCus, backHome) => {
     const { navigation } = this.props;
-    return (backCus ? navigation.goBack() : navigation.openDrawer());
+    return (backCus ? (backHome ? navigation.navigate('Home') : navigation.goBack()) : navigation.openDrawer());
   }
 
   renderRight = () => {
@@ -134,10 +134,7 @@ class Header extends React.Component {
           <BellButton key='chat-profile' navigation={navigation} />
         );
       case 'Elements':
-        return ([
-          <BellButton key='chat-profile' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-deals' CountCart={this.state.CountCart} navigation={navigation} isWhite={white} />
-        ]);
+        return ([]);
       case 'Product':
         return ([
           <SearchButton key='search-product' navigation={navigation} isWhite={white} />,
@@ -222,7 +219,7 @@ class Header extends React.Component {
     }
   }
   render() {
-    const { backCus, title, white, transparent, bgColor, iconColor, titleColor, navigation, ...props } = this.props;
+    const {backHome, backCus, title, white, transparent, bgColor, iconColor, titleColor, navigation, ...props } = this.props;
     const { routeName } = navigation.state;
     const noShadow = ['Search', 'Categories', 'Deals', 'Profile'].includes(routeName);
     const headerStyles = [
@@ -246,9 +243,9 @@ class Header extends React.Component {
           transparent={transparent}
           right={this.renderRight()}
           rightStyle={{}}
-          onLeftPress={() => navigation.goBack()}
+          //onLeftPress={}
           left={
-            <TouchableOpacity style={[backCus ? styles.button : null]} onPress={() => this.handleLeftPress(backCus)}>
+            <TouchableOpacity style={[backCus ? styles.button : null]} onPress={() => this.handleLeftPress(backCus, backHome)}>
               <Icon
                 name={backCus ? 'chevron-left' : "menu-8"} family={backCus ? "evilicons" : "ArgonExtra"}
                 size={backCus ? theme.SIZES.BASE * 2.4 : 14}                

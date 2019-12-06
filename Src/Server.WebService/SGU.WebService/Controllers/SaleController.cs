@@ -327,6 +327,34 @@ namespace SGU.WebService.Controllers
             }
         }
 
+        [System.Web.Http.Route("getorders")]
+        [System.Web.Http.HttpGet]
+        public JsonResult GetOrders(long UserId, byte OrderStatus)
+        {
+            var response = JsonResponse();
+            try
+            {
+                var _data = _saleService.GetOrdersByLogic(UserId, OrderStatus);
+                var result = _data.Select(x => new OrderHistoryView()
+                {
+                    OrderId = x.OrderID,
+                    CreatedDate = x.CreatedDate.ToString(),
+                    StatusName = EnumHelper.GetDisplayValue((OrderStatus)x.Status),
+                    TotalProduct = x.OrderDetails.Count(),
+                    TotalPrice = string.Format("{0:#,0}", x.OrderPrice)
+                }).OrderByDescending(x=>x.OrderId).ToList();
+
+                response.Data = new { result, code = HttpStatusCode.OK };
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Data = new { code = HttpStatusCode.InternalServerError, message = "Internal server exception: " + ex.Message };
+                return response;
+            }
+
+        }
+
         [System.Web.Http.Route("placeorder")]
         [System.Web.Http.HttpPost]
         public JsonResult PlaceOrder(OrderView model) 
@@ -379,7 +407,7 @@ namespace SGU.WebService.Controllers
                         OrderAddress = model.Address,
                         ShipmentID = model.ShipmentID,
                         OrderNote = model.NoteUser,
-                        Status = (byte)OrderStatus.New,
+                        Status = (byte)OrderStatus.Processing,
                     };
                     var resId = _saleService.CreateOrder(newOrder);
                     if (resId > 0)

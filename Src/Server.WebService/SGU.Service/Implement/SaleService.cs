@@ -86,7 +86,12 @@ namespace SGU.Service.Implement
         public Variant GetVariantById(long variantID)
         {
             return _unitOfWork.Repository<Variant>().GetOne(x => x.VariantID == variantID);
-        }        
+        }
+
+        public List<Order> GetOrdersByLogic(long idUser, byte orderStatus)
+        {
+            return _unitOfWork.Repository<Order>().Get(x => x.UserID == idUser && x.Status == orderStatus).ToList();
+        }
 
         public bool RemoveCart(long userId, long variantID)
         {
