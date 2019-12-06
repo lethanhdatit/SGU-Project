@@ -140,7 +140,7 @@ const HomeStack = createStackNavigator(
   },
   {
     cardStyle: {
-      backgroundColor: "#F8F9FE"
+      backgroundColor: "transparent"
     },
     transitionConfig,
     initialRouteName: 'Home'

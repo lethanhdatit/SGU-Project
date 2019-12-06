@@ -331,7 +331,7 @@ export default class ProductDetail extends React.Component {
           {this.renderCards()}
           {/* {this.renderAlbum()} */}
         </ScrollView>
-        <Block flex style={{
+        <Block style={{
           ...styles.shadow,
           backgroundColor: 'transparent', // TabBar background
           marginTop: theme.SIZES.BASE * 2,
@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
   },
   group: {
     paddingTop: theme.SIZES.BASE,
-    marginBottom: theme.SIZES.BASE * 2,
+    marginBottom: theme.SIZES.BASE * 2.5,
   },
   albumThumb: {
     borderRadius: 4,
@@ -539,11 +539,8 @@ const styles = StyleSheet.create({
     paddingTop: theme.SIZES.BASE
     // paddingBottom: theme.SIZES.BASE * 2,
   },
-  navbar: {
-    paddingVertical: 0,
-    paddingBottom: theme.SIZES.BASE * 2.5,
-    paddingTop: iPhoneX ? theme.SIZES.BASE * 4 : theme.SIZES.BASE,
-    zIndex: 5,
+  navbar: { 
+    paddingTop: iPhoneX ? theme.SIZES.BASE * 4 : theme.SIZES.BASE,    
   },
   nameInfo: {
     marginTop: 25

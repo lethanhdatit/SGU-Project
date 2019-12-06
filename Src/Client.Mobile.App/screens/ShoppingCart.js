@@ -83,7 +83,7 @@ export default class ShoppingCart extends React.Component {
 
   async ChangeQuantityAndRefesh(VariantId, value) {
     await this.ChangeQuantity(VariantId, value);
-    this._onFetchDetails();
+    await this._onFetchDetails();
   }
 
   OnChangeQuantity = async (VariantId, value, current) => {
@@ -150,7 +150,7 @@ export default class ShoppingCart extends React.Component {
 
   render() {
     var _Items = [];
-    if (this.IsEmpty(this.state.Products) == false) {
+    if (this.IsEmpty(this.state.Products) == false && this.IsEmpty(this.state.Products.Items) == false) {
       this.state.Products.Items.map((data, i) => {
         _Items.push(
           <Block key={i}>
@@ -228,6 +228,22 @@ export default class ShoppingCart extends React.Component {
 
     return (
       <Block flex style={styles.navbar}>
+        <ScrollView
+          showsVerticalScrollIndicator={true}
+        >
+          <Block flex style={{
+            backgroundColor: 'white',
+            padding: 10,
+            borderRadius: 4,
+            borderColor: 'rgba(0, 0, 0, 0.1)',
+            height: "100%",
+            width: "100%",
+            paddingTop: theme.SIZES.BASE,
+            marginBottom: theme.SIZES.BASE * 3.1,
+          }}>
+            {_Items}
+          </Block>
+        </ScrollView>
         {
           (this.state.IsCartEmpty)
             ?
@@ -238,7 +254,7 @@ export default class ShoppingCart extends React.Component {
                 borderRadius: 4,
                 borderColor: 'rgba(0, 0, 0, 0.1)',
                 height: "100%",
-                width: "100%",                
+                width: "100%",
               }}>
                 <Icon
                   name={'shopping-cart'}
@@ -252,51 +268,33 @@ export default class ShoppingCart extends React.Component {
             )
             :
             (
-              <Block>
-                <ScrollView
-                  showsVerticalScrollIndicator={true}
-                >
-                  <Block flex style={{
-                    backgroundColor: 'white',
-                    padding: 10,
-                    borderRadius: 4,
-                    borderColor: 'rgba(0, 0, 0, 0.1)',
-                    height: "100%",
-                    width: "100%",
-                    marginTop: 22,
-                  }}>
-                    {_Items}
+              <Block hide={this.state.IsCartEmpty} flex style={{
+                ...styles.shadow,
+                backgroundColor: '#F4F5F7', // TabBar background
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                bottom: 0,
+                width: "100%",
+                paddingHorizontal: 5
+              }}>
+                <Block row style={{ height: theme.SIZES.BASE * 3 }}>
+                  <Block left middle flex={3} style={{ backgroundColor: "transparent", marginLeft: 3 }}>
+                    <Block row right>
+                      <Text size={14}>
+                        Tổng tiền:
+                      </Text>
+                      <Text color="red" size={14} bold style={{ marginLeft: 3 }}>
+                        {this.state.Products.TotalPrice} đ
+                      </Text>
+                    </Block>
                   </Block>
-                </ScrollView>
-                <Block hide={this.state.IsCartEmpty} flex style={{
-                  ...styles.shadow,
-                  backgroundColor: '#F4F5F7', // TabBar background
-                  position: 'absolute',
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  width: "100%",
-                  paddingHorizontal: 5
-                }}>
-                  <Block row style={{ height: theme.SIZES.BASE * 3 }}>
-                    <Block left middle flex={3} style={{ backgroundColor: "transparent", marginLeft: 3 }}>
-                      <Block row right>
-                        <Text size={14}>
-                          Tổng tiền:
-                      </Text>
-                        <Text color="red" size={14} bold style={{ marginLeft: 3 }}>
-                          {this.state.Products.TotalPrice} đ
-                      </Text>
-                      </Block>
-                    </Block>
-                    <Block right middle flex={2}>
-                      <Button onPress={() => this.OnNextAction()} color="warning" style={{ ...styles.button, width: "70%", height: "80%" }}>
-                        Mua hàng
+                  <Block right middle flex={2}>
+                    <Button onPress={() => this.OnNextAction()} color="warning" style={{ ...styles.button, width: "70%", height: "80%" }}>
+                      Mua hàng
                     </Button>
-                    </Block>
                   </Block>
                 </Block>
-
               </Block>
             )
         }
@@ -367,12 +365,8 @@ const styles = StyleSheet.create({
     paddingTop: theme.SIZES.BASE
     // paddingBottom: theme.SIZES.BASE * 2,
   },
-  navbar: {
-    backgroundColor: 'white',
-    paddingVertical: 0,
-    paddingBottom: theme.SIZES.BASE * 3.1,
-    paddingTop: iPhoneX ? theme.SIZES.BASE * 4.5 : theme.SIZES.BASE * 1.5,
-    zIndex: 5,
+  navbar: {   
+    paddingTop: iPhoneX ? theme.SIZES.BASE * 4.5 : theme.SIZES.BASE * 1.5
   },
   nameInfo: {
     marginTop: 35

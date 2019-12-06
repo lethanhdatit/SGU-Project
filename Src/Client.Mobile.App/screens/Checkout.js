@@ -439,7 +439,7 @@ export default class Checkout extends React.Component {
                 <Block right flex>
                   <Block row middle flex>
                     <Text bold size={12} color={argonTheme.COLORS.HEADER} style={{ marginLeft: 3 }}>
-                      {this.state.Products.TotalShipmentPrice} đ
+                      {this.state.Products.TotalShipmentPrice != 0 ? (this.state.Products.TotalShipmentPrice != null ? `${this.state.Products.TotalShipmentPrice} đ`: "N/A") : "Free" }
                       </Text>
                   </Block>
                 </Block>

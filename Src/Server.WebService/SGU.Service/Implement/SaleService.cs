@@ -104,6 +104,18 @@ namespace SGU.Service.Implement
             _unitOfWork.SaveChanges();
         }
 
+        public void UpdateVariantQuantity(long VariantID,int quantity)
+        {
+            var entity = _unitOfWork.Repository<Variant>().GetById(VariantID);
+            var temp = entity.Stock - quantity;
+            if(temp >= 0)
+            {
+                entity.Stock = temp;
+                _unitOfWork.Repository<Variant>().Update(entity);
+                _unitOfWork.SaveChanges();
+            }           
+        }
+        
         public void AddCart(ShoppingCart entity)
         {
             entity.CreatedDate = DateTime.UtcNow;

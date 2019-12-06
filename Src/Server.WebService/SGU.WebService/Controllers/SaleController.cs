@@ -170,12 +170,13 @@ namespace SGU.WebService.Controllers
             var response = JsonResponse();
             try
             {
+                var cartView = new CartView();
                 var carts = _saleService.GetCartByIdUser(UserId);
                 if (carts != null && carts.Any())
                 {
                     var totalItemsPrice = carts.Sum(x => (x.Quantity * x.Variant.Product.ProductPrice));
-                    var total = totalItemsPrice;
-                    var shippingFee = 0;
+                    long? total = (long)totalItemsPrice;
+                    long? shippingFee = null;
 
                     if(ShipmentID != null && ShipmentID != 0)
                     {
@@ -217,20 +218,16 @@ namespace SGU.WebService.Controllers
 
                     }).ToList();
 
-                    var cartView = new CartView()
-                    {
-                        Items = itemsView,
-                        UserId = UserId,
-                        UserFullName = carts?.FirstOrDefault()?.User?.UserName,
-                        UserPhone = carts?.FirstOrDefault()?.User?.UserPhone,
-                        UserAddress = carts?.FirstOrDefault()?.User?.UserAddress,
-                        TotalShipmentPrice = string.Format("{0:#,0}", shippingFee),
-                        TotalItemsPrice = string.Format("{0:#,0}", totalItemsPrice),
-                        TotalPrice = string.Format("{0:#,0}", total)
-                    };
-
-                    response.Data = new { code = HttpStatusCode.OK, result = cartView, message = "Get cart success." };
+                    cartView.Items = itemsView;
+                    cartView.UserId = UserId;
+                    cartView.UserFullName = carts?.FirstOrDefault()?.User?.UserName;
+                    cartView.UserPhone = carts?.FirstOrDefault()?.User?.UserPhone;
+                    cartView.UserAddress = carts?.FirstOrDefault()?.User?.UserAddress;
+                    cartView.TotalShipmentPrice = shippingFee != null ? string.Format("{0:#,0}", shippingFee) : null;
+                    cartView.TotalItemsPrice = string.Format("{0:#,0}", totalItemsPrice);
+                    cartView.TotalPrice = string.Format("{0:#,0}", total);                    
                 }
+                response.Data = new { code = HttpStatusCode.OK, result = cartView, message = "Get cart success." };
                 return response;
             }
             catch (Exception ex)
@@ -399,6 +396,7 @@ namespace SGU.WebService.Controllers
                             var resD = _saleService.CreateOrderDetail(newOrderDetail);
                             if (resD > 0)
                             {
+                                _saleService.UpdateVariantQuantity(item.VariantID, item.Quantity);
                                 _saleService.RemoveCart(item.UserID, item.VariantID);
                             }
                         }
