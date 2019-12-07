@@ -17,7 +17,9 @@ export default {
     GET_ACTIVE_DETAILS_ITEM_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/sale/GetDetailsItem/`,
     GET_CART_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/sale/getcart/`,
     GET_ORDERS_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/sale/getorders/`,
+    GET_DETAIL_ORDERS_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/sale/getdetailorders/`,
     PLACE_ORDER_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/sale/placeorder/`,
+    CANCEL_ORDER_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/sale/cancelorder/`,
     UPDATE_CART_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/sale/updatecart/`, 
     COUNT_CART_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/sale/countcartitem/`,    
     

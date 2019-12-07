@@ -15,7 +15,7 @@ const { height, width } = Dimensions.get('window');
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 
 const BellButton = ({ isWhite, style, navigation }) => (
-  <TouchableOpacity style={[styles.button, style]} onPress={() => alert('Đang bảo trì.')}>
+  <TouchableOpacity style={[styles.button, style]} onPress={() => navigation.navigate('MyOrdersScreen', { tabId: '0' })}>
     <Icon
       family="ArgonExtra"
       size={20}
@@ -84,7 +84,7 @@ class Header extends React.Component {
 
   handleLeftPress = (backCus, backHome) => {
     const { navigation } = this.props;
-    return (backCus ? (backHome ? navigation.navigate('Home') : navigation.goBack()) : navigation.openDrawer());
+    return (backCus ? (backHome ? navigation.navigate('HomeScreen') : navigation.goBack()) : navigation.openDrawer());
   }
 
   renderRight = () => {
@@ -99,7 +99,7 @@ class Header extends React.Component {
     }
 
     switch (routeName) {
-      case 'Home':
+      case 'HomeScreen':
         return ([
           <BellButton key='chat-home' navigation={navigation} isWhite={white} />,
           <BasketButton key='basket-home' CountCart={this.state.CountCart} navigation={navigation} isWhite={white} />

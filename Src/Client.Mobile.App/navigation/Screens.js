@@ -64,18 +64,18 @@ const transitionConfig = (transitionProps, prevTransitionProps) => ({
 });
 
 const MyOrdersStack = createStackNavigator({
-  MyOrders: {
+  MyOrdersScreen: {
     screen: MyOrders,
     navigationOptions: ({ navigation }) => ({
-      header: <Header tabIndex={0} tabs={[
-        { id: 0, title: 'Tất Cả' },
+      header: <Header tabIndex={'0'} tabs={[
+        { id: '0', title: 'Tất Cả' },
         { id: 1, title: 'Đang Xử Lý' },
         { id: 2, title: 'Chờ Vận Chuyển' },
         { id: 4, title: 'Đã Hoàn Tất' },
         { id: 8, title: 'Đã Hủy' },
       ]}
-        backHome backCus title="Đơn Hàng Của Tôi" navigation={navigation} />,
-      // headerTransparent: true
+        backCus backHome title="Đơn Hàng Của Tôi" navigation={navigation} />,
+        headerTransparent: true
     })
   },
   OrderDetail: {
@@ -84,7 +84,13 @@ const MyOrdersStack = createStackNavigator({
       header: <Header backCus title="Chi Tiết Đơn Hàng" navigation={navigation} />,
       headerTransparent: true
     })
-  }
+  },
+  // Home: {
+  //   screen: Home,
+  //   navigationOptions: ({ navigation }) => ({
+  //     header: <Header title="Mua Sắm" navigation={navigation} />
+  //   })
+  // }
 }, {
   cardStyle: {
     backgroundColor: "#F8F9FE"
@@ -126,7 +132,7 @@ const ProfileStack = createStackNavigator(
 
 const HomeStack = createStackNavigator(
   {
-    Home: {
+    HomeScreen: {
       screen: Home,
       navigationOptions: ({ navigation }) => ({
         header: <Header title="Mua Sắm" navigation={navigation} />
@@ -159,7 +165,7 @@ const HomeStack = createStackNavigator(
       backgroundColor: "transparent"
     },
     transitionConfig,
-    initialRouteName: 'Home'
+    initialRouteName: 'HomeScreen'
   }
 );
 // divideru se baga ca si cum ar fi un ecrna dar nu-i nimic duh

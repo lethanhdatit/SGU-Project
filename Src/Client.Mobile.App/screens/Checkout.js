@@ -128,8 +128,7 @@ export default class Checkout extends React.Component {
     this._onFetchProducts();
   }
 
-
-  OnNextAction = async () => {
+  OnPlaceOrder = async () => {
     var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
     var dataBody = {
       UserId: UID,
@@ -140,14 +139,31 @@ export default class Checkout extends React.Component {
       NoteUser: this.state.ShippingNote
     };
     await API._fetch(config.PLACE_ORDER_API_ENDPOINT, 'POST', dataBody);
-    DeviceEventEmitter.emit('EventListener-CountCart');
-    this.props.navigation.navigate('Home');
+    DeviceEventEmitter.emit('EventListener-CountCart');    
+    this.props.navigation.navigate('MyOrdersScreen', { tabId: 1 });
   }
+
+  OnNextAction = async () => {
+    Alert.alert(
+      'Đặt hàng cho bạn ngay nhé?',
+      '',
+      [
+        {
+          text: 'Cancel',
+          //onPress: () => this._onFetchDetails(),
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => this.OnPlaceOrder() },
+      ],
+      { cancelable: true },
+    );
+  }
+
 
   handleDatePicked = date => {
     var customDate = moment(new Date(date)).format('DD/MM/YYYY hh:mm a');
     this.toggleDateTimePicker();
-    this.setState({ ShippingDate: customDate });    
+    this.setState({ ShippingDate: customDate });
   };
 
   toggleDateTimePicker = () => {
@@ -168,7 +184,7 @@ export default class Checkout extends React.Component {
     ) ? false : true;
 
     var _Items = [];
-    if (this.IsEmpty(this.state.Products) == false) {
+    if (this.IsEmpty(this.state.Products) == false && this.IsEmpty(this.state.Products.Items) == false) {
       this.state.Products.Items.map((data, i) => {
         _Items.push(
           <Block key={i}>
@@ -338,7 +354,7 @@ export default class Checkout extends React.Component {
                     </Block>
                   }
                   value={this.state.ShippingDate}
-                  onChangeText={(text) => this.setState({ ShippingDate: text })}
+                  //onChangeText={(text) => this.setState({ ShippingDate: text })}
                   editable={false}
                   disabled={true}
                 />
@@ -382,6 +398,18 @@ export default class Checkout extends React.Component {
                   style={{ width: "50%" }}
                   onSelect={(index, item) => this.OnSelectShipment(item)}
                 />
+              </Block>
+            </Block>
+          </Block>
+          <Block flex style={styles.group}>
+            <Text bold size={16} style={styles.title}>
+              Thanh toán:
+            </Text>
+            <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+              <Block left>
+                <Text size={16} style={{ color: "#525F7F", marginVertical: 5, marginLeft: 5 }}>
+                  [Ship COD]
+                </Text>
               </Block>
             </Block>
           </Block>
@@ -439,8 +467,8 @@ export default class Checkout extends React.Component {
                 <Block right flex>
                   <Block row middle flex>
                     <Text bold size={12} color={argonTheme.COLORS.HEADER} style={{ marginLeft: 3 }}>
-                      {this.state.Products.TotalShipmentPrice != 0 ? (this.state.Products.TotalShipmentPrice != null ? `${this.state.Products.TotalShipmentPrice} đ`: "N/A") : "Free" }
-                      </Text>
+                      {this.state.Products.TotalShipmentPrice != 0 ? (this.state.Products.TotalShipmentPrice != null ? `${this.state.Products.TotalShipmentPrice} đ` : "N/A") : "Free"}
+                    </Text>
                   </Block>
                 </Block>
               </Block>

@@ -112,7 +112,10 @@ namespace SGU.WebService.Models
         public string CreatedDate { get; set; }        
         public string StatusName { get; set; }       
         public int TotalProduct { get; set; }        
-        public string TotalPrice { get; set; }        
+        public string TotalPrice { get; set; }
+        
+        public DateTime CreatedDateDT { get; set; }
+        public DateTime? UpdatedDate { get; set; }
     }
 
     public class OrderDetailHistoryView
@@ -125,7 +128,10 @@ namespace SGU.WebService.Models
         public long ShipmentID { get; set; }
         public string ShipmentName { get; set; }
         public string ShipmentTotalPrice { get; set; }
+        public string TotalProductPrice { get; set; }
+        public string TotalPrice { get; set; }
         public string NoteUser { get; set; }
+        public bool IsAvailableCancel { get; set; }
         public List<CartItemView> Items { get; set; }
     }
 }

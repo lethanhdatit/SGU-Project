@@ -287,7 +287,7 @@ export default class ProductDetail extends React.Component {
   }
 
   OnNextAction = async (isAddToCart) => {
-    if (isAddToCart) {
+    
       var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
       var _items = [
         {
@@ -305,7 +305,11 @@ export default class ProductDetail extends React.Component {
         if (res.Data.code == 200) {          
           DeviceEventEmitter.emit('EventListener-CountCart');
           this.setState({ modalVisible: false });
+          if (isAddToCart) {
           this.props.navigation.navigate('ShoppingCart');
+          }else{
+            this.props.navigation.navigate('Checkout');
+          }
         }else if(res.Data.code == 202){
           Alert.alert(
             'Cảnh báo',
@@ -317,7 +321,7 @@ export default class ProductDetail extends React.Component {
           );
         }
       }
-    }
+   
   }
 
 

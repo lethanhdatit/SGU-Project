@@ -42,7 +42,7 @@ export default class MyOrders extends React.Component {
     this.state = {
       Orders: []
     }
-    this._onFetchOrders(0);  
+    this._onFetchOrders(0);
   }
 
 
@@ -56,17 +56,17 @@ export default class MyOrders extends React.Component {
 
   _onFetchOrders = async (status) => {
     var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
-    var res = await API._fetch(`${config.GET_ORDERS_API_ENDPOINT}?UserId=${Number(UID)}&OrderStatus=${status}`, 'GET');
+    var res = await API._fetch(`${config.GET_ORDERS_API_ENDPOINT}?UserId=${Number(UID)}&OrderStatus=${Number(status)}`, 'GET');
     if (res != null && res.Data != null) {
-      if (res.Data.code == 200) {        
+      if (res.Data.code == 200) {
         this.setState({ Orders: res.Data.result });
       }
-    }   
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.navigation !== nextProps.navigation) {
-      this._onFetchOrders(nextProps.navigation.getParam('tabId', 0));      
+      this._onFetchOrders(nextProps.navigation.getParam('tabId', 0));
     }
   }
 
@@ -75,47 +75,59 @@ export default class MyOrders extends React.Component {
     if (this.IsEmpty(this.state.Orders) == false) {
       this.state.Orders.map((data, i) => {
         _Items.push(
-          <Block key={i}>
+          <Block key={i} style={{
+            backgroundColor: 'white',
+            marginBottom: 15
+          }}>
             <Block row flex>
               <Block flex style={{
-                alignItems: 'flex-start',
-                alignSelf: 'flex-end',
-                marginLeft: 15
+                marginLeft: 15,
+                paddingVertical: 10
               }}>
                 <Block row style={{ marginBottom: 3 }}>
-                  <TouchableOpacity onPress={() => this.props.navigation.navigate('OrderDetail', { OrderId: data.OrderId })}>
+                  <TouchableOpacity onPress={() => this.props.navigation.navigate('OrderDetail', { OrderId: data.OrderId, 
+                    OrderStatus: data.StatusName, CreatedDate: data.CreatedDate})}>
                     <Text bold size={14} color="#32325D">
-                      Đơn hàng {data.OrderId} >
+                      Đơn hàng: #{data.OrderId}
                     </Text>
                   </TouchableOpacity>
                 </Block>
-                <Block row left flex>
-                  <Text size={12} color={argonTheme.COLORS.HEADER}>
-                    Đặt hàng ngày: {data.CreatedDate}
-                  </Text>                 
+                <Block row style={{ paddingRight: theme.SIZES.BASE }}>
+                  <Block left middle flex={2}>
+                    <Text size={12} color={argonTheme.COLORS.HEADER}>
+                      Đặt ngày: {data.CreatedDate}
+                    </Text>
+                  </Block>
+                  <Block row right flex>
+                    <Text size={12} color={argonTheme.COLORS.HEADER} style={{ fontStyle: 'italic' }}>
+                      {data.StatusName}
+                    </Text>
+                  </Block>
                 </Block>
-                <Block row left flex>                 
-                  <Text size={12} color={argonTheme.COLORS.HEADER}>
-                    Trạng thái: {data.StatusName}
-                  </Text>                
+                <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
+                  <Block style={styles.divider} />
                 </Block>
-                <Block row left flex>                
-                  <Text size={12} color={argonTheme.COLORS.HEADER}>
-                    Số lượng: {data.TotalProduct} sp
-                  </Text>
-                </Block>
-                <Block row>
-                  <Block left flex>
-                    <Text bold size={12} color={argonTheme.COLORS.HEADER}>
+                <Block right flex style={{ paddingRight: theme.SIZES.BASE }}>
+                  <Block row right flex>
+                    <Text size={12} color="red">
+                      {data.TotalProduct}
+                    </Text>
+                    <Text size={12} style={{ marginLeft: 3 }}>
+                      Sản phẩm.
+                    </Text>
+                    <Text size={12} style={{ marginLeft: 3 }}>
+                      Tổng cộng:
+                    </Text>
+                    <Text size={12} color="red" style={{ marginLeft: 3 }}>
                       {data.TotalPrice} đ
                     </Text>
                   </Block>
                 </Block>
               </Block>
             </Block>
-            <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
+            {/* <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
               <Block style={styles.divider} />
-            </Block>
+            </Block> */}
           </Block>
         );
       });
@@ -127,16 +139,13 @@ export default class MyOrders extends React.Component {
           showsVerticalScrollIndicator={false}
         >
           <Block flex style={{
-            backgroundColor: 'white',
-            padding: 14,
+            backgroundColor: '#F4F5F7',
             borderRadius: 4,
+            marginTop: 15,
             borderColor: 'rgba(0, 0, 0, 0.1)',
             height: "100%",
             width: "100%",
-          }}>           
-            <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
-              <Block style={styles.divider} />
-            </Block>
+          }}>
             {_Items}
           </Block>
         </ScrollView>
@@ -215,8 +224,8 @@ const styles = StyleSheet.create({
   navbar: {
     backgroundColor: 'white',
     paddingVertical: 0,
-    paddingBottom: theme.SIZES.BASE * 5.1,
-    paddingTop: iPhoneX ? theme.SIZES.BASE * 4.5 : theme.SIZES.BASE * 1.5,
+    paddingBottom: theme.SIZES.BASE * 1,
+    paddingTop: iPhoneX ? theme.SIZES.BASE * 8.5 : theme.SIZES.BASE * 4.2,
     zIndex: 5,
   },
   nameInfo: {

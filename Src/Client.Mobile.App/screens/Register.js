@@ -190,7 +190,7 @@ export default class Register extends React.Component {
                             borderless
                             value={this.state.DOB}
                             placeholder="Ngày sinh"
-                            onChangeText={(text) => this.setState({ DOB: text })}
+                            //onChangeText={(text) => this.setState({ DOB: text })}
                             editable={false}
                             iconContent={
                               <Icon

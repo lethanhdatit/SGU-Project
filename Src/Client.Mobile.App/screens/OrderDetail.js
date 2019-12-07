@@ -40,16 +40,7 @@ export default class OrderDetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      Products: [],
-      Shipments: [],
-      modalVisible: false,
-      isDateTimePickerVisible: false,
-      SelectedShipment: 0,
-      ShippingFullName: "",
-      ShippingPhone: "",
-      ShippingAddress: "",
-      ShippingDate: "",
-      ShippingNote: "",
+      DetailOrders: []
     }
   }
 
@@ -60,56 +51,28 @@ export default class OrderDetail extends React.Component {
   }
 
   componentDidMount() {
-    // const { navigation } = this.props;
-    // this.focusListener = navigation.addListener('didFocus', () => {
-    //   this._onFetchDetails();
-    // });
+    const { navigation } = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      this._onFetchDetailOrders();
+    });
   }
 
   componentWillUnmount() {
     // Remove the event listener
-    //this.focusListener.remove();
+    this.focusListener.remove();
   }
 
   componentWillMount() {
-    //this._onFetchDetails();
+    this._onFetchDetailOrders();
   }
 
-  _onFetchDetails = async () => {
-    var res = await this._onFetchProducts();
-    if (res != null) {
-      this.setState({
-        ShippingFullName: res.UserFullName != null ? res.UserFullName : "",
-        ShippingPhone: res.UserPhone != null ? res.UserPhone : "",
-        ShippingAddress: res.UserAddress != null ? res.UserAddress : ""
-      });
-    }
-    this._onFetchShipments();
-  }
 
-  _onFetchProducts = async () => {
-    var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
-    var res = await API._fetch(`${config.GET_CART_API_ENDPOINT}?UserId=${Number(UID)}&ShipmentID=${this.state.SelectedShipment}`, 'GET');
+  _onFetchDetailOrders = async (status) => {
+    var OrderID = this.props.navigation.getParam('OrderId', '0');
+    var res = await API._fetch(`${config.GET_DETAIL_ORDERS_API_ENDPOINT}?OrderID=${Number(OrderID)}`, 'GET');
     if (res != null && res.Data != null) {
       if (res.Data.code == 200) {
-        this.setState({
-          Products: res.Data.result,
-        });
-        return res.Data.result;
-      }
-    }
-    return null;
-  }
-
-  _onFetchShipments = async () => {
-    var res2 = await API._fetch(`${config.GET_ACTIVE_SHIPMENT}`, 'GET');
-    if (res2 != null && res2.Data != null) {
-      if (res2.Data.code == 200) {
-        var temp = [];
-        res2.Data.result.map((item, index) => {
-          temp.push(`${item.ShipmentID}-${item.ShipmentName}`);
-        });
-        this.setState({ Shipments: temp });
+        this.setState({ DetailOrders: res.Data.result });
       }
     }
   }
@@ -122,54 +85,39 @@ export default class OrderDetail extends React.Component {
     return true; // empty
   }
 
-  OnSelectShipment(value) {
-    var ShipmentID = value.split('-')[0];
-    this.state.SelectedShipment = ShipmentID;
-    this._onFetchProducts();
+  CancelOrder = async (IdOrder) => {
+    var OrderID = this.props.navigation.getParam('OrderId', '0');
+    var res = await API._fetch(`${config.CANCEL_ORDER_API_ENDPOINT}?OrderID=${Number(OrderID)}`, 'GET');
+    if (res != null && res.Data != null) {
+      if (res.Data.code == 200) {
+        this.props.navigation.navigate('MyOrdersScreen', { tabId: 8 });
+      }
+    }
   }
 
-
-  OnNextAction = async () => {
-    var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
-    var dataBody = {
-      UserId: UID,
-      Address: this.state.ShippingAddress,
-      Phone: this.state.ShippingPhone,
-      ShippingDate: this.state.ShippingDate,
-      ShipmentID: this.state.SelectedShipment,
-      NoteUser: this.state.ShippingNote
-    };
-    await API._fetch(config.PLACE_ORDER_API_ENDPOINT, 'POST', dataBody);
-    DeviceEventEmitter.emit('EventListener-CountCart');
-    this.props.navigation.navigate('Home');
+  OnCancelOrder = async () => {
+    Alert.alert(
+      'Bạn xác nhận hủy đơn hàng này?',
+      '',
+      [
+        {
+          text: 'Cancel',
+          //onPress: () => this._onFetchDetails(),
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => this.CancelOrder() },
+      ],
+      { cancelable: true },
+    );
   }
-
-  handleDatePicked = date => {
-    var customDate = moment(new Date(date)).format('DD/MM/YYYY hh:mm a');
-    this.toggleDateTimePicker();
-    this.setState({ ShippingDate: customDate });
-  };
-
-  toggleDateTimePicker = () => {
-    this.setState({ isDateTimePickerVisible: !this.state.isDateTimePickerVisible });
-  };
 
   render() {
-    var isDisableLoginButton = (
-      this.state.SelectedShipment != 0
-      && this.state.SelectedShipment != null
-      && validatePhone(this.state.ShippingPhone)
-      && this.state.ShippingFullName != null
-      && this.state.ShippingFullName.length > 3
-      && this.state.ShippingAddress != null
-      && this.state.ShippingAddress.length > 10
-      && this.state.ShippingDate != null
-      && this.state.ShippingDate != ""
-    ) ? false : true;
-
+    var OrderID = this.props.navigation.getParam('OrderId', '0');
+    var OrderStatus = this.props.navigation.getParam('OrderStatus', 'Unknown');
+    var CreatedDate = this.props.navigation.getParam('CreatedDate', 'Unknown');
     var _Items = [];
-    if (this.IsEmpty(this.state.Products) == false) {
-      this.state.Products.Items.map((data, i) => {
+    if (this.IsEmpty(this.state.DetailOrders) == false) {
+      this.state.DetailOrders.Items.map((data, i) => {
         _Items.push(
           <Block key={i}>
             <Block row flex>
@@ -232,161 +180,138 @@ export default class OrderDetail extends React.Component {
           showsVerticalScrollIndicator={false}
         >
           <Block flex style={styles.group}>
-            <Text bold size={16} style={styles.title}>
-              Thông tin giao hàng:
-            </Text>
-            <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-              <Input
-                placeholder="Họ tên"
-                iconContent={
-                  <Block
-                    middle
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: 10,
-                      backgroundColor: this.state.ShippingFullName.length != null && this.state.ShippingFullName.length > 3 ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
-                      marginRight: 10
-                    }}
-                  >
-                    <Icon
-                      size={11}
-                      color={argonTheme.COLORS.ICON}
-                      name="pencil"
-                      family="font-awesome"
-                    />
-                  </Block>
-                }
-                value={this.state.ShippingFullName}
-                onChangeText={(text) => this.setState({ ShippingFullName: text })}
-                editable={false}
-                disabled={true}
-              />
+            <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
+              <Block style={styles.divider} />
             </Block>
-            <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-              <Input
-                placeholder="Số điện thoại"
-                iconContent={
-                  <Block
-                    middle
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: 10,
-                      backgroundColor: validatePhone(this.state.ShippingPhone) ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
-                      marginRight: 10
-                    }}
-                  >
-                    <Icon
-                      size={11}
-                      color={argonTheme.COLORS.ICON}
-                      name="phone"
-                      family="font-awesome"
-                    />
-                  </Block>
-                }
-                value={this.state.ShippingPhone}
-                onChangeText={(text) => this.setState({ ShippingPhone: text })}
-                error={!validatePhone(this.state.ShippingPhone)}
-              />
-            </Block>
-            <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-              <Input
-                placeholder="Địa chỉ giao hàng"
-                iconContent={
-                  <Block
-                    middle
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: 10,
-                      backgroundColor: this.state.ShippingAddress.length != null && this.state.ShippingAddress.length > 10 ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
-                      marginRight: 10
-                    }}
-                  >
-                    <Icon
-                      size={11}
-                      color={argonTheme.COLORS.ICON}
-                      name="map-marker"
-                      family="font-awesome"
-                    />
-                  </Block>
-                }
-                value={this.state.ShippingAddress}
-                onChangeText={(text) => this.setState({ ShippingAddress: text })}
-              />
-            </Block>
-            <TouchableOpacity onPress={() => this.toggleDateTimePicker()}>
-              <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-                <Input
-                  placeholder="Ngày giao hàng"
-                  iconContent={
-                    <Block
-                      middle
-                      style={{
-                        width: 20,
-                        height: 20,
-                        borderRadius: 10,
-                        backgroundColor: this.state.ShippingDate.length != null && this.state.ShippingDate.length > 3 ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
-                        marginRight: 10
-                      }}
-                    >
-                      <Icon
-                        size={11}
-                        color={argonTheme.COLORS.ICON}
-                        name="calendar"
-                        family="font-awesome"
-                      />
-                    </Block>
-                  }
-                  value={this.state.ShippingDate}
-                  onChangeText={(text) => this.setState({ ShippingDate: text })}
-                  editable={false}
-                  disabled={true}
-                />
+            <Block row style={{ paddingHorizontal: theme.SIZES.BASE }}>
+              <Block row left center flex={2}>
+                <Text bold size={16} style={{ color: argonTheme.COLORS.HEADER }}>
+                  Mã đơn:
+                </Text>
+                <Text size={16} style={{
+                  color: "#525F7F",
+                  marginLeft: 10
+                }}>
+                  #{OrderID}
+                </Text>
               </Block>
-            </TouchableOpacity>
-            <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-              <Input
-                placeholder="Ghi chú"
-                iconContent={
-                  <Block
-                    middle
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: 10,
-                      backgroundColor: argonTheme.COLORS.INPUT_SUCCESS,
-                      marginRight: 10
-                    }}
-                  >
-                    <Icon
-                      size={11}
-                      color={argonTheme.COLORS.ICON}
-                      name="sticky-note"
-                      family="font-awesome"
-                    />
-                  </Block>
-                }
-                value={this.state.ShippingNote}
-                onChangeText={(text) => this.setState({ ShippingNote: text })}
-              />
+              <Block right flex>
+                <Text size={14} style={{
+                  color: "#525F7F",
+                  fontStyle: 'italic'
+                }}>
+                  {OrderStatus}
+                </Text>
+              </Block>
             </Block>
-          </Block>
-          <Block flex style={styles.group}>
-            <Text bold size={16} style={styles.title}>
-              Chọn nhà vận chuyển:
-            </Text>
-            <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-              <Block flex left>
-                <Select
-                  options={this.state.Shipments}
-                  style={{ width: "50%" }}
-                  onSelect={(index, item) => this.OnSelectShipment(item)}
-                />
+            <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
+              <Block style={styles.divider} />
+            </Block>
+            <Block row style={{ paddingHorizontal: theme.SIZES.BASE }}>
+              <Block left flex>
+                <Text bold size={14} style={{ ...styles.titleCustom }}>
+                  Người nhận:
+                  </Text>
+              </Block>
+              <Block right flex>
+                <Text size={14} style={{ color: "#525F7F", marginVertical: 5 }}>
+                  {this.state.DetailOrders.UserFullName}
+                </Text>
+              </Block>
+            </Block>
+
+            <Block row style={{ paddingHorizontal: theme.SIZES.BASE }}>
+              <Block left flex>
+                <Text bold size={14} style={{ ...styles.titleCustom }}>
+                  Số điện thoại:
+                  </Text>
+              </Block>
+              <Block right flex>
+                <Text size={14} style={{ color: "#525F7F", marginVertical: 5 }}>
+                  {this.state.DetailOrders.Phone}
+                </Text>
+              </Block>
+            </Block>
+
+            <Block row style={{ paddingHorizontal: theme.SIZES.BASE }}>
+              <Block left flex>
+                <Text bold size={14} style={{ ...styles.titleCustom }}>
+                  Địa chỉ:
+                  </Text>
+              </Block>
+              <Block right flex>
+                <Text size={14} style={{ color: "#525F7F", marginVertical: 5 }}>
+                  {this.state.DetailOrders.Address}
+                </Text>
+              </Block>
+            </Block>
+
+            <Block row style={{ paddingHorizontal: theme.SIZES.BASE }}>
+              <Block left flex>
+                <Text bold size={14} style={{ ...styles.titleCustom }}>
+                  Ngày đặt:
+                  </Text>
+              </Block>
+              <Block right flex>
+                <Text size={14} style={{ color: "#525F7F", marginVertical: 5 }}>
+                  {CreatedDate}
+                </Text>
+              </Block>
+            </Block>
+
+            <Block row style={{ paddingHorizontal: theme.SIZES.BASE }}>
+              <Block left flex>
+                <Text bold size={14} style={{ ...styles.titleCustom }}>
+                  Ngày giao:
+                  </Text>
+              </Block>
+              <Block right flex>
+                <Text size={14} style={{ color: "#525F7F", marginVertical: 5 }}>
+                  {this.state.DetailOrders.ShippingDate}
+                </Text>
+              </Block>
+            </Block>
+
+            <Block row style={{ paddingHorizontal: theme.SIZES.BASE }}>
+              <Block left flex>
+                <Text bold size={14} style={{ ...styles.titleCustom }}>
+                  Nhà vận chuyển:
+                  </Text>
+              </Block>
+              <Block right flex>
+                <Text size={14} style={{ color: "#525F7F", marginVertical: 5 }}>
+                  {this.state.DetailOrders.ShipmentName}
+                </Text>
+              </Block>
+            </Block>
+
+            <Block row style={{ paddingHorizontal: theme.SIZES.BASE }}>
+              <Block left flex>
+                <Text bold size={14} style={{ ...styles.titleCustom }}>
+                  Thanh toán:
+                  </Text>
+              </Block>
+              <Block right flex>
+                <Text size={14} style={{ color: "#525F7F", marginVertical: 5 }}>
+                  Ship COD
+                </Text>
               </Block>
             </Block>
           </Block>
+                  
+          <Block row style={{ paddingHorizontal: theme.SIZES.BASE }}>
+              <Block left flex>
+                <Text bold size={14} style={{ ...styles.titleCustom }}>
+                  Ghi chú:
+                  </Text>
+              </Block>
+              <Block right flex>
+                <Text size={14} style={{ color: "#525F7F", marginVertical: 5 }}>
+                  {this.state.DetailOrders.NoteUser}
+                </Text>
+              </Block>
+            </Block>
+
           <Block flex style={{
             backgroundColor: 'white',
             padding: 14,
@@ -426,7 +351,7 @@ export default class OrderDetail extends React.Component {
                 <Block right flex>
                   <Block row middle flex>
                     <Text bold size={12} color={argonTheme.COLORS.HEADER} style={{ marginLeft: 3 }}>
-                      {this.state.Products.TotalItemsPrice} đ
+                      {this.state.DetailOrders.TotalProductPrice} đ
                       </Text>
                   </Block>
                 </Block>
@@ -441,7 +366,7 @@ export default class OrderDetail extends React.Component {
                 <Block right flex>
                   <Block row middle flex>
                     <Text bold size={12} color={argonTheme.COLORS.HEADER} style={{ marginLeft: 3 }}>
-                      {this.state.Products.TotalShipmentPrice != 0 ? (this.state.Products.TotalShipmentPrice != null ? `${this.state.Products.TotalShipmentPrice} đ` : "N/A") : "Free"}
+                      {this.state.DetailOrders.ShipmentTotalPrice != '0' ? (this.state.DetailOrders.ShipmentTotalPrice != null ? `${this.state.DetailOrders.ShipmentTotalPrice} đ` : "N/A") : "Free"}
                     </Text>
                   </Block>
                 </Block>
@@ -460,7 +385,7 @@ export default class OrderDetail extends React.Component {
                 <Block right flex>
                   <Block row middle flex>
                     <Text color="red" size={14} bold style={{ marginLeft: 3 }}>
-                      {this.state.Products.TotalPrice} đ
+                      {this.state.DetailOrders.TotalPrice} đ
                     </Text>
                   </Block>
                 </Block>
@@ -468,24 +393,16 @@ export default class OrderDetail extends React.Component {
 
             </Block>
             <Block right middle flex={1}>
-              <Button onPress={() => this.OnNextAction()}
+              <Button onPress={() => this.OnCancelOrder()}
                 color="success"
-                style={{ ...styles.button, width: "90%", height: "60%", backgroundColor: isDisableLoginButton ? "#cccccc" : "#5E72E4" }}
-                disabled={isDisableLoginButton}
+                style={{ ...styles.button, width: "90%", height: "60%", backgroundColor: !this.state.DetailOrders.IsAvailableCancel ? "#cccccc" : "#5E72E4" }}
+                disabled={!this.state.DetailOrders.IsAvailableCancel}
               >
-                Đặt hàng
+                Hủy Đơn
               </Button>
             </Block>
           </Block>
         </Block>
-        <DateTimePicker
-          isVisible={this.state.isDateTimePickerVisible}
-          onConfirm={this.handleDatePicked}
-          onCancel={this.toggleDateTimePicker}
-          mode='datetime'
-          minimumDate={new Date()}
-          is24Hour={false}
-        />
       </Block >
     );
   }

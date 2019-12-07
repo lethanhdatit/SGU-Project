@@ -90,9 +90,19 @@ namespace SGU.Service.Implement
 
         public List<Order> GetOrdersByLogic(long idUser, byte orderStatus)
         {
+            if(orderStatus == 0)
+            {
+                return _unitOfWork.Repository<Order>().Get(x => x.UserID == idUser).ToList();
+            }
             return _unitOfWork.Repository<Order>().Get(x => x.UserID == idUser && x.Status == orderStatus).ToList();
         }
 
+        public List<OrderDetail> GetDetailOrdersByOID(long orderId)
+        {           
+            return _unitOfWork.Repository<OrderDetail>().Get(x => x.OrderID == orderId).ToList();
+        }
+
+        
         public bool RemoveCart(long userId, long variantID)
         {
             var cart = _unitOfWork.Repository<ShoppingCart>().GetOne(x => x.UserID == userId && x.VariantID == variantID);

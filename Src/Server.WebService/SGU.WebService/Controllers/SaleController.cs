@@ -326,7 +326,7 @@ namespace SGU.WebService.Controllers
                 return response;
             }
         }
-
+        
         [System.Web.Http.Route("getorders")]
         [System.Web.Http.HttpGet]
         public JsonResult GetOrders(long UserId, byte OrderStatus)
@@ -340,10 +340,59 @@ namespace SGU.WebService.Controllers
                     OrderId = x.OrderID,
                     CreatedDate = x.CreatedDate.ToString(),
                     StatusName = EnumHelper.GetDisplayValue((OrderStatus)x.Status),
-                    TotalProduct = x.OrderDetails.Count(),
-                    TotalPrice = string.Format("{0:#,0}", x.OrderPrice)
-                }).OrderByDescending(x=>x.OrderId).ToList();
+                    TotalProduct = x.OrderDetails.Sum(j=>j.Quantity),
+                    TotalPrice = string.Format("{0:#,0}", x.OrderPrice),
+                    UpdatedDate = x.UpdatedDate,
+                    CreatedDateDT = x.CreatedDate
+                }).OrderByDescending(x=>x.UpdatedDate != null ? x.UpdatedDate.Value : x.CreatedDateDT).ToList();
 
+                response.Data = new { result, code = HttpStatusCode.OK };
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Data = new { code = HttpStatusCode.InternalServerError, message = "Internal server exception: " + ex.Message };
+                return response;
+            }
+
+        }
+
+        [System.Web.Http.Route("getdetailorders")]
+        [System.Web.Http.HttpGet]
+        public JsonResult GetDetailOrders(long OrderID)
+        {
+            var response = JsonResponse();
+            try
+            {
+                var result = new OrderDetailHistoryView();
+                var _data = _saleService.GetDetailOrdersByOID(OrderID);
+                var order = _data.FirstOrDefault().Order;
+                result.UserId = order.User.UserID;
+                result.UserFullName = order.User.UserName;
+                result.Address = order.OrderAddress;
+                result.Phone = order.OrderPhone;
+                result.ShippingDate = order.OrderDate.ToString();
+                result.ShipmentID = order.ShipmentID;
+                result.ShipmentName = order.Shipment.ShipmentName;
+                result.TotalProductPrice = string.Format("{0:#,0}", _data.Sum(x => x.Quantity * x.Variant.Product.ProductPrice));
+                result.TotalPrice = string.Format("{0:#,0}", order.OrderPrice);
+                result.ShipmentTotalPrice = string.Format("{0:#,0}", order.OrderPrice - Decimal.Parse(result.TotalProductPrice));
+                result.NoteUser = order.OrderNote;
+                result.Items = new List<CartItemView>();
+                result.Items = _data.Select(x => new CartItemView()
+                {
+                    ProductId = x.Variant.ProductID,
+                    VariantID = x.VariantID,
+                    ProductPrice = string.Format("{0:#,0}", x.Variant.Product.ProductPrice),
+                    ProductName = x.Variant.Product.ProductName,
+                    ProductImage = x.Variant.VariantImage,
+                    VariantSize = x.Variant.VariantSize.ToUpper(),
+                    VariantColor = x.Variant.VariantColor.ToUpper(),
+                    Quantity = x.Quantity,
+                    Stock = x.Variant.Stock,
+                    TotalPrice = string.Format("{0:#,0}", x.Quantity * x.Variant.Product.ProductPrice)
+                }).ToList();
+                result.IsAvailableCancel = order.Status == (byte)OrderStatus.Processing;
                 response.Data = new { result, code = HttpStatusCode.OK };
                 return response;
             }
