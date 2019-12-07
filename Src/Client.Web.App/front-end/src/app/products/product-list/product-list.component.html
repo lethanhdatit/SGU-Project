@@ -1,0 +1,480 @@
+<div class="input-group">
+    <input type="text" class="form-control" [(ngModel)]="searchText" name="searchText" placeholder="Search">
+</div>
+<br>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <tr>
+            <th>Product ID</th>
+            <th>Type</th>
+            <th>Price</th>
+            <th>Origin</th>
+            <th>Trademark</th>
+            <th>Name</th>
+            <th>Infomation</th>
+            <th>Status</th>
+            <th>Created Date</th>
+            <th>Updated Date</th>
+        </tr>
+        <tr *ngFor="let product of productService.list | filter: searchText | paginate: {itemsPerPage: 10, currentPage: p}">
+            <td data-toggle="modal" data-target="#variantModal" data-whatever="@mdo" (click)="getProductID(product.productId)">{{product.productId}}</td>
+            <td data-toggle="modal" data-target="#variantModal" data-whatever="@mdo" (click)="getProductID(product.productId)">
+                <span *ngFor="let type of productTypeService.list">
+                    <span *ngIf="product.productTypeId == type.typeId">
+                        {{type.typeName}}
+                    </span>
+                </span>
+            </td>
+            <td data-toggle="modal" data-target="#variantModal" data-whatever="@mdo" (click)="getProductID(product.productId)">{{product.productPrice}}</td>
+            <td data-toggle="modal" data-target="#variantModal" data-whatever="@mdo" (click)="getProductID(product.productId)">
+                <span *ngFor="let origin of originService.list">
+                    <span *ngIf="product.originId == origin.originId">
+                        {{origin.originName}}
+                    </span>
+                </span>
+            </td>
+            <td data-toggle="modal" data-target="#variantModal" data-whatever="@mdo" (click)="getProductID(product.productId)">
+                <span *ngFor="let trademark of trademarkService.list">
+                    <span *ngIf="product.trademarkId == trademark.trademarkId">
+                        {{trademark.trademarkName}}
+                    </span>
+                </span>
+            </td>
+            <td data-toggle="modal" data-target="#variantModal" data-whatever="@mdo" (click)="getProductID(product.productId)">{{product.productName}}</td>
+            <td data-toggle="modal" data-target="#variantModal" data-whatever="@mdo" (click)="getProductID(product.productId)"><textarea cols="50" rows="10">{{product.productInfomation}}</textarea></td>
+            <td data-toggle="modal" data-target="#variantModal" data-whatever="@mdo" (click)="getProductID(product.productId)">{{product.status}}</td>
+            <td data-toggle="modal" data-target="#variantModal" data-whatever="@mdo" (click)="getProductID(product.productId)">{{product.createdDate | date: 'dd-MM-yyyy'}}</td>
+            <td data-toggle="modal" data-target="#variantModal" data-whatever="@mdo" (click)="getProductID(product.productId)">{{product.updatedDate | date: 'dd-MM-yyyy'}}</td>
+            <!-- <td>
+                <i class="far fa-trash-alt fa-lg text-danger" (click)="onDelete(product.productID)"></i>
+            </td> -->
+            <td>
+                <button class="btn btn-primary" type="button" (click)="populateForm(product)" data-toggle="modal" data-target="#productUpdateModal" data-whatever="@mdo">Update</button>
+            </td>
+        </tr>
+    </table>
+</div>
+<pagination-controls (pageChange)="p = $event"></pagination-controls>
+
+<div class="modal fade" id="productUpdateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Update Product</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+            <form #form="ngForm" autocomplete="off" (submit)="onSubmit(form)">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Key
+                            </div>
+                        </div>
+                        <input name="productId" [value]="productService.formData.productId"
+                        class="form-control" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Type ID
+                            </div>
+                        </div>
+                        <input name="productTypeId" #productTypeId="ngModel" [(ngModel)]="productService.formData.productTypeId"
+                        class="form-control" placeholder="Type ID" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Price
+                            </div>
+                        </div>
+                        <input name="productPrice" #productPrice="ngModel" [(ngModel)]="productService.formData.productPrice"
+                        class="form-control" placeholder="Price" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Origin ID
+                            </div>
+                        </div>
+                        <input name="originId" #originId="ngModel" [(ngModel)]="productService.formData.originId"
+                        class="form-control" placeholder="Origin ID" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Trademark ID
+                            </div>
+                        </div>
+                        <input name="trademarkId" #trademarkId="ngModel" [(ngModel)]="productService.formData.trademarkId"
+                        class="form-control" placeholder="Trademark ID" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Name
+                            </div>
+                        </div>
+                        <input name="productName" #productName="ngModel" [(ngModel)]="productService.formData.productName"
+                        class="form-control" placeholder="Name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Infomation
+                            </div>
+                        </div>
+                        <textarea name="productInfomation" #productInfomation="ngModel" [(ngModel)]="productService.formData.productInfomation"
+                        class="form-control" cols="30" rows="10"></textarea>
+                        <!-- <input name="productInfomation" #productInfomation="ngModel" [(ngModel)]="productService.formData.productInfomation"
+                        class="form-control" placeholder="Infomation" required> -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Status
+                            </div>
+                        </div>
+                        <select class="form-control" name="status" #status="ngModel" [(ngModel)]="productService.formData.status">
+                            <option value="1" selected="selected">1</option>
+                            <option value="0">0</option>
+                        </select>
+                        <!-- <input name="status" #status="ngModel" [(ngModel)]="productService.formData.status"
+                        class="form-control" placeholder="Status"> -->
+                    </div>
+                </div>
+            
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Created Date
+                            </div>
+                        </div>
+                        <input type="datetime-local" name="createdDate" #createdDate="ngModel" [(ngModel)]="productService.formData.createdDate"
+                        class="form-control" placeholder="Created Date">
+                    </div>
+                </div>
+            
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Updated Date
+                            </div>
+                        </div>
+                        <input type="datetime-local" name="updatedDate" #updatedDate="ngModel" [(ngModel)]="productService.formData.updatedDate"
+                        class="form-control" placeholder="Updated Date">
+                    </div>
+                </div>
+
+                <div class="modal-footer form-group">
+                    <button class="btn btn-success" type="submit" ><i class="fas fa-database"></i> Update</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+    
+<div class="modal fade bd-example-modal-lg" id="variantModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Variant List</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+                <tr>
+                    <th>Product ID</th>
+                    <th>Size</th>
+                    <th>Color</th>
+                    <th>Image</th>
+                    <th>Stock</th>
+                    <th>Status</th>
+                </tr>
+                <tr *ngFor="let variant of variantService.list"
+                data-toggle="modal" data-target="#variantUpdateModal" data-whatever="@mdo" (click)="populateFormVariant(variant)">
+                    
+                    <td *ngIf="productID == variant.productId;else elseBlock">{{variant.productId}}</td>
+                    <td *ngIf="productID == variant.productId;else elseBlock">{{variant.variantSize}}</td>
+                    <td *ngIf="productID == variant.productId;else elseBlock">{{variant.variantColor}}</td>
+                    <td *ngIf="productID == variant.productId;else elseBlock"><img [src]="variant.variantImage"></td>
+                    <td *ngIf="productID == variant.productId;else elseBlock">{{variant.stock}}</td>
+                    <td *ngIf="productID == variant.productId;else elseBlock">{{variant.status}}</td>
+                    <!-- <td>
+                        <i class="far fa-trash-alt fa-lg text-danger" (click)="onDelete(ordtail.detailID)"></i>
+                    </td> -->
+                    <!-- <td (click)="populateForm(ordtail)" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo"><i class="fas fa-wrench fa-lg"></i></td> -->
+                </tr>
+                <ng-template #elseBlock></ng-template>
+            </table>
+        </div>
+        <!-- <pagination-controls (pageChange)="p = $event"></pagination-controls> -->
+          
+      </div>
+            
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#variantAddModal" 
+        data-whatever="@mdo" (click)="formrs(variantService.formData)">Add</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="variantAddModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Variant</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+            <form #form="ngForm" autocomplete="off" (submit)="onSubmitVariantAdd(form)">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Key
+                            </div>
+                        </div>
+                        <input name="variantId" [value]="variantService.formData.variantId"
+                        class="form-control" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Product ID
+                            </div>
+                        </div>
+                        <input name="productId" #productId="ngModel" [(ngModel)]="variantService.formData.productId"
+                        class="form-control" placeholder="Product ID" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Variant Size
+                            </div>
+                        </div>
+                        <input name="variantSize" #variantSize="ngModel" [(ngModel)]="variantService.formData.variantSize"
+                        class="form-control" placeholder="Variant Size" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Varian tColor
+                            </div>
+                        </div>
+                        <input name="variantColor" #variantColor="ngModel" [(ngModel)]="variantService.formData.variantColor"
+                        class="form-control" placeholder="Variant Color" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Variant Image
+                            </div>
+                        </div>
+                        <input name="variantImage" #variantImage="ngModel" [(ngModel)]="variantService.formData.variantImage"
+                        class="form-control" placeholder="Variant Image" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Stock
+                            </div>
+                        </div>
+                        <input name="stock" #stock="ngModel" [(ngModel)]="variantService.formData.stock"
+                        class="form-control" placeholder="Stock" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Status
+                            </div>
+                        </div>
+                        <select class="form-control" name="status" #status="ngModel" [(ngModel)]="variantService.formData.status">
+                            <option value="1" selected="selected">1</option>
+                            <option value="0">0</option>
+                        </select>
+                        <!-- <input name="status" #status="ngModel" [(ngModel)]="variantService.formData.status"
+                        class="form-control" placeholder="Status" required> -->
+                    </div>
+                </div>
+
+                <div class="modal-footer form-group">
+                    <button class="btn btn-success" type="submit"><i class="fas fa-database"></i> Add</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade" id="variantUpdateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Update Variant</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+            <form #form="ngForm" autocomplete="off" (submit)="onSubmitVariantUpdate(form)">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Key
+                            </div>
+                        </div>
+                        <input name="variantId" [value]="variantService.formData.variantId"
+                        class="form-control" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Product ID
+                            </div>
+                        </div>
+                        <input name="productId" #productId="ngModel" [(ngModel)]="variantService.formData.productId"
+                        class="form-control" placeholder="Product ID" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Variant Size
+                            </div>
+                        </div>
+                        <input name="variantSize" #variantSize="ngModel" [(ngModel)]="variantService.formData.variantSize"
+                        class="form-control" placeholder="Variant Size" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Varian tColor
+                            </div>
+                        </div>
+                        <input name="variantColor" #variantColor="ngModel" [(ngModel)]="variantService.formData.variantColor"
+                        class="form-control" placeholder="Variant Color" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Variant Image
+                            </div>
+                        </div>
+                        <input name="variantImage" #variantImage="ngModel" [(ngModel)]="variantService.formData.variantImage"
+                        class="form-control" placeholder="Variant Image" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Stock
+                            </div>
+                        </div>
+                        <input name="stock" #stock="ngModel" [(ngModel)]="variantService.formData.stock"
+                        class="form-control" placeholder="Stock" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Status
+                            </div>
+                        </div>
+                        <select class="form-control" name="status" #status="ngModel" [(ngModel)]="variantService.formData.status">
+                            <option value="1" selected="selected">1</option>
+                            <option value="0">0</option>
+                        </select>
+                        <!-- <input name="status" #status="ngModel" [(ngModel)]="variantService.formData.status"
+                        class="form-control" placeholder="Status" required> -->
+                    </div>
+                </div>
+
+                <div class="modal-footer form-group">
+                    <button class="btn btn-success" type="submit"><i class="fas fa-database"></i> Update</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>

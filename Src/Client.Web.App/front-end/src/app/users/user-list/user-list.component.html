@@ -1,0 +1,314 @@
+<div class="input-group">
+    <input type="text" class="form-control" [(ngModel)]="searchText" name="searchText" placeholder="Search">
+</div>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <tr>
+            <th>ID</th>
+            <th>Avatar</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>Day of Birth</th>
+            <th>Status</th>
+            <th>Created Date</th>
+            <th>Updated Date</th>
+        </tr>
+        <tr *ngFor="let ul of userService.list | filter: searchText | paginate: {itemsPerPage: 10, currentPage: p}">
+            <td data-toggle="modal" data-target="#userOrderModal" data-whatever="@mdo" (click)="getID(ul.userId)">{{ul.userId}}</td>
+            <td data-toggle="modal" data-target="#userOrderModal" data-whatever="@mdo" (click)="getID(ul.userId)"><img [src]="ul.userAvatar"></td>
+            <td data-toggle="modal" data-target="#userOrderModal" data-whatever="@mdo" (click)="getID(ul.userId)">{{ul.userName}}</td>
+            <td data-toggle="modal" data-target="#userOrderModal" data-whatever="@mdo" (click)="getID(ul.userId)">{{ul.userPhone}}</td>
+            <td data-toggle="modal" data-target="#userOrderModal" data-whatever="@mdo" (click)="getID(ul.userId)">{{ul.userEmail}}</td>
+            <td data-toggle="modal" data-target="#userOrderModal" data-whatever="@mdo" (click)="getID(ul.userId)">{{ul.userAddress}}</td>
+            <td data-toggle="modal" data-target="#userOrderModal" data-whatever="@mdo" (click)="getID(ul.userId)">{{ul.userDayOfBirth | date: 'dd-MM-yyyy'}}</td>
+            <td data-toggle="modal" data-target="#userOrderModal" data-whatever="@mdo" (click)="getID(ul.userId)">{{ul.status}}</td>
+            <td data-toggle="modal" data-target="#userOrderModal" data-whatever="@mdo" (click)="getID(ul.userId)">{{ul.createdDate | date: 'dd-MM-yyyy'}}</td>
+            <td data-toggle="modal" data-target="#userOrderModal" data-whatever="@mdo" (click)="getID(ul.userId)">{{ul.updatedDate | date: 'dd-MM-yyyy'}}</td>
+            <td>
+                <button class="btn btn-primary" type="button" (click)="populateForm(ul)" data-toggle="modal" data-target="#userUpdateModal" data-whatever="@mdo">Update</button>
+            </td>
+        </tr>
+    </table>
+</div>
+<pagination-controls (pageChange)="p = $event"></pagination-controls>
+
+<div class="modal fade" id="userUpdateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Update User</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+            <form #form="ngForm" autocomplete="off" (submit)="onSubmit(form)">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Key
+                            </div>
+                        </div>
+                        <input name="userID" class="form-control"  
+                        [value]="userService.formData.userId" disabled>
+                    </div>
+                </div>
+            
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Avatar
+                            </div>
+                        </div>
+                        <input name="userAvatar" class="form-control" placeholder="Avatar" #userAvatar="ngModel" 
+                        [(ngModel)]="userService.formData.userAvatar" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Name
+                            </div>
+                        </div>
+                        <input name="userName" class="form-control" placeholder="Name" #userName="ngModel" 
+                        [(ngModel)]="userService.formData.userName" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Phone
+                            </div>
+                        </div>
+                        <input name="userPhone" class="form-control" placeholder="Phone" #userPhone="ngModel" 
+                        [(ngModel)]="userService.formData.userPhone" required maxlength="10" minlength="10">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Email
+                            </div>
+                        </div>
+                        <input type="email" name="userEmail" class="form-control" placeholder="Email" #userEmail="ngModel" 
+                        [(ngModel)]="userService.formData.userEmail" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Address
+                            </div>
+                        </div>
+                        <input name="userAddress" class="form-control" placeholder="Address" #userAddress="ngModel" 
+                        [(ngModel)]="userService.formData.userAddress" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Day of Birth
+                            </div>
+                        </div>
+                        <input type="datetime-local" name="userDayofBirth" class="form-control" placeholder="DayofBirth" #userDayofBirth="ngModel" 
+                        [(ngModel)]="userService.formData.userDayOfBirth">
+                    </div>
+                </div>
+            
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Status
+                            </div>
+                        </div>
+                        <select class="form-control" name="status" #status="ngModel" [(ngModel)]="userService.formData.status">
+                            <option value="1" selected="selected">1</option>
+                            <option value="0">0</option>
+                        </select>
+                        <!-- <input name="status" #status="ngModel" [(ngModel)]="userService.formData.status"
+                        class="form-control" placeholder="Status"> -->
+                    </div>
+                </div>
+            
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Created Date
+                            </div>
+                        </div>
+                        <input type="datetime-local" name="createdDate" #createdDate="ngModel" [(ngModel)]="userService.formData.createdDate"
+                        class="form-control" placeholder="Created Date">
+                    </div>
+                </div>
+            
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Updated Date
+                            </div>
+                        </div>
+                        <input type="datetime-local" name="updatedDate" #updatedDate="ngModel" [(ngModel)]="userService.formData.updatedDate"
+                        class="form-control" placeholder="Updated Date">
+                    </div>
+                </div>
+
+                <div class="modal-footer form-group">
+                    <button class="btn btn-success" type="submit" ><i class="fas fa-database"></i> Update</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg" id="userOrderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Orders List</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+          <div class="table-responsive">
+              <table class="table table-hover">
+                  <tr>
+                    <th>User</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Price</th>
+                    <th>Shipment</th>
+                    <th>Note</th>
+                  </tr>
+                  <tr *ngFor="let order of orderService.list" data-toggle="modal" data-target="#userOrderDetailModal" 
+                  data-whatever="@mdo" (click)="getOrderID(order.orderId)">
+                        <td *ngIf="userID == order.userId; else elseBlock">
+                            <span *ngFor="let user of userService.list">
+                                <span *ngIf="order.userId == user.userId">
+                                    {{user.userName}}
+                                </span>
+                            </span>
+                        </td>
+                        <td *ngIf="userID == order.userId; else elseBlock">{{order.orderStatus}}</td>
+                        <td *ngIf="userID == order.userId; else elseBlock">{{order.orderDate | date: 'dd-MM-yyyy'}}</td>
+                        <td *ngIf="userID == order.userId; else elseBlock">{{order.orderPhone}}</td>
+                        <td *ngIf="userID == order.userId; else elseBlock">{{order.orderAddress}}</td>
+                        <td *ngIf="userID == order.userId; else elseBlock">{{order.orderPrice}}</td>
+                        <td *ngIf="userID == order.userId; else elseBlock">
+                            <span *ngFor="let shment of shipmentService.list">
+                                <span *ngIf="order.shipmentId == shment.shipmentId">
+                                    {{shment.shipmentName}}
+                                </span>
+                            </span>
+                        </td>
+                        <td *ngIf="userID == order.userId; else elseBlock">{{order.orderNote}}</td>
+                  </tr>
+                  <ng-template #elseBlock></ng-template>
+                </table>
+          </div>
+          
+      </div>
+            
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg" id="userOrderDetailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Order Detail List</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+          <div class="table-responsive">
+              <table class="table table-hover">
+                  <tr>
+                    <th>Product</th>
+                    <th>Size</th>
+                    <th>Color</th>
+                    <th>Image</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                  </tr>
+                  <tr *ngFor="let detail of orderDetailService.list">
+                        <td *ngIf="orderID == detail.orderId; else elseBlock1">
+                            <span *ngFor="let variant of variantService.list">
+                                <span *ngIf="detail.variantId == variant.variantId">
+                                    <span *ngFor="let product of productService.list">
+                                        <span *ngIf="product.productId == variant.productId">
+                                            {{product.productName}}
+                                        </span>
+                                    </span>
+                                </span>
+                            </span>
+                        </td>
+                        <td *ngIf="orderID == detail.orderId; else elseBlock1">
+                            <span *ngFor="let variant of variantService.list">
+                                <span *ngIf="detail.variantId == variant.variantId">
+                                    {{variant.variantSize}}
+                                </span>
+                            </span>
+                        </td>
+                        <td *ngIf="orderID == detail.orderId; else elseBlock1">
+                            <span *ngFor="let variant of variantService.list">
+                                <span *ngIf="detail.variantId == variant.variantId">
+                                    {{variant.variantColor}}
+                                </span>
+                            </span>
+                        </td>
+                        <td *ngIf="orderID == detail.orderId; else elseBlock1">
+                            <span *ngFor="let variant of variantService.list">
+                                <span *ngIf="detail.variantId == variant.variantId">
+                                    <img [src]="variant.variantImage">
+                                </span>
+                            </span>
+                        </td>
+                        <td *ngIf="orderID == detail.orderId; else elseBlock1">{{detail.quantity}}</td>
+                        <td *ngIf="orderID == detail.orderId; else elseBlock1">{{detail.price}}</td>
+                        
+                  </tr>
+                  <ng-template #elseBlock1></ng-template>
+                </table>
+          </div>
+          
+      </div>
+            
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
