@@ -32,7 +32,14 @@ namespace SGU.Service.Implement
 
             return entity.UserID;
         }
-       
+
+        public void UpdateUser(User entity)
+        {
+            entity.UpdatedDate = DateTime.UtcNow;
+            _unitOfWork.Repository<User>().Update(entity);
+            _unitOfWork.SaveChanges();
+        }
+
         public bool IsExistUserEmail(string email)
         {
             return _unitOfWork.Repository<User>().GetExists(x => x.UserEmail == email);

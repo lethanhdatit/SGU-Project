@@ -20,8 +20,8 @@ class DropDown extends React.Component {
   }
 
   render() {
-    const { onSelect, iconName, iconFamily, iconSize, iconColor, color, textStyle, style, ...props } = this.props;
-
+    const {DefaultValue, onSelect, iconName, iconFamily, iconSize, iconColor, color, textStyle, style, ...props } = this.props;
+    var _value = this.state.value == null && DefaultValue != null ? DefaultValue : this.state.value;
     const modalStyles = [
       styles.qty,
       color && { backgroundColor: color },
@@ -41,7 +41,7 @@ class DropDown extends React.Component {
         dropdownTextStyle={{paddingLeft:16, fontSize:12}}
         {...props}>
         <Block flex row middle space="between">
-          <Text size={12} style={textStyles}>{this.state.value}</Text>
+          <Text size={12} style={textStyles}>{_value}</Text>
           <Icon name={iconName || "nav-down"} family={iconFamily || "ArgonExtra"} size={iconSize || 10} color={iconColor || argonTheme.COLORS.WHITE} />
         </Block>
       </ModalDropdown>

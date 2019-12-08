@@ -10,7 +10,7 @@ import {
   Alert
 } from "react-native";
 import { Block, Checkbox, Text, theme } from "galio-framework";
-
+import { MaterialIndicator } from 'react-native-indicators';
 import { Button, Icon, Input } from "../components";
 import { Images, argonTheme } from "../constants";
 import * as API from "../components/Api";
@@ -25,7 +25,8 @@ export default class Login extends React.Component {
     this.state = {
       Email: "",
       Password: "",
-      Remember: false
+      Remember: false,
+      IsLoading: false
     };
   }
 
@@ -43,6 +44,7 @@ export default class Login extends React.Component {
   }
 
   async OnBasicLogin() {
+    this.setState({IsLoading: true});
     var dataBody = {
       Email: this.state.Email,
       Password: this.state.Password,
@@ -84,6 +86,7 @@ export default class Login extends React.Component {
     else {
       console.log("Call API fail at: " + config.LOGIN_API_ENDPOINT);
     }
+    this.setState({IsLoading: false});
   }
 
   async OnRegister() {
@@ -97,12 +100,22 @@ export default class Login extends React.Component {
       && this.state.Password != "") ? false : true;
     return (
       <Block flex middle>
-        <StatusBar hidden />
+        <StatusBar hidden />        
         <ImageBackground
           source={Images.RegisterBackground}
           style={{ width, height, zIndex: 1 }}
         >
           <Block flex middle>
+          { this.state.IsLoading ?
+            <Block style={{              
+              width: '90%', 
+              height: '90%',
+              borderRadius: 5
+            }}>
+              <MaterialIndicator size={30} trackWidth={3} color={"#C0C0C0"}/>
+            </Block>
+           : <Block></Block>
+        }
             <Block style={styles.registerContainer}>
               <Block flex>
                 <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>

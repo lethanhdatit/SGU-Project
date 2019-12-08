@@ -106,10 +106,13 @@ export default class Checkout extends React.Component {
     if (res2 != null && res2.Data != null) {
       if (res2.Data.code == 200) {
         var temp = [];
+        var defaultShipment = 0;
         res2.Data.result.map((item, index) => {
-          temp.push(`${item.ShipmentID}-${item.ShipmentName}`);
+          temp.push(`${item.ShipmentID}-${item.ShipmentName}`);          
+          if(index == 0) defaultShipment = item.ShipmentID;
         });
-        this.setState({ Shipments: temp });
+        
+        this.setState({ Shipments: temp, SelectedShipment: defaultShipment });
       }
     }
   }
@@ -176,9 +179,7 @@ export default class Checkout extends React.Component {
       && this.state.SelectedShipment != null
       && validatePhone(this.state.ShippingPhone)
       && this.state.ShippingFullName != null
-      && this.state.ShippingFullName.length > 3
       && this.state.ShippingAddress != null
-      && this.state.ShippingAddress.length > 10
       && this.state.ShippingDate != null
       && this.state.ShippingDate != ""
     ) ? false : true;
@@ -261,7 +262,7 @@ export default class Checkout extends React.Component {
                       width: 20,
                       height: 20,
                       borderRadius: 10,
-                      backgroundColor: this.state.ShippingFullName.length != null && this.state.ShippingFullName.length > 3 ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
+                      backgroundColor: this.state.ShippingFullName.length != null ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
                       marginRight: 10
                     }}
                   >
@@ -314,7 +315,7 @@ export default class Checkout extends React.Component {
                       width: 20,
                       height: 20,
                       borderRadius: 10,
-                      backgroundColor: this.state.ShippingAddress.length != null && this.state.ShippingAddress.length > 10 ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
+                      backgroundColor: this.state.ShippingAddress.length != null ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
                       marginRight: 10
                     }}
                   >
@@ -341,7 +342,7 @@ export default class Checkout extends React.Component {
                         width: 20,
                         height: 20,
                         borderRadius: 10,
-                        backgroundColor: this.state.ShippingDate.length != null && this.state.ShippingDate.length > 3 ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
+                        backgroundColor: this.state.ShippingDate.length != 0 ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
                         marginRight: 10
                       }}
                     >
@@ -394,6 +395,8 @@ export default class Checkout extends React.Component {
             <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
               <Block flex left>
                 <Select
+                  defaultIndex={0}
+                  DefaultValue={this.state.Shipments && this.state.Shipments[0]}
                   options={this.state.Shipments}
                   style={{ width: "50%" }}
                   onSelect={(index, item) => this.OnSelectShipment(item)}

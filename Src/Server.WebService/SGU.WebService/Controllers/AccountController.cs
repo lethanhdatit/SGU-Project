@@ -171,6 +171,68 @@ namespace SGU.WebService.Controllers
         }
 
 
+        
+        [System.Web.Http.Route("GetUserInfo")]
+        [System.Web.Http.HttpGet]
+        public JsonResult GetUserInfo(long UserId)
+        {
+            var response = JsonResponse();
+            try
+            {
+                var _data = _accountService.GetUserByUID(UserId);
+                var result =  new UserViewModel()
+                {
+                    UserID = _data.UserID,
+                    Email = _data.UserEmail,
+                    Avatar = _data.UserAvatar,
+                    FullName = _data.UserName,
+                    Phone = _data.UserPhone,
+                    Address = _data.UserAddress,
+                    DOB = _data.UserDayOfBirth.ToString("dd/MM/yyyy")
+                };
+
+                response.Data = new { result, code = HttpStatusCode.OK };
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Data = new { code = HttpStatusCode.InternalServerError, message = "Internal server exception: " + ex.Message };
+                return response;
+            }
+
+        }
+
+        [System.Web.Http.Route("UpdateUserInfo")]
+        [System.Web.Http.HttpPost]
+        public JsonResult UpdateUserInfo(UserViewModel model)
+        {
+            var response = JsonResponse();
+            try
+            {
+                var _data = _accountService.GetUserByUID(model.UserID);
+                if(_data != null)
+                {                    
+                    _data.UserName = model.FullName;
+                    _data.UserPhone = model.Phone;
+                    _data.UserAddress = model.Address;
+                    _data.UserDayOfBirth = DateTime.Parse(model.DOB);
+                    _accountService.UpdateUser(_data);
+                    response.Data = new { code = HttpStatusCode.OK };
+                }
+                else
+                {
+                    response.Data = new { code = HttpStatusCode.NotFound };
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Data = new { code = HttpStatusCode.InternalServerError, message = "Internal server exception: " + ex.Message };
+                return response;
+            }
+
+        }
+
         #region Private
         private JsonResult JsonResponse(string msg = "OK", int dataStatusCode = 0, HttpStatusCode statusCode = HttpStatusCode.OK)
         {

@@ -6,20 +6,144 @@ import {
   Image,
   ImageBackground,
   Platform,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert
 } from "react-native";
 import { Block, Text, theme } from "galio-framework";
 
 import { Button, Input, Icon } from "../components";
+import * as AsyncStorage from '../components/AsyncStorage';
+import config from "../config";
+import * as API from "../components/Api";
 import { Images, argonTheme } from "../constants";
 import { HeaderHeight } from "../constants/utils";
-
+import DateTimePicker from "react-native-modal-datetime-picker";
+import moment from "moment";
 const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
+const validateEmail = (email) => {
+  const expression = /(?!.*\.{2})^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([\t]*\r\n)?[\t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([\t]*\r\n)?[\t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
+
+  return expression.test(String(email).toLowerCase())
+}
+
+const validatePhone = (phone) => {
+  const expression = /((09|03|07|08|05)+([0-9]{8})\b)/g;
+
+  return expression.test(String(phone).toLowerCase())
+}
 
 class Profile extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      FullName: null,
+      Email: null,
+      Avatar: null,
+      UserID: null,
+      Phone: null,
+      Address: null,
+      DOB: null
+    }
+  }
+
+  componentWillMount() {
+    this._OnFetchUserInfo();
+  }
+
+  async _OnFetchUserInfo() {
+    var UserId = await AsyncStorage._getData(config.USER_ID_STOREKEY);
+    var res = await API._fetch(`${config.GET_USER_INFO_API_ENDPOINT}?UserId=${Number(UserId)}`, 'GET');
+    if (res != null && res.Data != null) {
+      if (res.Data.code == 200) {
+        var user = res.Data.result;
+        this.setState({
+          isDateTimePickerVisible: false,
+          UserID: user.UserID,
+          FullName: user.FullName,
+          Email: user.Email,
+          Avatar: user.Avatar,
+          Phone: user.Phone,
+          Address: user.Address,
+          DOB: user.DOB
+        });
+      }
+    }
+  }
+
+  async _UpdateUserInfo() {
+
+    var dataBody = {
+      UserID: this.state.UserID,
+      FullName: this.state.FullName,
+      Phone: this.state.Phone,
+      Address: this.state.Address,
+      DOB: this.state.DOB
+    };
+
+    var res = await API._fetch(config.UPDATE_USER_INFO_API_ENDPOINT, 'POST', dataBody);
+    if (res != null && res.Data != null) {
+      if (res.Data.code == 200) {
+        Alert.alert(
+          'Thông Báo',
+          'Cập nhật thông tin thành công',
+          [
+            { text: 'OK' },
+          ],
+          { cancelable: true },
+        );
+        this._OnFetchUserInfo();
+      } else {
+        Alert.alert(
+          'Lỗi.',
+          res.Data.message,
+          [
+            { text: 'OK' },
+          ],
+          { cancelable: true },
+        );
+      }
+    } else {
+
+    }
+  }
+
+  async _OnUpdateUserInfo() {
+    Alert.alert(
+      'Cập nhật thông tin ngay?',
+      '',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => this._UpdateUserInfo() },
+      ],
+      { cancelable: true },
+    );
+  }
+
+  toggleDateTimePicker = () => {
+    this.setState({ isDateTimePickerVisible: !this.state.isDateTimePickerVisible });
+  };
+
+  handleDatePicked = date => {
+    var customDate = moment(new Date(date)).format('DD/MM/YYYY');
+    this.toggleDateTimePicker();
+    this.setState({ DOB: customDate });
+  };
+
   render() {
+    var isDisableLoginButton = (
+      validatePhone(this.state.Phone)
+      && this.state.FullName != null
+      && this.state.FullName != ""
+      && this.state.Address != null
+      && this.state.Address != ""
+      && this.state.DOB != null
+      && this.state.DOB != ""
+    ) ? false : true;
     return (
       <Block flex style={styles.profile}>
         <Block flex>
@@ -35,15 +159,16 @@ class Profile extends React.Component {
               <Block flex style={styles.profileCard}>
                 <Block middle style={styles.avatarContainer}>
                   <Image
-                    source={{ uri: Images.ProfilePicture }}
                     style={styles.avatar}
+                    source={{ uri: (this.state.Avatar != null && this.state.Avatar != "" ? this.state.Avatar : '../assets/default-profile.png') }}
+                    defaultSource={require('../assets/default-profile.png')}
                   />
                 </Block>
 
 
                 <Block flex style={styles.group}>
-                  <Text bold size={16} style={styles.title}>
-                    Thông tin giao hàng:
+                  <Text bold center size={16} style={styles.title}>
+                    Thông tin tài khoản
                   </Text>
                   <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
                     <Input
@@ -55,7 +180,7 @@ class Profile extends React.Component {
                             width: 20,
                             height: 20,
                             borderRadius: 10,
-                            backgroundColor: argonTheme.COLORS.INPUT_SUCCESS,
+                            backgroundColor: this.state.FullName.length != null && this.state.FullName.length != "" ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
                             marginRight: 10
                           }}
                         >
@@ -67,8 +192,8 @@ class Profile extends React.Component {
                           />
                         </Block>
                       }
-                    // value={this.state.ShippingFullName}
-                    // onChangeText={(text) => this.setState({ ShippingFullName: text })}
+                      value={this.state.FullName}
+                      onChangeText={(text) => this.setState({ FullName: text })}
                     />
                   </Block>
                   <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
@@ -81,7 +206,7 @@ class Profile extends React.Component {
                             width: 20,
                             height: 20,
                             borderRadius: 10,
-                            backgroundColor: argonTheme.COLORS.INPUT_ERROR,
+                            backgroundColor: this.state.Email.length != null && this.state.Email.length != "" ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
                             marginRight: 10
                           }}
                         >
@@ -93,9 +218,11 @@ class Profile extends React.Component {
                           />
                         </Block>
                       }
-                    // value={this.state.ShippingPhone}
-                    // onChangeText={(text) => this.setState({ ShippingPhone: text })}
-                    // error={!validatePhone(this.state.ShippingPhone)}
+                      value={this.state.Email}
+                      onChangeText={(text) => this.setState({ Email: text })}
+                      // error={!validatePhone(this.state.ShippingPhone)}
+                      editable={false}
+                      disabled={true}
                     />
                   </Block>
                   <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
@@ -108,7 +235,7 @@ class Profile extends React.Component {
                             width: 20,
                             height: 20,
                             borderRadius: 10,
-                            backgroundColor: argonTheme.COLORS.INPUT_ERROR,
+                            backgroundColor: validatePhone(this.state.ShippingPhone) ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
                             marginRight: 10
                           }}
                         >
@@ -120,8 +247,8 @@ class Profile extends React.Component {
                           />
                         </Block>
                       }
-                    // value={this.state.ShippingPhone}
-                    // onChangeText={(text) => this.setState({ ShippingPhone: text })}
+                      value={this.state.Phone}
+                      onChangeText={(text) => this.setState({ Phone: text })}
                     // error={!validatePhone(this.state.ShippingPhone)}
                     />
                   </Block>
@@ -135,7 +262,7 @@ class Profile extends React.Component {
                             width: 20,
                             height: 20,
                             borderRadius: 10,
-                            backgroundColor: argonTheme.COLORS.INPUT_ERROR,
+                            backgroundColor: this.state.Address.length != null && this.state.Address.length != "" ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
                             marginRight: 10
                           }}
                         >
@@ -147,8 +274,8 @@ class Profile extends React.Component {
                           />
                         </Block>
                       }
-                    // value={this.state.ShippingPhone}
-                    // onChangeText={(text) => this.setState({ ShippingPhone: text })}
+                      value={this.state.Address}
+                      onChangeText={(text) => this.setState({ Address: text })}
                     // error={!validatePhone(this.state.ShippingPhone)}
                     />
                   </Block>
@@ -163,7 +290,7 @@ class Profile extends React.Component {
                               width: 20,
                               height: 20,
                               borderRadius: 10,
-                              backgroundColor: argonTheme.COLORS.INPUT_SUCCESS,
+                              backgroundColor: this.state.DOB.length != null && this.state.DOB.length != "" ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
                               marginRight: 10
                             }}
                           >
@@ -175,145 +302,47 @@ class Profile extends React.Component {
                             />
                           </Block>
                         }
-                        //value={this.state.ShippingDate}
-                        //onChangeText={(text) => this.setState({ ShippingDate: text })}
+                        value={this.state.DOB}
+                        //onChangeText={(text) => this.setState({ DOB: text })}
                         editable={false}
                         disabled={true}
                       />
                     </Block>
                   </TouchableOpacity>
-
                 </Block>
-
-
-
+                <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+                  <Button onPress={() => this._OnUpdateUserInfo(isDisableLoginButton)}
+                    color="success"
+                    style={{ ...styles.button, backgroundColor: isDisableLoginButton ? "#cccccc" : "#5E72E4" }}
+                    disabled={isDisableLoginButton}
+                  >
+                    Cập Nhật
+                  </Button>
+                </Block>
 
               </Block>
             </ScrollView>
           </ImageBackground>
+          <DateTimePicker
+            isVisible={this.state.isDateTimePickerVisible}
+            onConfirm={this.handleDatePicked}
+            onCancel={this.toggleDateTimePicker}
+            mode='date'
+            minimumDate={new Date('01/01/1900')}
+            maximumDate={new Date()}
+            is24Hour={false}
+          />
         </Block>
-        {/* <ScrollView showsVerticalScrollIndicator={false} 
-                    contentContainerStyle={{ flex: 1, width, height, zIndex: 9000, backgroundColor: 'red' }}>
-        <Block flex style={styles.profileCard}>
-          <Block middle style={styles.avatarContainer}>
-            <Image
-              source={{ uri: Images.ProfilePicture }}
-              style={styles.avatar}
-            />
-          </Block>
-          <Block style={styles.info}>
-            <Block
-              middle
-              row
-              space="evenly"
-              style={{ marginTop: 20, paddingBottom: 24 }}
-            >
-              <Button small style={{ backgroundColor: argonTheme.COLORS.INFO }}>
-                CONNECT
-              </Button>
-              <Button
-                small
-                style={{ backgroundColor: argonTheme.COLORS.DEFAULT }}
-              >
-                MESSAGE
-              </Button>
-            </Block>
-
-            <Block row space="between">
-              <Block middle>
-                <Text
-                  bold
-                  size={12}
-                  color="#525F7F"
-                  style={{ marginBottom: 4 }}
-                >
-                  2K
-                </Text>
-                <Text size={12}>Orders</Text>
-              </Block>
-              <Block middle>
-                <Text bold size={12} style={{ marginBottom: 4 }}>
-                  10
-                </Text>
-                <Text size={12}>Photos</Text>
-              </Block>
-              <Block middle>
-                <Text bold size={12} style={{ marginBottom: 4 }}>
-                  89
-                </Text>
-                <Text size={12}>Comments</Text>
-              </Block>
-            </Block>
-          </Block>
-          <Block flex>
-              <Block middle style={styles.nameInfo}>
-                <Text bold size={28} color="#32325D">
-                  Jessica Jones, 27
-                </Text>
-                <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
-                  San Francisco, USA
-                </Text>
-              </Block>
-              <Block middle style={{ marginTop: 30, marginBottom: 16 }}>
-                <Block style={styles.divider} />
-              </Block>
-              <Block middle>
-                <Text size={16} color="#525F7F" style={{ textAlign: "center" }}>
-                  An artist of considerable range, Jessica name taken by
-                  Melbourne …
-                </Text>
-                <Button
-                  color="transparent"
-                  textStyle={{
-                    color: "#233DD2",
-                    fontWeight: "500",
-                    fontSize: 16
-                  }}
-                >
-                  Show more
-                </Button>
-              </Block>
-              <Block
-                row
-                style={{ paddingVertical: 14, alignItems: "baseline" }}
-              >
-                <Text bold size={16} color="#525F7F">
-                  Album
-                </Text>
-              </Block>
-              <Block
-                row
-                style={{ paddingBottom: 20, justifyContent: "flex-end" }}
-              >
-                <Button
-                  small
-                  color="transparent"
-                  textStyle={{ color: "#5E72E4", fontSize: 12 }}
-                >
-                  View all
-                </Button>
-              </Block>
-              <Block style={{ paddingBottom: -HeaderHeight * 2 }}>
-                <Block row space="between" style={{ flexWrap: "wrap" }}>
-                  {Images.Viewed.map((img, imgIndex) => (
-                    <Image
-                      source={{ uri: img }}
-                      key={`viewed-${img}`}
-                      resizeMode="cover"
-                      style={styles.thumb}
-                    />
-                  ))}
-                </Block>
-              </Block>
-          </Block>
-        </Block>
-                  </ScrollView>*/}
       </Block>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  button: {
+    marginBottom: theme.SIZES.BASE,
+    width: "100%"
+  },
   profile: {
     marginTop: Platform.OS === "android" ? -HeaderHeight : 0,
     // marginBottom: -HeaderHeight * 2,

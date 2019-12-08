@@ -11,6 +11,8 @@ export default {
     LOGIN_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/account/login/`,
     REGISTER_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/account/register/`,    
     CHECK_LOGIN_STATUS_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/account/checksigninstatus/`,
+    GET_USER_INFO_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/account/GetUserInfo/`,
+    UPDATE_USER_INFO_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/account/UpdateUserInfo/`,
     SEARCH_PRODUCTS_API_ENDPOINT: `${REST_API_BASE_ENDPOINT}api/sale/searchitems/`,
     GET_ACTIVE_PRODUCT_TYPE: `${REST_API_BASE_ENDPOINT}api/sale/getproducttypes/`,
     GET_ACTIVE_SHIPMENT: `${REST_API_BASE_ENDPOINT}api/sale/GetShipments/`,

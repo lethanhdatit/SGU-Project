@@ -32,13 +32,15 @@ namespace SGU.WebService.Models
         public byte LoginProvider { get; set; }
     }
 
-    public class EditUserViewModel
+    public class UserViewModel
     {       
         public long UserID { get; set; }
-        public string FullName { get; set; }    
+        public string Email { get; set; }
+        public string Avatar { get; set; }
+        public string FullName { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
-        public DateTime DOB { get; set; }
+        public string DOB { get; set; }
     }
 
 }
