@@ -18,38 +18,41 @@ import config from "../config";
 class AuthLoadingScreen extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {          
+    this.state = {
     };
   }
- 
+
 
   componentWillMount() {
     this._AuthenAsync();
   }
- 
+
   _AuthenAsync = async () => {
-    var userId = await AsyncStorage._getData(config.USER_ID_STOREKEY);    
-    if(userId == null || userId == ""){    
-    this.props.navigation.navigate('Login');
+    var userId = await AsyncStorage._getData(config.USER_ID_STOREKEY);
+    if (userId == null || userId == "") {
+      this.props.navigation.navigate('Login');
     }
-    else
-    {
+    else {
       var res = await API._fetch(`${config.CHECK_LOGIN_STATUS_API_ENDPOINT}?UserId=${userId}`, 'GET');
       if (res != null && res.Data != null) {
         if (res.Data.code == 200) {
           this.props.navigation.navigate('App');
+        } else {
+          this.props.navigation.navigate('Login');
         }
-      }      
-    }         
+      } else {
+        this.props.navigation.navigate('Login');
+      }
+    }
   };
 
-  
+
   // Render any loading content that you like here
   render() {
     return (
       <View style={styles.container}>
         <ActivityIndicator />
-        <StatusBar barStyle="default" />        
+        <StatusBar barStyle="default" />
       </View>
     );
   }
@@ -68,9 +71,9 @@ const styles = StyleSheet.create({
 export default createAppContainer(
   createSwitchNavigator({
     AuthLoading: AuthLoadingScreen,
-    App: Screens,   
-    Login: LoginScreen, 
-    Register: RegisterScreen      
+    App: Screens,
+    Login: LoginScreen,
+    Register: RegisterScreen
   },
     {
       initialRouteName: 'AuthLoading'

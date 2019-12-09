@@ -13,6 +13,9 @@ namespace SGU.WebService.Models
         public long? ProductTypeId { get; set; }
         public long? OriginID { get; set; }
         public long? TrademarkID { get; set; }
+        public int PageSize { get; set; }
+
+        public int PageCurrent { get; set; }
     }
 
     public class ProductView

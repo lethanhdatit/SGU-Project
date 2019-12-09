@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import { Block, theme, Button, Text } from 'galio-framework';
 import Icon from '../components/Icon';
 import Input from '../components/Input';
@@ -23,8 +23,12 @@ class Home extends React.Component {
       ProductTypeId: null,
       OriginID: null,
       TrademarkID: null,
-      PageSize: 3,
-      IsLoading: false
+      PageSizeRight: 2,
+      IsLoading: false,
+      pageSize: 10, // số lượng item mỗi lần lấy thêm khi bấm vào nút xem thêm (10 item)
+      pageCurrent: 1,
+      maxCount: -1,
+      isShowLoadMore: true,
     }
   }
 
@@ -46,12 +50,28 @@ class Home extends React.Component {
     this.focusListener.remove();
   }
 
-  _onRequestSearch() {
+  async loadItemViewMore() {
+    if (this.state.IsLoading == false) {   
+      await this.setState({ IsLoading: true });
+      if (this.state.Products.length < this.state.maxCount) {
+        await this.setState({ pageCurrent: this.state.pageCurrent + 1 });
+        await this._onRequestSearch(this.state.pageCurrent);
+      }
+      else {
+        await this.setState({ isShowLoadMore: false });
+      }
+    }
+    await this.setState({ IsLoading: false });
+  }
+
+  _onRequestSearch(pageCurrent = 1, pageSize = this.state.pageSize) {
     var searchOptions = {
       SearchTerm: this.state.SearchTerm,
       ProductTypeId: this.state.ProductTypeId,
       OriginID: this.state.OriginID,
       TrademarkID: this.state.TrademarkID,
+      pageSize: pageSize,
+      pageCurrent: pageCurrent,
     };
     this._OnSearchProducts(searchOptions);
   }
@@ -72,7 +92,9 @@ class Home extends React.Component {
             cta: data.ProductPrice
           });
         });
-        this.setState({ Products: temp })
+        var _products = searchOptions.pageCurrent == 1 ? temp : this.state.Products.concat(temp);
+        var isShowLoadMore = _products.length < res.Data.maxCount;
+        this.setState({ Products: _products, maxCount: res.Data.maxCount, isShowLoadMore: isShowLoadMore })
       }
     }
     this.setState({ IsLoading: false });
@@ -101,7 +123,7 @@ class Home extends React.Component {
 
   renderProducts = () => {
     var _Items = [];
-    var pageSize = this.state.PageSize;
+    var pageSize = this.state.PageSizeRight;
     var length = this.state.Products.length;
     if (length != 0) {
       var du = length % pageSize;
@@ -171,6 +193,27 @@ class Home extends React.Component {
               )
           }
         </Block>
+        <Block>
+          {
+            this.state.isShowLoadMore &&
+            (
+              <TouchableOpacity
+                style={{
+                  marginTop: 5,
+                  height: 40,
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#fff'
+                }}
+                activeOpacity={.7}
+                onPress={this.loadItemViewMore.bind(this)}>
+                <Text
+                  style={{color: '#22a9e3'}}>Xem thêm</Text>
+              </TouchableOpacity>
+            )
+          }
+        </Block>
       </ScrollView>
     )
   }
@@ -194,13 +237,15 @@ class Home extends React.Component {
     );
   }
 
-  UpdateSelectProductType(typeID) {
+  UpdateSelectProductType(typeID, pageCurrent = 1, pageSize = this.state.pageSize) {
     if (this.state.ProductTypeId != typeID) {
       var searchOptions = {
         SearchTerm: this.state.SearchTerm,
         ProductTypeId: typeID,
         OriginID: this.state.OriginID,
         TrademarkID: this.state.TrademarkID,
+        pageSize: pageSize,
+        pageCurrent: pageCurrent,
       };
       this._OnSearchProducts(searchOptions);
       this.setState({ ProductTypeId: typeID });
@@ -210,6 +255,8 @@ class Home extends React.Component {
         ProductTypeId: null,
         OriginID: this.state.OriginID,
         TrademarkID: this.state.TrademarkID,
+        pageSize: pageSize,
+        pageCurrent: pageCurrent,
       };
       this._OnSearchProducts(searchOptions);
       this.setState({ ProductTypeId: null });
