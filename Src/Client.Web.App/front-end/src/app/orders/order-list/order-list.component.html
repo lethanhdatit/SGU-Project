@@ -1,0 +1,465 @@
+<div class="input-group">
+    <input type="text" class="form-control" [(ngModel)]="searchText" name="searchText" placeholder="Search">
+</div>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <tr>
+            <th>Order Id</th>
+            <th>User ID</th>
+            <th>Order Status</th>
+            <th>Date</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Price</th>
+            <th>Shipment ID</th>
+            <th>Note</th>
+            <th>Status</th>
+            <th>Created Date</th>
+            <th>Updated Date</th>
+        </tr>
+        <tr *ngFor="let ord of orderService.list | filter: searchText | paginate: {itemsPerPage: 10, currentPage: p}">
+            <td data-toggle="modal" data-target="#orderDetailModal" data-whatever="@mdo" (click)="getOrderID(ord.orderId)">{{ord.orderId}}</td>
+            <td data-toggle="modal" data-target="#orderDetailModal" data-whatever="@mdo" (click)="getOrderID(ord.orderId)">{{ord.userId}}</td>
+            <td data-toggle="modal" data-target="#orderDetailModal" data-whatever="@mdo" (click)="getOrderID(ord.orderId)">{{ord.orderStatus}}</td>
+            <td data-toggle="modal" data-target="#orderDetailModal" data-whatever="@mdo" (click)="getOrderID(ord.orderId)">{{ord.orderDate | date: 'dd-MM-yyyy'}}</td>
+            <td data-toggle="modal" data-target="#orderDetailModal" data-whatever="@mdo" (click)="getOrderID(ord.orderId)">{{ord.orderPhone}}</td>
+            <td data-toggle="modal" data-target="#orderDetailModal" data-whatever="@mdo" (click)="getOrderID(ord.orderId)">{{ord.orderAddress}}</td>
+            <td data-toggle="modal" data-target="#orderDetailModal" data-whatever="@mdo" (click)="getOrderID(ord.orderId)">{{ord.orderPrice}}</td>
+            <td data-toggle="modal" data-target="#orderDetailModal" data-whatever="@mdo" (click)="getOrderID(ord.orderId)">{{ord.shipmentId}}</td>
+            <td data-toggle="modal" data-target="#orderDetailModal" data-whatever="@mdo" (click)="getOrderID(ord.orderId)">{{ord.orderNote}}</td>
+            <td data-toggle="modal" data-target="#orderDetailModal" data-whatever="@mdo" (click)="getOrderID(ord.orderId)">{{ord.status}}</td>
+            <td data-toggle="modal" data-target="#orderDetailModal" data-whatever="@mdo" (click)="getOrderID(ord.orderId)">{{ord.createdDate | date: 'dd-MM-yyyy'}}</td>
+            <td data-toggle="modal" data-target="#orderDetailModal" data-whatever="@mdo" (click)="getOrderID(ord.orderId)">{{ord.updatedDate | date: 'dd-MM-yyyy'}}</td>
+            <!-- <td>
+                <i class="far fa-trash-alt fa-lg text-danger" (click)="onDelete(ord.orderID)"></i>
+            </td> -->
+            <td>
+                <button class="btn btn-primary" type="button" (click)="populateForm(ord)" data-toggle="modal" data-target="#orderUpdateModal" data-whatever="@mdo">Update</button>
+            </td>
+        </tr>
+    </table>
+</div>
+<pagination-controls (pageChange)="p = $event"></pagination-controls>
+
+<div class="modal fade" id="orderUpdateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Update Order</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+            <form #form="ngForm" autocomplete="off" (submit)="onSubmit(form)">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Key
+                            </div>
+                        </div>
+                        <input name="orderId" [value]="orderService.formData.orderId"
+                        class="form-control" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                User ID
+                            </div>
+                        </div>
+                        <input name="userId" #userId="ngModel" [(ngModel)]="orderService.formData.userId"
+                        class="form-control" placeholder="User ID" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Order Status
+                            </div>
+                        </div>
+                        <select class="form-control" name="orderStatus" #orderStatus="ngModel" [(ngModel)]="orderService.formData.orderStatus">
+                            <option value="true" selected="selected">true</option>
+                            <option value="false">false</option>
+                        </select>
+                        <!-- <input name="orderStatus" #orderStatus="ngModel" [(ngModel)]="orderService.formData.orderStatus"
+                        class="form-control" placeholder="Order Status"> -->
+                    </div>
+                </div>
+            
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Order Date
+                            </div>
+                        </div>
+                        <input type="datetime-local" name="orderDate" #orderDate="ngModel" [(ngModel)]="orderService.formData.orderDate"
+                        class="form-control" placeholder="Order Date">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Phone
+                            </div>
+                        </div>
+                        <input name="orderPhone" #orderPhone="ngModel" [(ngModel)]="orderService.formData.orderPhone"
+                        class="form-control" placeholder="Order Phone" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Address
+                            </div>
+                        </div>
+                        <input name="orderAddress" #orderAddress="ngModel" [(ngModel)]="orderService.formData.orderAddress"
+                        class="form-control" placeholder="Order Address" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Price
+                            </div>
+                        </div>
+                        <input name="orderPrice" #orderPrice="ngModel" [(ngModel)]="orderService.formData.orderPrice"
+                        class="form-control" placeholder="Order Price">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Shipment ID
+                            </div>
+                        </div>
+                        <input name="shipmentId" #shipmentId="ngModel" [(ngModel)]="orderService.formData.shipmentId"
+                        class="form-control" placeholder="Shipment ID">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Note
+                            </div>
+                        </div>
+                        <input name="orderNote" #orderNote="ngModel" [(ngModel)]="orderService.formData.orderNote"
+                        class="form-control" placeholder="Order Note">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Status
+                            </div>
+                        </div>
+                        <select class="form-control" name="status" #status="ngModel" [(ngModel)]="orderService.formData.status">
+                            <option value="1" selected="selected">1</option>
+                            <option value="0">0</option>
+                        </select>
+                        <!-- <input name="status" #status="ngModel" [(ngModel)]="orderService.formData.status"
+                        class="form-control" placeholder="Status"> -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Created Date
+                            </div>
+                        </div>
+                        <input type="datetime-local" name="createdDate" #createdDate="ngModel" [(ngModel)]="orderService.formData.createdDate"
+                        class="form-control" placeholder="Created Date">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Updated Date
+                            </div>
+                        </div>
+                        <input type="datetime-local" name="updatedDate" #updatedDate="ngModel" [(ngModel)]="orderService.formData.updatedDate"
+                        class="form-control" placeholder="Updated Date">
+                    </div>
+                </div>
+
+                <div class="modal-footer form-group">
+                    <button class="btn btn-success" type="submit"><i class="fas fa-database"></i> Update</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg" id="orderDetailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Order Detail List</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Product</th>
+                    <th>Size</th>
+                    <th>Color</th>
+                    <th>Image</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+                <tr *ngFor="let ordtail of orderDetailService.list"
+                data-toggle="modal" data-target="#orderDetailUpdateModal" data-whatever="@mdo" (click)="populateFormDetailList(ordtail)">
+                    
+                    <td *ngIf="order_ID == ordtail.orderId;else elseBlock">{{ordtail.orderId}}</td>
+                    <td *ngIf="order_ID == ordtail.orderId;else elseBlock">
+                        <span *ngFor="let variant of variantService.list">
+                            <span *ngIf="ordtail.variantId == variant.variantId">
+                                <span *ngFor="let product of productService.list">
+                                    <span *ngIf="product.productId == variant.productId">
+                                        {{product.productName}}
+                                    </span>
+                                </span>
+                            </span>
+                        </span>
+                    </td>
+                    <td *ngIf="order_ID == ordtail.orderId;else elseBlock">
+                        <span *ngFor="let variant of variantService.list">
+                            <span *ngIf="getVariantID(ordtail.variantId) == variant.variantId; else elseBlock">
+                                {{variant.variantSize}}
+                            </span>
+                        </span>
+                    </td>
+                    <td *ngIf="order_ID == ordtail.orderId;else elseBlock">
+                        <span *ngFor="let variant of variantService.list">
+                            <span *ngIf="getVariantID(ordtail.variantId) == variant.variantId; else elseBlock">
+                                {{variant.variantColor}}
+                            </span>
+                        </span>
+                    </td>
+                    <td *ngIf="order_ID == ordtail.orderId;else elseBlock">
+                        <span *ngFor="let variant of variantService.list">
+                            <span *ngIf="getVariantID(ordtail.variantId) == variant.variantId; else elseBlock">
+                                <img [src]="variant.variantImage">
+                            </span>
+                        </span>
+                    </td>
+                    <td *ngIf="order_ID == ordtail.orderId;else elseBlock">{{ordtail.quantity}}</td>
+                    <td *ngIf="order_ID == ordtail.orderId;else elseBlock">{{ordtail.price}}</td>
+                    <!-- <td>
+                        <i class="far fa-trash-alt fa-lg text-danger" (click)="onDelete(ordtail.detailID)"></i>
+                    </td> -->
+                    <!-- <td (click)="populateForm(ordtail)" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo"><i class="fas fa-wrench fa-lg"></i></td> -->
+                </tr>
+                <ng-template #elseBlock></ng-template>
+            </table>
+        </div>
+        <!-- <pagination-controls (pageChange)="p = $event"></pagination-controls> -->
+          
+      </div>
+            
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#orderDetailAddModal" 
+        data-whatever="@mdo" (click)="populateFormrsDetail(orderDetailService.formData)">Add</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="orderDetailAddModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Order Detail</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+            <form #form="ngForm" autocomplete="off" (submit)="onSubmitDetail(form)">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Key
+                            </div>
+                        </div>
+                        <input name="detailId" [value]="orderDetailService.formData.detailId"
+                        class="form-control" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Order ID
+                            </div>
+                        </div>
+                        <input name="orderId" #orderId="ngModel" [(ngModel)]="orderDetailService.formData.orderId"
+                        class="form-control" placeholder="Order ID" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Variant ID
+                            </div>
+                        </div>
+                        <input name="variantId" #variantId="ngModel" [(ngModel)]="orderDetailService.formData.variantId"
+                        class="form-control" placeholder="Variant ID" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Quantity
+                            </div>
+                        </div>
+                        <input name="quantity" #quantity="ngModel" [(ngModel)]="orderDetailService.formData.quantity"
+                        class="form-control" placeholder="Quantity" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Price
+                            </div>
+                        </div>
+                        <input name="price" #price="ngModel" [(ngModel)]="orderDetailService.formData.price"
+                        class="form-control" placeholder="Price" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer form-group">
+                    <button class="btn btn-success" type="submit"><i class="fas fa-database"></i> Add</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade" id="orderDetailUpdateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Update Order Detail</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+            <form #form="ngForm" autocomplete="off" (submit)="onSubmitDetailList(form)">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Key
+                            </div>
+                        </div>
+                        <input name="detailId" [value]="orderDetailService.formData.detailId"
+                        class="form-control" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Order ID
+                            </div>
+                        </div>
+                        <input name="orderId" #orderId="ngModel" [(ngModel)]="orderDetailService.formData.orderId"
+                        class="form-control" placeholder="Order ID" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Variant ID
+                            </div>
+                        </div>
+                        <input name="variantId" #variantId="ngModel" [(ngModel)]="orderDetailService.formData.variantId"
+                        class="form-control" placeholder="Variant ID" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Quantity
+                            </div>
+                        </div>
+                        <input name="quantity" #quantity="ngModel" [(ngModel)]="orderDetailService.formData.quantity"
+                        class="form-control" placeholder="Quantity" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Price
+                            </div>
+                        </div>
+                        <input name="price" #price="ngModel" [(ngModel)]="orderDetailService.formData.price"
+                        class="form-control" placeholder="Price" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer form-group">
+                    <button class="btn btn-success" type="submit"><i class="fas fa-database"></i> Update</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>

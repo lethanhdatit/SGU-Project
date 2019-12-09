@@ -1,0 +1,177 @@
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#orderModal" 
+data-whatever="@mdo" (click)="populateFormrs(orderService.formData)">Add</button>
+
+<div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Order</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+            <form #form="ngForm" autocomplete="off" (submit)="onSubmit(form)">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Key
+                            </div>
+                        </div>
+                        <input name="orderId" [value]="orderService.formData.orderId"
+                        class="form-control" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                User ID
+                            </div>
+                        </div>
+                        <input name="userId" #userId="ngModel" [(ngModel)]="orderService.formData.userId"
+                        class="form-control" placeholder="User ID">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Order Status
+                            </div>
+                        </div>
+                        <select class="form-control" name="orderStatus" #orderStatus="ngModel" [(ngModel)]="orderService.formData.orderStatus">
+                            <option value="true" selected="selected">true</option>
+                            <option value="false">false</option>
+                        </select>
+                        <!-- <input name="orderStatus" #orderStatus="ngModel" [(ngModel)]="orderService.formData.orderStatus"
+                        class="form-control" placeholder="Order Status"> -->
+                    </div>
+                </div>
+            
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Order Date
+                            </div>
+                        </div>
+                        <input type="datetime-local" name="orderDate" #orderDate="ngModel" [(ngModel)]="orderService.formData.orderDate"
+                        class="form-control" placeholder="Order Date">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Phone
+                            </div>
+                        </div>
+                        <input name="orderPhone" #orderPhone="ngModel" [(ngModel)]="orderService.formData.orderPhone"
+                        class="form-control" placeholder="Order Phone">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Address
+                            </div>
+                        </div>
+                        <input name="orderAddress" #orderAddress="ngModel" [(ngModel)]="orderService.formData.orderAddress"
+                        class="form-control" placeholder="Order Address">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Price
+                            </div>
+                        </div>
+                        <input name="orderPrice" #orderPrice="ngModel" [(ngModel)]="orderService.formData.orderPrice"
+                        class="form-control" placeholder="Order Price">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Shipment ID
+                            </div>
+                        </div>
+                        <input name="shipmentId" #shipmentId="ngModel" [(ngModel)]="orderService.formData.shipmentId"
+                        class="form-control" placeholder="Shipment ID">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Note
+                            </div>
+                        </div>
+                        <input name="orderNote" #orderNote="ngModel" [(ngModel)]="orderService.formData.orderNote"
+                        class="form-control" placeholder="Order Note">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Status
+                            </div>
+                        </div>
+                        <select class="form-control" name="status" #status="ngModel" [(ngModel)]="orderService.formData.status">
+                            <option value="1" selected="selected">1</option>
+                            <option value="0">0</option>
+                        </select>
+                        <!-- <input name="status" #status="ngModel" [(ngModel)]="orderService.formData.status"
+                        class="form-control" placeholder="Status"> -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Created Date
+                            </div>
+                        </div>
+                        <input type="datetime-local" name="createdDate" #createdDate="ngModel" [(ngModel)]="orderService.formData.createdDate"
+                        class="form-control" placeholder="Created Date">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Updated Date
+                            </div>
+                        </div>
+                        <input type="datetime-local" name="updatedDate" #updatedDate="ngModel" [(ngModel)]="orderService.formData.updatedDate"
+                        class="form-control" placeholder="Updated Date">
+                    </div>
+                </div>
+
+                <div class="modal-footer form-group">
+                    <button class="btn btn-success" type="submit"><i class="fas fa-database"></i> Add</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>

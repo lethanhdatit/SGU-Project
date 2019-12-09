@@ -1,0 +1,149 @@
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#userModal" 
+data-whatever="@mdo" (click)="populateFormrs(userService.formData)">Add</button>
+
+<div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add User</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+            <form #form="ngForm" autocomplete="off" (submit)="onSubmit(form)">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Key
+                            </div>
+                        </div>
+                        <input name="userId" class="form-control"  
+                        [value]="userService.formData.userId" disabled>
+                    </div>
+                </div>
+            
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Avatar
+                            </div>
+                        </div>
+                        <input name="userAvatar" class="form-control" placeholder="Avatar" #userAvatar="ngModel" 
+                        [(ngModel)]="userService.formData.userAvatar">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Name
+                            </div>
+                        </div>
+                        <input name="userName" class="form-control" placeholder="Name" #userName="ngModel" 
+                        [(ngModel)]="userService.formData.userName">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Phone
+                            </div>
+                        </div>
+                        <input name="userPhone" class="form-control" placeholder="Phone" #userPhone="ngModel" 
+                        [(ngModel)]="userService.formData.userPhone" maxlength="10" minlength="10">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Email
+                            </div>
+                        </div>
+                        <input type="email" name="userEmail" class="form-control" placeholder="Email" #userEmail="ngModel" 
+                        [(ngModel)]="userService.formData.userEmail" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Address
+                            </div>
+                        </div>
+                        <input name="userAddress" class="form-control" placeholder="Address" #userAddress="ngModel" 
+                        [(ngModel)]="userService.formData.userAddress">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Day of Birth
+                            </div>
+                        </div>
+                        <input type="datetime-local" name="userDayOfBirth" class="form-control" placeholder="Day Of Birth" #userDayOfBirth="ngModel" 
+                        [(ngModel)]="userService.formData.userDayOfBirth">
+                    </div>
+                </div>
+            
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Status
+                            </div>
+                        </div>
+                        <select class="form-control" name="status" #status="ngModel" [(ngModel)]="userService.formData.status">
+                            <option value="1" selected="selected">1</option>
+                            <option value="0">0</option>
+                        </select>
+                        <!-- <input name="status" #status="ngModel" [(ngModel)]="userService.formData.status"
+                        class="form-control" placeholder="Status"> -->
+                    </div>
+                </div>
+            
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Created Date
+                            </div>
+                        </div>
+                        <input type="datetime-local" name="createdDate" #createdDate="ngModel" [(ngModel)]="userService.formData.createdDate"
+                        class="form-control" placeholder="Created Date">
+                    </div>
+                </div>
+            
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white">
+                                Updated Date
+                            </div>
+                        </div>
+                        <input type="datetime-local" name="updatedDate" #updatedDate="ngModel" [(ngModel)]="userService.formData.updatedDate"
+                        class="form-control" placeholder="Updated Date">
+                    </div>
+                </div>
+
+                <div class="modal-footer form-group">
+                    <button class="btn btn-success" type="submit" ><i class="fas fa-database"></i> Add</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>

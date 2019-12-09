@@ -1,0 +1,118 @@
+<div class="input-group">
+    <input type="text" class="form-control" [(ngModel)]="searchText" name="searchText" placeholder="Search">
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Created Date</th>
+            <th>Updated Date</th>
+        </tr>
+        <tr *ngFor="let ori of originService.list | filter: searchText | paginate: {itemsPerPage: 10, currentPage: p}">
+            <td>{{ori.originId}}</td>
+            <td>{{ori.originName}}</td>
+            <td>{{ori.status}}</td>
+            <td>{{ori.createdDate | date: 'dd-MM-yyyy'}}</td>
+            <td>{{ori.updatedDate | date: 'dd-MM-yyyy'}}</td>
+            <!-- <td>
+                <i class="far fa-trash-alt fa-lg text-danger" (click)="onDelete(ori.originID)"></i>
+            </td> -->
+            <td>
+                <button type="button" class="btn btn-primary" (click)="populateForm(ori)" data-toggle="modal" data-target="#originUpdateModal" data-whatever="@mdo">Update</button>
+            </td>
+        </tr>
+    </table>
+</div>
+<pagination-controls (pageChange)="p = $event"></pagination-controls>
+
+<div class="modal fade" id="originUpdateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update Origin</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form #form="ngForm" autocomplete="off" (submit)="onSubmit(form)">
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text bg-white">
+                            Key
+                        </div>
+                    </div>
+                    <input name="originId" [value]="originService.formData.originId"
+                    class="form-control" disabled>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text bg-white">
+                            Origin Name
+                        </div>
+                    </div>
+                    <input name="originName" #originName="ngModel" [(ngModel)]="originService.formData.originName"
+                    class="form-control" placeholder="Origin Name" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text bg-white">
+                            Status
+                        </div>
+                    </div>
+                    <select class="form-control" name="status" #status="ngModel" [(ngModel)]="originService.formData.status">
+                        <option value="1" selected="selected">1</option>
+                        <option value="0">0</option>
+                    </select>
+                    <!-- <input name="status" #status="ngModel" [(ngModel)]="originService.formData.status"
+                    class="form-control" placeholder="Status"> -->
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text bg-white">
+                            Created Date
+                        </div>
+                    </div>
+                    <input type="datetime-local" name="createdDate" #createdDate="ngModel" [(ngModel)]="originService.formData.createdDate"
+                    class="form-control" placeholder="Created Date">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text bg-white">
+                            Updated Date
+                        </div>
+                    </div>
+                    <input type="datetime-local" name="updatedDate" #updatedDate="ngModel" [(ngModel)]="originService.formData.updatedDate"
+                    class="form-control" placeholder="Updated Date">
+                </div>
+            </div>
+
+            <div class="modal-footer form-group">
+                <button class="btn btn-success" type="submit" ><i class="fas fa-database"></i> Update</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
