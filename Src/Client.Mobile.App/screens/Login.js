@@ -44,7 +44,7 @@ export default class Login extends React.Component {
   }
 
   async OnBasicLogin() {
-    this.setState({IsLoading: true});
+    this.setState({ IsLoading: true });
     var dataBody = {
       Email: this.state.Email,
       Password: this.state.Password,
@@ -61,12 +61,12 @@ export default class Login extends React.Component {
         }
         this.props.navigation.navigate('App');
       }
-      else if (res.Data.code == 500) {       
+      else if (res.Data.code == 500) {
         Alert.alert(
           'Lỗi',
           'Lỗi không xác định.',
-          [            
-            { text: 'OK'},
+          [
+            { text: 'OK' },
           ],
           { cancelable: true },
         );
@@ -76,17 +76,17 @@ export default class Login extends React.Component {
         Alert.alert(
           'Lỗi',
           res.Data.message,
-          [            
-            { text: 'OK'},
+          [
+            { text: 'OK' },
           ],
           { cancelable: true },
-        );       
+        );
       }
     }
     else {
       console.log("Call API fail at: " + config.LOGIN_API_ENDPOINT);
     }
-    this.setState({IsLoading: false});
+    this.setState({ IsLoading: false });
   }
 
   async OnRegister() {
@@ -100,24 +100,26 @@ export default class Login extends React.Component {
       && this.state.Password != "") ? false : true;
     return (
       <Block flex middle>
-        <StatusBar hidden />        
+        <StatusBar hidden />
         <ImageBackground
           source={Images.RegisterBackground}
           style={{ width, height, zIndex: 1 }}
         >
           <Block flex middle>
-          { this.state.IsLoading ?
-            <Block style={{              
-              width: '90%', 
-              height: '90%',
-              borderRadius: 5
-            }}>
-              <MaterialIndicator size={30} trackWidth={3} color={"#C0C0C0"}/>
-            </Block>
-           : <Block></Block>
-        }
             <Block style={styles.registerContainer}>
               <Block flex>
+                {this.state.IsLoading ?
+                  <Block style={{
+                    width: '90%',
+                    height: '90%',
+                    position: 'absolute',
+                    borderRadius: 5,
+                    zIndex: 5,
+                  }}>
+                    <MaterialIndicator size={40} trackWidth={3} color={"#C0C0C0"} />
+                  </Block>
+                  : <Block></Block>
+                }
                 <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
                   <Block flex={0.25} middle style={{ marginBottom: 15, marginTop: 15 }}>
                     <Text color="#8898AA" size={25} style={{ fontWeight: "bold" }}>

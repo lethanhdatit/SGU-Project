@@ -23,7 +23,7 @@ const { width } = Dimensions.get("screen");
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 const thumbMeasure = (width - 48 - 32) / 3;
 const cardWidth = width - theme.SIZES.BASE * 2;
-
+import { MaterialIndicator } from 'react-native-indicators';
 const validateEmail = (email) => {
   const expression = /(?!.*\.{2})^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([\t]*\r\n)?[\t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([\t]*\r\n)?[\t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
 
@@ -40,7 +40,8 @@ export default class OrderDetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      DetailOrders: []
+      DetailOrders: [],
+      IsLoading: false
     }
   }
 
@@ -68,6 +69,7 @@ export default class OrderDetail extends React.Component {
 
 
   _onFetchDetailOrders = async (status) => {
+    this.setState({ IsLoading: true });
     var OrderID = this.props.navigation.getParam('OrderId', '0');
     var res = await API._fetch(`${config.GET_DETAIL_ORDERS_API_ENDPOINT}?OrderID=${Number(OrderID)}`, 'GET');
     if (res != null && res.Data != null) {
@@ -75,6 +77,7 @@ export default class OrderDetail extends React.Component {
         this.setState({ DetailOrders: res.Data.result });
       }
     }
+    this.setState({ IsLoading: false });
   }
 
   IsEmpty(obj) {
@@ -86,6 +89,7 @@ export default class OrderDetail extends React.Component {
   }
 
   CancelOrder = async (IdOrder) => {
+    this.setState({ IsLoading: true });
     var OrderID = this.props.navigation.getParam('OrderId', '0');
     var res = await API._fetch(`${config.CANCEL_ORDER_API_ENDPOINT}?OrderID=${Number(OrderID)}`, 'GET');
     if (res != null && res.Data != null) {
@@ -93,6 +97,7 @@ export default class OrderDetail extends React.Component {
         this.props.navigation.navigate('MyOrdersScreen', { tabId: 8 });
       }
     }
+    this.setState({ IsLoading: false });
   }
 
   OnCancelOrder = async () => {
@@ -176,6 +181,18 @@ export default class OrderDetail extends React.Component {
 
     return (
       <Block flex style={styles.navbar}>
+         {this.state.IsLoading ?
+          <Block style={{
+            width: '90%',
+            height: '90%',
+            position: 'absolute',
+            borderRadius: 5,
+            zIndex: 5,
+          }}>
+            <MaterialIndicator size={40} trackWidth={3} color={"#C0C0C0"} />
+          </Block>
+          : <Block></Block>
+        }
         <ScrollView
           showsVerticalScrollIndicator={false}
         >
@@ -196,7 +213,7 @@ export default class OrderDetail extends React.Component {
                 </Text>
               </Block>
               <Block right flex>
-                <Text size={14} style={{
+                <Text size={12} style={{
                   color: "#525F7F",
                   fontStyle: 'italic'
                 }}>

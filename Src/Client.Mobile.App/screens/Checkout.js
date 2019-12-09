@@ -19,6 +19,7 @@ import { Button, Icon, Input, Select } from "../components";
 import * as API from "../components/Api";
 import * as AsyncStorage from '../components/AsyncStorage';
 import config from "../config";
+import { MaterialIndicator } from 'react-native-indicators';
 const { width } = Dimensions.get("screen");
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 const thumbMeasure = (width - 48 - 32) / 3;
@@ -50,6 +51,7 @@ export default class Checkout extends React.Component {
       ShippingAddress: "",
       ShippingDate: "",
       ShippingNote: "",
+      IsLoading: false
     }
   }
 
@@ -88,6 +90,7 @@ export default class Checkout extends React.Component {
   }
 
   _onFetchProducts = async () => {
+    this.setState({ IsLoading: true });
     var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
     var res = await API._fetch(`${config.GET_CART_API_ENDPOINT}?UserId=${Number(UID)}&ShipmentID=${this.state.SelectedShipment}`, 'GET');
     if (res != null && res.Data != null) {
@@ -95,26 +98,30 @@ export default class Checkout extends React.Component {
         this.setState({
           Products: res.Data.result,
         });
+        this.setState({ IsLoading: false });
         return res.Data.result;
       }
     }
+    this.setState({ IsLoading: false });
     return null;
   }
 
   _onFetchShipments = async () => {
+    this.setState({ IsLoading: true });
     var res2 = await API._fetch(`${config.GET_ACTIVE_SHIPMENT}`, 'GET');
     if (res2 != null && res2.Data != null) {
       if (res2.Data.code == 200) {
         var temp = [];
         var defaultShipment = 0;
         res2.Data.result.map((item, index) => {
-          temp.push(`${item.ShipmentID}-${item.ShipmentName}`);          
-          if(index == 0) defaultShipment = item.ShipmentID;
+          temp.push(`${item.ShipmentID}-${item.ShipmentName}`);
+          if (index == 0) defaultShipment = item.ShipmentID;
         });
-        
+
         this.setState({ Shipments: temp, SelectedShipment: defaultShipment });
       }
     }
+    this.setState({ IsLoading: false });
   }
 
   IsEmpty(obj) {
@@ -132,6 +139,7 @@ export default class Checkout extends React.Component {
   }
 
   OnPlaceOrder = async () => {
+    this.setState({ IsLoading: true });
     var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
     var dataBody = {
       UserId: UID,
@@ -142,7 +150,8 @@ export default class Checkout extends React.Component {
       NoteUser: this.state.ShippingNote
     };
     await API._fetch(config.PLACE_ORDER_API_ENDPOINT, 'POST', dataBody);
-    DeviceEventEmitter.emit('EventListener-CountCart');    
+    this.setState({ IsLoading: false });
+    DeviceEventEmitter.emit('EventListener-CountCart');
     this.props.navigation.navigate('MyOrdersScreen', { tabId: 1 });
   }
 
@@ -245,6 +254,18 @@ export default class Checkout extends React.Component {
 
     return (
       <Block flex style={styles.navbar}>
+        {this.state.IsLoading ?
+          <Block style={{
+            width: '90%',
+            height: '90%',
+            position: 'absolute',
+            borderRadius: 5,
+            zIndex: 5,
+          }}>
+            <MaterialIndicator size={40} trackWidth={3} color={"#C0C0C0"} />
+          </Block>
+          : <Block></Block>
+        }
         <ScrollView
           showsVerticalScrollIndicator={false}
         >

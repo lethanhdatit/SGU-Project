@@ -215,9 +215,9 @@ namespace SGU.WebService.Controllers
                     _data.UserName = model.FullName;
                     _data.UserPhone = model.Phone;
                     _data.UserAddress = model.Address;
-                    _data.UserDayOfBirth = DateTime.Parse(model.DOB);
+                    _data.UserDayOfBirth = DateTime.ParseExact(model.DOB, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                     _accountService.UpdateUser(_data);
-                    response.Data = new { code = HttpStatusCode.OK };
+                    response.Data = new { code = HttpStatusCode.OK }; 
                 }
                 else
                 {

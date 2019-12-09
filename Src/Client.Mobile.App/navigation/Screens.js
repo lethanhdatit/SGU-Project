@@ -16,7 +16,7 @@ import ShoppingCart from "../screens/ShoppingCart";
 import Checkout from "../screens/Checkout";
 import Profile from "../screens/Profile";
 import Elements from "../screens/Elements";
-import MyOrders from "../screens/Elements-copy";
+import MyOrders from "../screens/MyOrders";
 import OrderDetail from "../screens/OrderDetail";
 // drawer
 import Menu from "./Menu";

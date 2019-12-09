@@ -17,7 +17,7 @@ import { Images, argonTheme } from "../constants";
 import * as API from "../components/Api";
 import * as AsyncStorage from '../components/AsyncStorage';
 import config from "../config";
-
+import { MaterialIndicator } from 'react-native-indicators';
 const { width, height } = Dimensions.get("screen");
 
 const validate = (email) => {
@@ -36,6 +36,7 @@ export default class Register extends React.Component {
       Password: "",
       RePassword: "",
       DOB: "",
+      IsLoading: false
     };
   }
 
@@ -66,6 +67,7 @@ export default class Register extends React.Component {
     }
 
     if(count == 0){
+      this.setState({ IsLoading: true });
       var dataBody = {
         FullName: this.state.FullName,
         Email: this.state.Email,
@@ -99,6 +101,7 @@ export default class Register extends React.Component {
       else {
         console.log("Call API fail at: " + config.LOGIN_API_ENDPOINT);
       }
+      this.setState({ IsLoading: false });
     }    
   }
 
@@ -138,6 +141,18 @@ export default class Register extends React.Component {
           <Block flex middle>
             <Block style={styles.registerContainer}>
               <Block flex>
+              {this.state.IsLoading ?
+                  <Block style={{
+                    width: '90%',
+                    height: '90%',
+                    position: 'absolute',
+                    borderRadius: 5,
+                    zIndex: 5,
+                  }}>
+                    <MaterialIndicator size={40} trackWidth={3} color={"#C0C0C0"} />
+                  </Block>
+                  : <Block></Block>
+                }
                 <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
                   <Block flex={0.25} middle style={{ marginBottom: 15, marginTop: 15 }}>
                     <Text color="#8898AA" size={25} style={{ fontWeight: "bold" }}>

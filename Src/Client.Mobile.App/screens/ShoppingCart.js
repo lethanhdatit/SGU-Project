@@ -22,6 +22,7 @@ import Tabs from '../components/Tabs';
 import * as API from "../components/Api";
 import * as AsyncStorage from '../components/AsyncStorage';
 import config from "../config";
+import { MaterialIndicator } from 'react-native-indicators';
 const { width } = Dimensions.get("screen");
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 const thumbMeasure = (width - 48 - 32) / 3;
@@ -35,7 +36,8 @@ export default class ShoppingCart extends React.Component {
     this.state = {
       Products: [],
       modalVisible: false,
-      IsCartEmpty: true
+      IsCartEmpty: true,
+      IsLoading: false
     }
   }
 
@@ -62,6 +64,7 @@ export default class ShoppingCart extends React.Component {
   }
 
   _onFetchDetails = async () => {
+    this.setState({ IsLoading: true });
     var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
     var res = await API._fetch(`${config.GET_CART_API_ENDPOINT}?UserId=${Number(UID)}&ShipmentID=${0}`, 'GET');
     if (res != null && res.Data != null) {
@@ -70,6 +73,7 @@ export default class ShoppingCart extends React.Component {
         this.setState({ Products: res.Data.result, IsCartEmpty: _IsCartEmpty });
       }
     }
+    this.setState({ IsLoading: false });
   }
 
 
@@ -111,6 +115,7 @@ export default class ShoppingCart extends React.Component {
 
 
   ChangeQuantity = async (VariantId, value) => {
+    this.setState({ IsLoading: true });
     var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
     var _items = [
       {
@@ -141,6 +146,7 @@ export default class ShoppingCart extends React.Component {
         //alert(res.Data.message);
       }
     }
+    this.setState({ IsLoading: false });
   }
 
   OnNextAction = async () => {
@@ -228,6 +234,18 @@ export default class ShoppingCart extends React.Component {
 
     return (
       <Block flex style={styles.navbar}>
+        {this.state.IsLoading ?
+              <Block style={{
+                width: '90%',
+                height: '90%',
+                position: 'absolute',
+                borderRadius: 5,
+                zIndex: 10,
+              }}>
+                <MaterialIndicator size={40} trackWidth={3} color={"#C0C0C0"} />
+              </Block>
+              : <Block></Block>
+            }
         <ScrollView
           showsVerticalScrollIndicator={true}
         >

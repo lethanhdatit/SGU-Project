@@ -22,6 +22,7 @@ import Tabs from '../components/Tabs';
 import * as API from "../components/Api";
 import * as AsyncStorage from '../components/AsyncStorage';
 import config from "../config";
+import { MaterialIndicator } from 'react-native-indicators';
 const { width } = Dimensions.get("screen");
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 const thumbMeasure = (width - 48 - 32) / 3;
@@ -42,7 +43,8 @@ export default class ProductDetail extends React.Component {
       BuyQuantity: 0,
       SelectedVariantImage: null,
       DefaultImage: null,
-      IsAddToCart: true
+      IsAddToCart: true,
+      IsLoading: false
     }
   }
 
@@ -72,6 +74,7 @@ export default class ProductDetail extends React.Component {
   }
 
   _onFetchDetails = async () => {
+    this.setState({ IsLoading: true });
     var ProductID = this.props.navigation.getParam('productId', '0');
     var IsAddToCart = this.props.navigation.getParam('isAddToCart', true);
     var res = await API._fetch(`${config.GET_ACTIVE_DETAILS_ITEM_API_ENDPOINT}?ProductID=${Number(ProductID)}`, 'GET');
@@ -80,6 +83,7 @@ export default class ProductDetail extends React.Component {
         this.setState({ ProductID: ProductID, IsAddToCart: IsAddToCart, ProductDetails: res.Data.result, SelectedVariantStock: res.Data.result.TotalQuantity, SelectedVariantImage: res.Data.result.ProductImage, TotalStock: res.Data.result.TotalQuantity, DefaultImage: res.Data.result.ProductImage });
       }
     }
+    this.setState({ IsLoading: false });
   }
 
 
@@ -287,7 +291,7 @@ export default class ProductDetail extends React.Component {
   }
 
   OnNextAction = async (isAddToCart) => {
-    
+    this.setState({ IsLoading: true });
       var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
       var _items = [
         {
@@ -321,7 +325,7 @@ export default class ProductDetail extends React.Component {
           );
         }
       }
-   
+      this.setState({ IsLoading: false });
   }
 
 
@@ -329,6 +333,18 @@ export default class ProductDetail extends React.Component {
     var IsShowButton = this.state.BuyQuantity > 0 ? true : false;
     return (
       <Block flex style={styles.navbar}>
+         {this.state.IsLoading ?
+          <Block style={{
+            width: '90%',
+            height: '90%',
+            position: 'absolute',
+            borderRadius: 5,
+            zIndex: 10,
+          }}>
+            <MaterialIndicator size={40} trackWidth={3} color={"#C0C0C0"} />
+          </Block>
+          : <Block></Block>
+        }
         <ScrollView
           showsVerticalScrollIndicator={false}
         >

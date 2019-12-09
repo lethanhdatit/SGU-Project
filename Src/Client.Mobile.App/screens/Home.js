@@ -9,7 +9,7 @@ import argonTheme from '../constants/Theme';
 import * as API from "../components/Api";
 import * as AsyncStorage from '../components/AsyncStorage';
 import config from "../config";
-
+import { MaterialIndicator } from 'react-native-indicators';
 const { width } = Dimensions.get('screen');
 const cardWidth = width - theme.SIZES.BASE * 2;
 
@@ -23,13 +23,27 @@ class Home extends React.Component {
       ProductTypeId: null,
       OriginID: null,
       TrademarkID: null,
-      PageSize: 3
+      PageSize: 3,
+      IsLoading: false
     }
   }
 
   componentWillMount() {
     this._OnFetchProductTypes();
     this._onRequestSearch();
+  }
+
+  componentDidMount() {
+    const { navigation } = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      this._OnFetchProductTypes();
+      this._onRequestSearch();
+    });
+  }
+
+  componentWillUnmount() {
+    // Remove the event listener
+    this.focusListener.remove();
   }
 
   _onRequestSearch() {
@@ -44,6 +58,7 @@ class Home extends React.Component {
 
   _OnSearchProducts = async (searchOptions) => {
     //console.log(JSON.stringify(searchOptions));
+    this.setState({ IsLoading: true });
     var res = await API._fetch(`${config.SEARCH_PRODUCTS_API_ENDPOINT}`, 'POST', searchOptions);
     if (res != null && res.Data != null) {
       if (res.Data.code == 200) {
@@ -60,6 +75,7 @@ class Home extends React.Component {
         this.setState({ Products: temp })
       }
     }
+    this.setState({ IsLoading: false });
   };
 
   _OnFetchProductTypes = async () => {
@@ -75,6 +91,13 @@ class Home extends React.Component {
     }
   };
 
+  IsEmpty(obj) {
+    for (var key in obj) {
+      return false; // not empty
+    }
+
+    return true; // empty
+  }
 
   renderProducts = () => {
     var _Items = [];
@@ -113,7 +136,7 @@ class Home extends React.Component {
         </Block>
       );
     }
-
+    var itemsIsEmpty = this.IsEmpty(_Items);
     return (
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -121,7 +144,32 @@ class Home extends React.Component {
         <Block flex>
           {/* <Card item={articles[3]} horizontal />
           <Card item={articles[4]} full /> */}
-          {_Items}
+          {
+            (itemsIsEmpty) ?
+              (
+                <Block middle center style={{
+                  backgroundColor: '#F4F5F7',
+                  padding: 10,
+                  borderRadius: 4,
+                  borderColor: 'rgba(0, 0, 0, 0.1)',
+                  height: "100%",
+                  width: "100%",
+                }}>
+                  <Icon
+                    name={'close'}
+                    family="font-awesome"
+                    // style={{ paddingRight: 8 }}
+                    size={30}
+                    color={argonTheme.COLORS.ICON}
+                  />
+                  <Text bold size={15} color="#32325D">Không có sản phẩm nào!</Text>
+                </Block>
+              )
+              :
+              (
+                _Items
+              )
+          }
         </Block>
       </ScrollView>
     )
@@ -211,8 +259,20 @@ class Home extends React.Component {
   render() {
     return (
       <Block flex center style={styles.home}>
+        {this.state.IsLoading ?
+          <Block style={{
+            width: '90%',
+            height: '90%',
+            position: 'absolute',
+            borderRadius: 5,
+            zIndex: 5,
+          }}>
+            <MaterialIndicator size={40} trackWidth={3} color={"#C0C0C0"} />
+          </Block>
+          : <Block></Block>
+        }
         {this.renderSearch()}
-        {this.renderOptions()}      
+        {this.renderOptions()}
         {this.renderProducts()}
       </Block>
     );

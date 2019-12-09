@@ -20,7 +20,7 @@ import { HeaderHeight } from "../constants/utils";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import moment from "moment";
 const { width, height } = Dimensions.get("screen");
-
+import { MaterialIndicator } from 'react-native-indicators';
 const thumbMeasure = (width - 48 - 32) / 3;
 const validateEmail = (email) => {
   const expression = /(?!.*\.{2})^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([\t]*\r\n)?[\t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([\t]*\r\n)?[\t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
@@ -44,8 +44,21 @@ class Profile extends React.Component {
       UserID: null,
       Phone: null,
       Address: null,
-      DOB: null
+      DOB: null,
+      IsLoading: false
     }
+  }
+
+  componentDidMount() {
+    const { navigation } = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      this._OnFetchUserInfo();
+    });
+  }
+
+  componentWillUnmount() {
+    // Remove the event listener
+    this.focusListener.remove();
   }
 
   componentWillMount() {
@@ -53,6 +66,7 @@ class Profile extends React.Component {
   }
 
   async _OnFetchUserInfo() {
+    this.setState({ IsLoading: true });
     var UserId = await AsyncStorage._getData(config.USER_ID_STOREKEY);
     var res = await API._fetch(`${config.GET_USER_INFO_API_ENDPOINT}?UserId=${Number(UserId)}`, 'GET');
     if (res != null && res.Data != null) {
@@ -66,14 +80,16 @@ class Profile extends React.Component {
           Avatar: user.Avatar,
           Phone: user.Phone,
           Address: user.Address,
-          DOB: user.DOB
+          DOB: user.DOB,
+          IsLoading: false
         });
       }
     }
+    this.setState({ IsLoading: false });
   }
 
   async _UpdateUserInfo() {
-
+    this.setState({ IsLoading: true });
     var dataBody = {
       UserID: this.state.UserID,
       FullName: this.state.FullName,
@@ -107,6 +123,7 @@ class Profile extends React.Component {
     } else {
 
     }
+    this.setState({ IsLoading: false });
   }
 
   async _OnUpdateUserInfo() {
@@ -136,11 +153,9 @@ class Profile extends React.Component {
 
   render() {
     var isDisableLoginButton = (
-      validatePhone(this.state.Phone)
+      (this.state.Phone == null || this.state.Phone == "" || validatePhone(this.state.Phone))
       && this.state.FullName != null
       && this.state.FullName != ""
-      && this.state.Address != null
-      && this.state.Address != ""
       && this.state.DOB != null
       && this.state.DOB != ""
     ) ? false : true;
@@ -152,6 +167,18 @@ class Profile extends React.Component {
             style={styles.profileContainer}
             imageStyle={styles.profileBackground}
           >
+            {this.state.IsLoading ?
+              <Block style={{
+                width: '90%',
+                height: '90%',
+                position: 'absolute',
+                borderRadius: 5,
+                zIndex: 10,
+              }}>
+                <MaterialIndicator size={40} trackWidth={3} color={"#C0C0C0"} />
+              </Block>
+              : <Block></Block>
+            }
             <ScrollView
               showsVerticalScrollIndicator={false}
               style={{ width, marginTop: '25%' }}
@@ -164,13 +191,14 @@ class Profile extends React.Component {
                     defaultSource={require('../assets/default-profile.png')}
                   />
                 </Block>
-
-
                 <Block flex style={styles.group}>
-                  <Text bold center size={16} style={styles.title}>
+                  {/* <Text bold center size={16} style={styles.title}>
                     Thông tin tài khoản
-                  </Text>
+                  </Text> */}
                   <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+                    <Text bold left size={14} style={{ color: argonTheme.COLORS.HEADER }}>
+                      Họ tên:
+                  </Text>
                     <Input
                       placeholder="Họ tên"
                       iconContent={
@@ -180,7 +208,7 @@ class Profile extends React.Component {
                             width: 20,
                             height: 20,
                             borderRadius: 10,
-                            backgroundColor: this.state.FullName.length != null && this.state.FullName.length != "" ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
+                            backgroundColor: this.state.FullName != null && this.state.FullName != "" ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
                             marginRight: 10
                           }}
                         >
@@ -197,6 +225,9 @@ class Profile extends React.Component {
                     />
                   </Block>
                   <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+                    <Text bold left size={14} style={{ color: argonTheme.COLORS.HEADER }}>
+                      Email:
+                  </Text>
                     <Input
                       placeholder="Email"
                       iconContent={
@@ -206,7 +237,7 @@ class Profile extends React.Component {
                             width: 20,
                             height: 20,
                             borderRadius: 10,
-                            backgroundColor: this.state.Email.length != null && this.state.Email.length != "" ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
+                            backgroundColor: this.state.Email != null && this.state.Email != "" ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
                             marginRight: 10
                           }}
                         >
@@ -226,6 +257,9 @@ class Profile extends React.Component {
                     />
                   </Block>
                   <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+                    <Text bold left size={14} style={{ color: argonTheme.COLORS.HEADER }}>
+                      Số điện thoại:
+                  </Text>
                     <Input
                       placeholder="Số điện thoại"
                       iconContent={
@@ -235,7 +269,7 @@ class Profile extends React.Component {
                             width: 20,
                             height: 20,
                             borderRadius: 10,
-                            backgroundColor: validatePhone(this.state.ShippingPhone) ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
+                            backgroundColor: (this.state.Phone == null || this.state.Phone == "" || validatePhone(this.state.Phone)) ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
                             marginRight: 10
                           }}
                         >
@@ -253,6 +287,9 @@ class Profile extends React.Component {
                     />
                   </Block>
                   <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+                    <Text bold left size={14} style={{ color: argonTheme.COLORS.HEADER }}>
+                      Địa chỉ:
+                  </Text>
                     <Input
                       placeholder="Địa chỉ"
                       iconContent={
@@ -262,7 +299,7 @@ class Profile extends React.Component {
                             width: 20,
                             height: 20,
                             borderRadius: 10,
-                            backgroundColor: this.state.Address.length != null && this.state.Address.length != "" ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
+                            backgroundColor: argonTheme.COLORS.INPUT_SUCCESS,
                             marginRight: 10
                           }}
                         >
@@ -281,6 +318,9 @@ class Profile extends React.Component {
                   </Block>
                   <TouchableOpacity onPress={() => this.toggleDateTimePicker()}>
                     <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+                      <Text bold left size={14} style={{ color: argonTheme.COLORS.HEADER }}>
+                        Ngày sinh:
+                      </Text>
                       <Input
                         placeholder="Ngày sinh"
                         iconContent={
@@ -290,7 +330,7 @@ class Profile extends React.Component {
                               width: 20,
                               height: 20,
                               borderRadius: 10,
-                              backgroundColor: this.state.DOB.length != null && this.state.DOB.length != "" ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
+                              backgroundColor: this.state.DOB != null && this.state.DOB != "" ? argonTheme.COLORS.INPUT_SUCCESS : argonTheme.COLORS.INPUT_ERROR,
                               marginRight: 10
                             }}
                           >

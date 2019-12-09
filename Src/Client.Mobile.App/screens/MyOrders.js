@@ -23,7 +23,7 @@ const { width } = Dimensions.get("screen");
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 const thumbMeasure = (width - 48 - 32) / 3;
 const cardWidth = width - theme.SIZES.BASE * 2;
-
+import { MaterialIndicator } from 'react-native-indicators';
 const validateEmail = (email) => {
   const expression = /(?!.*\.{2})^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([\t]*\r\n)?[\t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([\t]*\r\n)?[\t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
 
@@ -40,11 +40,23 @@ export default class MyOrders extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      Orders: []
+      Orders: [],
+      IsLoading: false
     }
     this._onFetchOrders(0);
   }
 
+  componentDidMount() {
+    const { navigation } = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      this._onFetchOrders(0);
+    });
+  }
+
+  componentWillUnmount() {
+    // Remove the event listener
+    this.focusListener.remove();
+  }
 
   IsEmpty(obj) {
     for (var key in obj) {
@@ -55,6 +67,7 @@ export default class MyOrders extends React.Component {
   }
 
   _onFetchOrders = async (status) => {
+    this.setState({ IsLoading: true });
     var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
     var res = await API._fetch(`${config.GET_ORDERS_API_ENDPOINT}?UserId=${Number(UID)}&OrderStatus=${Number(status)}`, 'GET');
     if (res != null && res.Data != null) {
@@ -62,6 +75,7 @@ export default class MyOrders extends React.Component {
         this.setState({ Orders: res.Data.result });
       }
     }
+    this.setState({ IsLoading: false });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -85,8 +99,10 @@ export default class MyOrders extends React.Component {
                 paddingVertical: 10
               }}>
                 <Block row style={{ marginBottom: 3 }}>
-                  <TouchableOpacity onPress={() => this.props.navigation.navigate('OrderDetail', { OrderId: data.OrderId, 
-                    OrderStatus: data.StatusName, CreatedDate: data.CreatedDate})}>
+                  <TouchableOpacity onPress={() => this.props.navigation.navigate('OrderDetail', {
+                    OrderId: data.OrderId,
+                    OrderStatus: data.StatusName, CreatedDate: data.CreatedDate
+                  })}>
                     <Text bold size={14} color="#32325D">
                       Đơn hàng: #{data.OrderId}
                     </Text>
@@ -98,8 +114,8 @@ export default class MyOrders extends React.Component {
                       Đặt ngày: {data.CreatedDate}
                     </Text>
                   </Block>
-                  <Block row right flex>
-                    <Text size={12} color={argonTheme.COLORS.HEADER} style={{ fontStyle: 'italic' }}>
+                  <Block row right >
+                    <Text size={13} color={argonTheme.COLORS.HEADER} style={{ fontStyle: 'italic' }}>
                       {data.StatusName}
                     </Text>
                   </Block>
@@ -132,9 +148,21 @@ export default class MyOrders extends React.Component {
         );
       });
     }
-
+    var itemsIsEmpty = this.IsEmpty(_Items);
     return (
       <Block flex style={styles.navbar}>
+        {this.state.IsLoading ?
+          <Block style={{
+            width: '90%',
+            height: '90%',
+            position: 'absolute',
+            borderRadius: 5,
+            zIndex: 5,
+          }}>
+            <MaterialIndicator size={40} trackWidth={3} color={"#C0C0C0"} />
+          </Block>
+          : <Block></Block>
+        }
         <ScrollView
           showsVerticalScrollIndicator={false}
         >
@@ -146,7 +174,30 @@ export default class MyOrders extends React.Component {
             height: "100%",
             width: "100%",
           }}>
-            {_Items}
+            {(itemsIsEmpty) ?
+              (
+                <Block middle center style={{
+                  backgroundColor: '#F4F5F7',
+                  padding: 10,
+                  borderRadius: 4,
+                  borderColor: 'rgba(0, 0, 0, 0.1)',
+                  height: "100%",
+                  width: "100%",
+                }}>
+                  <Icon
+                    name={'close'}
+                    family="font-awesome"
+                    // style={{ paddingRight: 8 }}
+                    size={30}
+                    color={argonTheme.COLORS.ICON}
+                  />
+                  <Text bold size={15} color="#32325D">Không có đơn hàng nào!</Text>
+                </Block>
+              )
+              :
+              (
+                _Items
+              )}
           </Block>
         </ScrollView>
       </Block >
