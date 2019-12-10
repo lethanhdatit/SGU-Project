@@ -292,40 +292,40 @@ export default class ProductDetail extends React.Component {
 
   OnNextAction = async (isAddToCart) => {
     this.setState({ IsLoading: true });
-      var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
-      var _items = [
-        {
-          VariantID: this.state.SelectedVariantId,
-          Quantity: this.state.BuyQuantity,
-        }
-      ];
-      var dataBody = {
-        UserId: UID,
-        Items: _items,
-        Type: 2 //update out cart
-      };
-      var res = await API._fetch(config.UPDATE_CART_API_ENDPOINT, 'POST', dataBody);
-      if (res != null && res.Data != null) {
-        if (res.Data.code == 200) {          
-          DeviceEventEmitter.emit('EventListener-CountCart');
-          this.setState({ modalVisible: false });
-          if (isAddToCart) {
-          this.props.navigation.navigate('ShoppingCart');
-          }else{
-            this.props.navigation.navigate('Checkout');
-          }
-        }else if(res.Data.code == 202){
-          Alert.alert(
-            'Cảnh báo',
-            res.Data.message,
-            [            
-              { text: 'OK'},
-            ],
-            { cancelable: true },
-          );
-        }
+    var UID = await AsyncStorage._getData(config.USER_ID_STOREKEY);
+    var _items = [
+      {
+        VariantID: this.state.SelectedVariantId,
+        Quantity: this.state.BuyQuantity,
       }
-      this.setState({ IsLoading: false });
+    ];
+    var dataBody = {
+      UserId: UID,
+      Items: _items,
+      Type: 2 //update out cart
+    };
+    var res = await API._fetch(config.UPDATE_CART_API_ENDPOINT, 'POST', dataBody);
+    if (res != null && res.Data != null) {
+      if (res.Data.code == 200) {
+        DeviceEventEmitter.emit('EventListener-CountCart');
+        this.setState({ modalVisible: false });
+        if (isAddToCart) {
+          this.props.navigation.navigate('ShoppingCart');
+        } else {
+          this.props.navigation.navigate('Checkout');
+        }
+      } else if (res.Data.code == 202) {
+        Alert.alert(
+          'Cảnh báo',
+          res.Data.message,
+          [
+            { text: 'OK' },
+          ],
+          { cancelable: true },
+        );
+      }
+    }
+    this.setState({ IsLoading: false });
   }
 
 
@@ -333,7 +333,7 @@ export default class ProductDetail extends React.Component {
     var IsShowButton = this.state.BuyQuantity > 0 ? true : false;
     return (
       <Block flex style={styles.navbar}>
-         {this.state.IsLoading ?
+        {this.state.IsLoading ?
           <Block style={{
             width: '90%',
             height: '90%',
@@ -385,9 +385,7 @@ export default class ProductDetail extends React.Component {
           animationType="slide"
           transparent={true}
           visible={this.state.modalVisible}
-          onRequestClose={() => {
-            alert('Modal has been closed.');
-          }}>
+        >
           <Block style={{
             ...styles.shadow,
             backgroundColor: '#F4F5F7',
@@ -559,8 +557,8 @@ const styles = StyleSheet.create({
     paddingTop: theme.SIZES.BASE
     // paddingBottom: theme.SIZES.BASE * 2,
   },
-  navbar: { 
-    paddingTop: iPhoneX ? theme.SIZES.BASE * 4 : theme.SIZES.BASE,    
+  navbar: {
+    paddingTop: iPhoneX ? theme.SIZES.BASE * 4 : theme.SIZES.BASE,
   },
   nameInfo: {
     marginTop: 25

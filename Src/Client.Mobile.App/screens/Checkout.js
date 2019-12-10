@@ -73,11 +73,12 @@ export default class Checkout extends React.Component {
     this.focusListener.remove();
   }
 
-  componentWillMount() {
-    this._onFetchDetails();
-  }
+  // componentWillMount() {
+  //   this._onFetchDetails();
+  // }
 
   _onFetchDetails = async () => {
+    await this._onFetchShipments();
     var res = await this._onFetchProducts();
     if (res != null) {
       this.setState({
@@ -86,7 +87,7 @@ export default class Checkout extends React.Component {
         ShippingAddress: res.UserAddress != null ? res.UserAddress : ""
       });
     }
-    this._onFetchShipments();
+   
   }
 
   _onFetchProducts = async () => {
