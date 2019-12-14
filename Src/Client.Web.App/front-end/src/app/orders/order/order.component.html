@@ -38,21 +38,8 @@ data-whatever="@mdo" (click)="populateFormrs(orderService.formData)">Add</button
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text bg-white">
-                                Order Status
-                            </div>
-                        </div>
-                        <select class="form-control" name="orderStatus" #orderStatus="ngModel" [(ngModel)]="orderService.formData.orderStatus">
-                            <option value="true" selected="selected">true</option>
-                            <option value="false">false</option>
-                        </select>
-                        <!-- <input name="orderStatus" #orderStatus="ngModel" [(ngModel)]="orderService.formData.orderStatus"
-                        class="form-control" placeholder="Order Status"> -->
-                    </div>
-                </div>
+                <input hidden name="orderStatus" #orderStatus="ngModel" [(ngModel)]="orderService.formData.orderStatus"
+                        class="form-control" placeholder="Order Status" value="true">
             
                 <div class="form-group">
                     <div class="input-group">
@@ -134,8 +121,10 @@ data-whatever="@mdo" (click)="populateFormrs(orderService.formData)">Add</button
                             </div>
                         </div>
                         <select class="form-control" name="status" #status="ngModel" [(ngModel)]="orderService.formData.status">
-                            <option value="1" selected="selected">1</option>
-                            <option value="0">0</option>
+                            <option value="1" selected="selected">Đang Xử Lý</option>
+                            <option value="2">Chờ Vận Chuyển</option>
+                            <option value="4">Đã Hoàn Tất</option>
+                            <option value="8">Hủy</option>
                         </select>
                         <!-- <input name="status" #status="ngModel" [(ngModel)]="orderService.formData.status"
                         class="form-control" placeholder="Status"> -->

@@ -53,7 +53,7 @@ namespace SGU.WebService.Controllers
                     _data = _data.Where(x => x.ProductName.ToLower().Contains(model.SearchTerm.ToLower())).ToList();
                 }
                 var maxCount = _data.Count();
-                _data = _data.Skip((model.PageCurrent - 1) * model.PageSize).Take(model.PageSize).ToList();
+                _data = _data.OrderByDescending(x => x.CreatedDate).Skip((model.PageCurrent - 1) * model.PageSize).Take(model.PageSize).ToList();
                 var result = ConvertToProductView(_data);
                 response.Data = new { maxCount = maxCount, result, code = HttpStatusCode.OK };
                 return response;

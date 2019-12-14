@@ -53,6 +53,7 @@ class Home extends React.Component {
   async loadItemViewMore() {
     if (this.state.IsLoading == false) {   
       await this.setState({ IsLoading: true });
+      console.log(this.state.maxCount);
       if (this.state.Products.length < this.state.maxCount) {
         await this.setState({ pageCurrent: this.state.pageCurrent + 1 });
         await this._onRequestSearch(this.state.pageCurrent);
@@ -238,6 +239,7 @@ class Home extends React.Component {
   }
 
   UpdateSelectProductType(typeID, pageCurrent = 1, pageSize = this.state.pageSize) {
+    this.state.pageCurrent = -1;
     if (this.state.ProductTypeId != typeID) {
       var searchOptions = {
         SearchTerm: this.state.SearchTerm,
